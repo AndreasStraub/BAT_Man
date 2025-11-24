@@ -1,0 +1,114 @@
+﻿<Window x:Class="WPF_Test.Views.AddAktivitaetDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="clr-namespace:WPF_Test.ViewModels"
+        mc:Ignorable="d"
+        
+        
+        Height="450" Width="800"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="{DynamicResource AppBackground}">
+
+    <Window.Style>
+        <Style TargetType="Window">
+            <Setter Property="Title" Value="{DynamicResource AddActivityDialog_Title}"/>
+
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+
+                    <Setter Property="Title" Value="{DynamicResource EditActivityDialog_Title}"/>
+
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Style>
+    
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1.5*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Grid.Column="0" 
+                      Header="{DynamicResource AddActivityDialog_Date}"
+                      Style="{DynamicResource {x:Type GroupBox}}">
+
+                <DatePicker Margin="10"
+                            SelectedDate="{Binding AktivitaetZumBearbeiten.Datum, Mode=TwoWay}"/>
+            </GroupBox>
+
+            <GroupBox Grid.Column="1" 
+                      Header="{DynamicResource AddActivityDialog_Status}"
+                      Style="{DynamicResource {x:Type GroupBox}}"
+                      Margin="10,0,0,0">
+
+                <ListBox Margin="10"
+                         Style="{StaticResource RadioListBoxStyle}"
+                         ItemsSource="{Binding AlleStatusOptionen}"
+                         SelectedItem="{Binding AusgewaehlterStatus, Mode=TwoWay}"/>
+
+            </GroupBox>
+
+            <GroupBox Grid.Column="2" 
+                      Header="{DynamicResource AddActivityDialog_Comment}"
+                      Style="{DynamicResource {x:Type GroupBox}}"
+                      Margin="10,0,0,0">
+
+                <TextBox Margin="10"
+                         Style="{StaticResource MultiLineTextBoxStyle}"
+                         Text="{Binding AktivitaetZumBearbeiten.Kommentar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </GroupBox>
+
+        </Grid>
+
+        <StackPanel Grid.Row="1" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right"
+                    Background="{DynamicResource AppBackground}"
+                    Height="60">
+
+            <Button x:Name="btnDelete" 
+                    Content="{DynamicResource AddActivityDialog_DeleteButton}" 
+                    Margin="10"
+                    Click="btnDelete_Click">
+
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+
+                        <Setter Property="Visibility" Value="Collapsed" />
+
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="btnOK" 
+                    Content="{DynamicResource Dialog_OK}" 
+                    Margin="10"
+                    IsDefault="True"
+                    Click="btnOK_Click"/>
+
+            <Button x:Name="btnCancel" 
+                    Content="{DynamicResource Dialog_Cancel}" 
+                    Margin="0,10,10,10"
+                    IsCancel="True"/>
+
+        </StackPanel>
+
+    </Grid>
+</Window>

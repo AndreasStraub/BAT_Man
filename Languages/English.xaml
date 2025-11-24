@@ -1,0 +1,60 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <system:String x:Key="Nav_Welcome">Welcome</system:String>
+    <system:String x:Key="Nav_Companies">Company Overview</system:String>
+    <system:String x:Key="Nav_CompanyAdd">Add Company</system:String>
+    <system:String x:Key="Nav_CompanyShow">Show Company</system:String>
+    <system:String x:Key="Nav_Settings">Settings</system:String>
+    <system:String x:Key="Nav_Help">Help</system:String>
+    <system:String x:Key="Nav_LoggedInAs">Logged in as:</system:String>
+
+    <system:String x:Key="Welcome_Message">Welcome to the BAT-Man Prototype!</system:String>
+
+    <system:String x:Key="SaveButton">Save</system:String>
+    <system:String x:Key="CancelButton">Cancel</system:String>
+
+    <system:String x:Key="Settings_Title">Settings</system:String>
+    <system:String x:Key="Settings_Theme">Theme Mode</system:String>
+    <system:String x:Key="Settings_Theme_Dark">Dark</system:String>
+    <system:String x:Key="Settings_Theme_Light">Light</system:String>
+    <system:String x:Key="Settings_Theme_Green">Green</system:String>
+    <system:String x:Key="Settings_Theme_Blue">Blue</system:String>
+    <system:String x:Key="Settings_ChangePassword">Change Password</system:String>
+    <system:String x:Key="Settings_Security">Security</system:String>
+    <system:String x:Key="Settings_Language">Language</system:String>
+    <system:String x:Key="Settings_Language_German">Deutsch</system:String>
+    <system:String x:Key="Settings_Language_English">English</system:String>
+
+    <!--<system:String x:Key="Settings_Title">Settings</system:String>-->
+    <system:String x:Key="CompanyList_RefreshButton">Refresh List</system:String>
+    <system:String x:Key="CompanyList_Header_Company">Company / Contact</system:String>
+    <system:String x:Key="CompanyList_Header_Contact">Contact (Phone / E-Mail)</system:String>
+    <system:String x:Key="CompanyList_Header_Status">Status</system:String>
+    <system:String x:Key="CompanyList_Header_Notes">Notes</system:String>
+
+    <system:String x:Key="ShowCompany_Title">Edit Company</system:String>
+    <system:String x:Key="ShowCompany_Select">Select Company:</system:String>
+    <system:String x:Key="ShowCompany_EditButton">Edit Company</system:String>
+    <system:String x:Key="ShowCompany_DeleteButton">Delete Company</system:String>
+
+    <system:String x:Key="Activity_Title">Activities</system:String>
+    <system:String x:Key="Activity_AddButton">Add Activity</system:String>
+    <system:String x:Key="Activity_EditHint">Double-click a row to Edit/Delete</system:String>
+    <system:String x:Key="Activity_Col_Date">Date</system:String>
+    <system:String x:Key="Activity_Col_Status">Status</system:String>
+    <system:String x:Key="Activity_Col_Notes">Comment</system:String>
+
+    <system:String x:Key="AddActivityDialog_Title">Add Activity</system:String>
+    <system:String x:Key="EditActivityDialog_Title">Edit Activity</system:String>
+    <system:String x:Key="AddActivityDialog_Date">Date</system:String>
+    <system:String x:Key="AddActivityDialog_Status">Select Status</system:String>
+    <system:String x:Key="AddActivityDialog_Comment">Comment</system:String>
+    <system:String x:Key="AddActivityDialog_DeleteButton">Delete</system:String>
+    <system:String x:Key="Dialog_OK">OK</system:String>
+    <system:String x:Key="Dialog_Cancel">Cancel</system:String>
+
+    <system:String x:Key="CompanyList_DoubleClickHint">Double-click a row for detail view</system:String>
+
+</ResourceDictionary>

@@ -1,0 +1,66 @@
+﻿<Application x:Class="WPF_Test.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:WPF_Test"
+             xmlns:viewmodels="clr-namespace:WPF_Test.ViewModels"
+             xmlns:views="clr-namespace:WPF_Test.Views"
+             xmlns:converters="clr-namespace:WPF_Test.Converters"
+             ShutdownMode="OnExplicitShutdown">
+
+    <!-- 
+        ShutdownMode: "OnExplicitShutdown".
+        Verhindert das automatische Beenden der App beim Wechsel vom Login- zum Hauptfenster.
+        -> (Siehe Dokumentation: App.xaml.md > 1. ShutdownMode)
+    -->
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- 
+                    Globale Ressourcen:
+                    Zentrales Laden von Styles, Themes und Sprachen zur besseren Wartbarkeit.
+                    -> (Siehe Dokumentation: App.xaml.md > 2. ResourceDictionary & MergedDictionaries)
+                -->
+                <ResourceDictionary Source="Styles/BasisStyles.xaml"/>
+                <ResourceDictionary Source="Themes/Dark.xaml"/>
+                <ResourceDictionary Source="Languages/German.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Globaler Converter für Menü-Logik (View-Erkennung) -->
+            <converters:InstanceToTypeConverter x:Key="InstanceToTypeConverter"/>
+
+            <!-- 
+                MVVM DataTemplates:
+                Definition der Zuordnung zwischen ViewModel (Logik) und View (UI).
+                Ermöglicht die automatische View-Instanziierung durch WPF.
+                -> (Siehe Dokumentation: App.xaml.md > 3. DataTemplates)
+            -->
+
+            <DataTemplate DataType="{x:Type viewmodels:WelcomeViewModel}">
+                <views:WelcomeView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewmodels:FirmenUebersichtViewModel}">
+                <views:FirmenUebersichtView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewmodels:FirmaAnlegenViewModel}">
+                <views:FirmaAnlegenView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewmodels:FirmaAnzeigenViewModel}">
+                <views:FirmaAnzeigenView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewmodels:SettingsViewModel}">
+                <views:SettingsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewmodels:LoginViewModel}">
+                <views:LoginWindow/>
+            </DataTemplate>
+
+        </ResourceDictionary>
+    </Application.Resources>
+
+</Application>

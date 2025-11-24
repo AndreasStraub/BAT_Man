@@ -1,0 +1,47 @@
+﻿<!-- 
+====================================================================
+DATEI: Themes/BlueDark.xaml
+====================================================================
+Blaues Dark-Theme, angelehnt an dein Solarized-Dark-Theme.
+====================================================================
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Schriftgrößen -->
+    <system:Double x:Key="BaseFontSize">14</system:Double>
+    <system:Double x:Key="InputFontSize">16</system:Double>
+    <system:Double x:Key="HeaderFontSize">14</system:Double>
+    <system:Double x:Key="SmallFontSize">12</system:Double>
+
+    <!-- Grundfarben -->
+    <!-- Hintergrund: dunkles Blau, aber nicht schwarz -->
+    <SolidColorBrush x:Key="AppBackground" Color="#1F2A3B"/>
+    <!-- Eingabefelder: etwas heller als Hintergrund -->
+    <SolidColorBrush x:Key="TextBoxBackground" Color="#28354A"/>
+    <!-- Standard-Text: helles, leicht bläuliches Grau -->
+    <SolidColorBrush x:Key="TextForeground" Color="#E1E7F0"/>
+    <!-- Rahmen: dezentes Blau-Grau -->
+    <SolidColorBrush x:Key="BorderColor" Color="#3B4A62"/>
+
+    <!-- Buttons -->
+    <!-- Hauptbutton: mittleres Blau -->
+    <SolidColorBrush x:Key="ButtonBackground" Color="#447ACC"/>
+    <!-- Hover: etwas heller / kräftiger -->
+    <SolidColorBrush x:Key="ButtonBackgroundHover" Color="#539FE6"/>
+
+    <Color x:Key="ButtonBackgroundColor">#447ACC</Color>
+    <Color x:Key="ButtonTextColor">#F7FBFF</Color>
+
+    <!-- Gedrückt: etwas dunkler -->
+    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#335C99"/>
+    <SolidColorBrush x:Key="ButtonText" Color="#F7FBFF"/>
+
+    <!-- Listen-Hover -->
+    <SolidColorBrush x:Key="ListItemHoverBackground" Color="#32405A"/>
+
+    <!-- Caret (Textcursor) -->
+    <SolidColorBrush x:Key="ControlCaret" Color="#FF8AC6FF" />
+
+</ResourceDictionary>

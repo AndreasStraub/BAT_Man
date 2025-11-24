@@ -1,0 +1,44 @@
+﻿<Window x:Class="WPF_Test.Views.EditFirmaDialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        mc:Ignorable="d" 
+        
+        Title="{Binding DialogTitle}" 
+        
+        Height="600" Width="500"
+        WindowStartupLocation="CenterScreen"
+        
+        ResizeMode="NoResize"
+        Background="{DynamicResource AppBackground}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ContentControl Grid.Row="0" Content="{Binding}"/>
+
+        <Grid Grid.Row="1" 
+              Background="{DynamicResource AppBackground}"
+              Height="60">
+
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Right">
+
+                <Button x:Name="btnOK" 
+                        Content="{DynamicResource Dialog_OK}" 
+                        Margin="10"
+                        IsDefault="True"
+                        Click="btnOK_Click"/>
+
+                <Button x:Name="btnCancel" 
+                        Content="{DynamicResource Dialog_Cancel}" 
+                        Margin="0,10,10,10"
+                        IsCancel="True"/>
+            </StackPanel>
+
+        </Grid>
+    </Grid>
+</Window>

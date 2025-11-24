@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="bin\**" />
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="bin\**" />
+    <None Remove="obj\**" />
+    <Page Remove="bin\**" />
+    <Page Remove="obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="App.xaml_OK.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="Styles\BasisStyles01.xaml" />
+    <Page Remove="Styles\BasisStyles02.xaml" />
+    <Page Remove="Styles\BasisStyles03.xaml" />
+    <Page Remove="Styles\BasisStyles04.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="9.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\BetriebAnzeigenView_01.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Styles\BasisStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+</Project>

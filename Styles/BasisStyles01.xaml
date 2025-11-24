@@ -1,0 +1,151 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!--
+  ====================================================================
+  STYLE FÜR TEXTBOX
+  ====================================================================
+  -->
+  <Style TargetType="TextBox">
+
+    <!--
+    NORMALE EIGENSCHAFTEN (Das "Auto neu lackieren")
+    Diese Setter sind einfach und ändern simple Eigenschaften
+    des vorhandenen Steuerelements.
+    -->
+    <Setter Property="Height" Value="40" />
+    <Setter Property="Background" Value="{DynamicResource TextBoxBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource TextForeground}" />
+    <Setter Property="CaretBrush" Value="{DynamicResource TextForeground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Padding" Value="8,0,0,0" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+
+    <!--
+    ====================================================================
+    DIE TEMPLATE (SCHABLONEN)-ERKLÄRUNG (Die "Karosserie austauschen")
+    ====================================================================
+
+    Der "Template"-Setter ist anders. Er ist nicht das "Lackieren" des Autos,
+    sondern das "Wegwerfen der Standard-Karosserie" (des Windows-Aussehens)
+    und das Ersetzen durch ein komplett neues, eigenes Design.
+    -->
+    <Setter Property="Template">
+      <Setter.Value>
+
+        <!-- 1. DER NEUE BAUPLAN (ControlTemplate) -->
+        <!-- Wir definieren hier den *völlig neuen* Aufbau der TextBox. -->
+        <ControlTemplate TargetType="TextBox">
+
+          <!-- 2. UNSER NEUES DESIGN -->
+          <!-- Das Aussehen ist ab jetzt NUR NOCH dieser "Border" (Rahmen). -->
+          <!-- Die Standard-Windows-TextBox (das graue Rechteck) ist weg. -->
+          
+            <!-- 3. DIE VERBINDUNG (TemplateBinding) -->
+            <!--
+            Damit Setter wie "Background=" (weiter oben im Style) überhaupt
+            funktionieren, müssen wir die Eigenschaft des Borders (z.B. Background)
+            an die Eigenschaft der TextBox (z.B. Background) "binden".
+            -->
+          
+          <Border CornerRadius="8"
+
+            Background="{TemplateBinding Background}"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            BorderThickness="{TemplateBinding BorderThickness}">
+
+            <!-- 4. DER MAGISCHE TEIL (PART_ContentHost) -->
+            <!--
+            Wir haben jetzt einen schönen runden Rahmen, aber wo blinkt
+            der Cursor? Wo erscheint der Text, den der Benutzer tippt?
+
+            "PART_ContentHost" ist ein reservierter Name. Er sagt WPF:
+            "Genau an DIESER STELLE (innerhalb unseres Borders)
+            sollst du bitte den eigentlichen Text-Inhalt einfügen."
+
+            Ohne diese Zeile hättest du nur einen leeren Rahmen.
+            -->
+            <ScrollViewer x:Name="PART_ContentHost" />
+
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!--
+  ====================================================================
+  STYLE FÜR PASSWORDBOX
+  ====================================================================
+  Dieser Block ist eine exakte Kopie des TextBox-Stils, aber
+  der "TargetType" wurde auf "PasswordBox" geändert, da eine PasswordBox
+  keine TextBox ist und einen eigenen Stil braucht.
+  Die Kommentare von oben gelten hier 1:1 genauso.
+  ====================================================================
+  -->
+  <Style TargetType="PasswordBox">
+    <Setter Property="Height" Value="40" />
+    <Setter Property="Background" Value="{DynamicResource TextBoxBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource TextForeground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="Padding" Value="8,0,0,0" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="PasswordBox">
+          <Border CornerRadius="8"
+                  Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}">
+            <!-- Auch die PasswordBox verwendet intern diesen Namen -->
+            <ScrollViewer x:Name="PART_ContentHost" />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!--
+  ====================================================================
+  STYLE FÜR BUTTON
+  ====================================================================
+  -->
+  <Style TargetType="Button">
+    <Setter Property="Height" Value="40" />
+    <Setter Property="Width" Value="120" />
+    <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource ButtonText}" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Border x:Name="ButtonBorder"
+                  CornerRadius="8"
+                  Background="{TemplateBinding Background}"
+                  BorderThickness="0">
+            <!--
+            Beim Button heißt der Inhalts-Platzhalter "ContentPresenter".
+            Er zeigt den Text (z.B. "Anmelden") an.
+            -->
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Border>
+          <!-- Trigger ändern das Aussehen bei Maus-Hover oder Klick -->
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource ButtonBackgroundHover}"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource ButtonBackgroundPressed}"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+</ResourceDictionary>

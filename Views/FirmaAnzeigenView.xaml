@@ -1,0 +1,157 @@
+﻿<UserControl x:Class="WPF_Test.Views.FirmaAnzeigenView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="800">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0" 
+                  Header="{DynamicResource ShowCompany_Title}"
+                  Style="{DynamicResource {x:Type GroupBox}}">
+
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                    <Label Content="{DynamicResource ShowCompany_Select}" 
+                           Foreground="{DynamicResource TextForeground}"/>
+
+                    <ComboBox x:Name="comboFirmen" Width="250"
+                              ItemsSource="{Binding AlleFirmen}"
+                              SelectedItem="{Binding AusgewaehlteFirma, Mode=TwoWay}"
+                              DisplayMemberPath="Firmenname"/>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                        <Button Content="{DynamicResource ShowCompany_EditButton}"
+                                Command="{Binding FirmaBearbeitenCommand}"/>
+
+                        <Button Content="{DynamicResource ShowCompany_DeleteButton}" 
+                                Margin="10,0,0,0"
+                                Command="{Binding FirmaLoeschenCommand}"/>
+                    </StackPanel>
+
+                </StackPanel>
+
+                <Border Grid.Column="1" 
+                        Background="{DynamicResource TextBoxBackground}" 
+                        Padding="15" CornerRadius="8"
+                        MaxWidth="550">
+
+                    <Grid TextBlock.FontSize="14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="1.5*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{Binding AusgewaehlteFirma.Firmenname}" 
+                                       FontSize="16" FontWeight="Bold"
+                                       Foreground="{DynamicResource TextForeground}"/>
+
+                            <TextBlock Foreground="{DynamicResource TextForeground}" Margin="0,5,0,0">
+                                <Run Text="{Binding AusgewaehlteFirma.Strasse}"/>
+                                <Run Text=" "/>
+                                <Run Text="{Binding AusgewaehlteFirma.Hausnummer}"/>
+                            </TextBlock>
+
+                            <TextBlock Foreground="{DynamicResource TextForeground}">
+                                <Run Text="{Binding AusgewaehlteFirma.PLZ}"/>
+                                <Run Text=" "/>
+                                <Run Text="{Binding AusgewaehlteFirma.Ort}"/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                            <TextBlock Text="{Binding AusgewaehlteFirma.Ansprechpartner}" 
+                                       Foreground="{DynamicResource TextForeground}"
+                                       TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding AusgewaehlteFirma.Telefon}" 
+                                       Foreground="{DynamicResource TextForeground}"
+                                       TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding AusgewaehlteFirma.EMail}" 
+                                       Foreground="{DynamicResource TextForeground}"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                    </Grid>
+                </Border>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" 
+                  Header="{DynamicResource Activity_Title}"
+                  Margin="0,10,0,0"
+                  Style="{DynamicResource {x:Type GroupBox}}">
+
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <ListView Grid.Row="0"
+                          ItemsSource="{Binding AktivitaetenListe}"
+                          SelectedItem="{Binding AusgewaehlteAktivitaet}"
+                          AlternationCount="2"
+                          BorderThickness="0"
+                          Background="Transparent">
+
+                    <!--<ListView.InputBindings>
+                        <MouseBinding MouseAction="LeftDoubleClick"
+                                      Command="{Binding EditAktivitaetCommand}" />
+                    </ListView.InputBindings>-->
+
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="{DynamicResource Activity_Col_Date}" Width="120"
+                                            DisplayMemberBinding="{Binding Datum, StringFormat='dd.MM.yyyy'}"/>
+
+                            <GridViewColumn Header="{DynamicResource Activity_Col_Status}" Width="150"
+                                            DisplayMemberBinding="{Binding StatusBezeichnung}"/>
+
+                            <GridViewColumn Header="{DynamicResource Activity_Col_Notes}" Width="400"
+                                            DisplayMemberBinding="{Binding Kommentar}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+                <Border Grid.Row="1" 
+                        Margin="0,10,0,0" 
+                        BorderBrush="{DynamicResource BorderColor}" 
+                        BorderThickness="0,2,0,0"
+                        Padding="0,10,0,0">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                   Text="{DynamicResource Activity_EditHint}"
+                                   Foreground="{DynamicResource TextForeground}"
+                                   Opacity="0.7"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Left"
+                                   FontStyle="Italic"/>
+
+                        <Button Grid.Column="1" 
+                                Content="{DynamicResource Activity_AddButton}"
+                                Command="{Binding AddAktivitaetCommand}"
+                                HorizontalAlignment="Right"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>
