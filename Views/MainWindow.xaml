@@ -111,8 +111,11 @@
                     </Button.Style>
                 </Button>
 
+               
                 <Button Content="{DynamicResource Nav_Help}" 
-                        Style="{StaticResource NavButtonStyle}"/>
+                        Style="{StaticResource NavButtonStyle}"
+                        Command="{Binding OpenHelpPdfCommand}" /> <!--HILFE COMMAND-->
+                
 
                 <StackPanel Margin="20,20,0,0">
                     <TextBlock Text="{DynamicResource Nav_LoggedInAs}" 
@@ -120,8 +123,10 @@
                     <TextBlock Text="{Binding TeilnehmerKurs}" 
                                Foreground="{DynamicResource TextForeground}" Opacity="0.7"/>
                     <TextBlock Text="{Binding TeilnehmerName}" 
-                               Foreground="{DynamicResource TextForeground}" FontWeight="Bold" FontSize="16"/>
+                               Foreground="{DynamicResource TextForeground}" 
+                               FontWeight="Bold" FontSize="16"/>
                 </StackPanel>
+
             </StackPanel>
         </DockPanel>
 
