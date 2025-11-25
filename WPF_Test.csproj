@@ -24,10 +24,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Hilfe\hilfe.pdf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Remove="Styles\BasisStyles01.xaml" />
     <Page Remove="Styles\BasisStyles02.xaml" />
     <Page Remove="Styles\BasisStyles03.xaml" />
     <Page Remove="Styles\BasisStyles04.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Hilfe\hilfe.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
