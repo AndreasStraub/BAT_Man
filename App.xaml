@@ -21,9 +21,10 @@
                     Zentrales Laden von Styles, Themes und Sprachen zur besseren Wartbarkeit.
                     -> (Siehe Dokumentation: App.xaml.md > 2. ResourceDictionary & MergedDictionaries)
                 -->
-                <ResourceDictionary Source="Styles/BasisStyles.xaml"/>
-                <ResourceDictionary Source="Themes/Dark.xaml"/>
-                <ResourceDictionary Source="Languages/German.xaml"/>
+                <ResourceDictionary Source="/Styles/BasisStyles.xaml"/>
+                <ResourceDictionary Source="/Themes/Dark.xaml"/>
+                <ResourceDictionary Source="/Languages/German.xaml"/>
+                <ResourceDictionary Source="/Help/HelpGerman.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Globaler Converter für Menü-Logik (View-Erkennung) -->
@@ -58,6 +59,10 @@
 
             <DataTemplate DataType="{x:Type viewmodels:LoginViewModel}">
                 <views:LoginWindow/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewmodels:HilfeViewModel}">
+                <views:HilfeView/>
             </DataTemplate>
 
         </ResourceDictionary>

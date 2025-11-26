@@ -9,6 +9,11 @@
     <Grid VerticalAlignment="Center">
         <StackPanel Margin="20">
 
+            <!--  
+                TITEL:
+                Verwendet 'DynamicResource', damit sich der Text sofort ändert, 
+                wenn die Sprache umgeschaltet wird.
+             -->
             <TextBlock Text="{DynamicResource Settings_Title}"
                        FontSize="24"
                        Foreground="{DynamicResource TextForeground}"
@@ -21,11 +26,22 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
+                <!--  
+                    BEREICH 1: DESIGN (THEMES)
+                    Hier wird das Aussehen der Anwendung gesteuert.
+                 -->
                 <GroupBox Grid.Column="0" 
                           Header="{DynamicResource Settings_Theme}"
                           Style="{DynamicResource {x:Type GroupBox}}"
                           Margin="0,0,10,0">
                     <StackPanel Margin="5">
+
+                        <!--  
+                            THEME-LOGIK:
+                            1. GroupName="Theme": Sorgt dafür, dass nur EINER dieser Buttons gewählt sein kann.
+                            2. IsChecked="{Binding IsDarkMode...}": Wenn der User klickt, wird der Setter im ViewModel aufgerufen.
+                               Dieser Setter ruft dann 'ThemeService.ChangeTheme("dark")' auf.
+                         -->
                         <RadioButton Content="{DynamicResource Settings_Theme_Dark}"
                                      GroupName="Theme"
                                      Foreground="{DynamicResource TextForeground}"
@@ -52,11 +68,22 @@
                     </StackPanel>
                 </GroupBox>
 
+                <!--  
+                    BEREICH 2: SPRACHE
+                    Steuerung der Lokalisierung (Deutsch/Englisch).
+                 -->
                 <GroupBox Grid.Column="1" 
                           Header="{DynamicResource Settings_Language}"
                           Style="{DynamicResource {x:Type GroupBox}}"
                           Margin="5,0,5,0">
                     <StackPanel Margin="5">
+
+                        <!--  
+                            SPRACH-LOGIK:
+                            Ähnlich wie beim Theme. Der Setter von 'IsGerman' ruft 'LanguageService.ChangeLanguage("de")' auf.
+                            Dadurch werden im Hintergrund die ResourceDictionaries ausgetauscht.
+                            Alle Texte mit '{DynamicResource ...}' aktualisieren sich daraufhin sofort.
+                         -->
                         <RadioButton Content="{DynamicResource Settings_Language_German}"
                                      GroupName="Language"
                                      Foreground="{DynamicResource TextForeground}"
@@ -71,11 +98,21 @@
                     </StackPanel>
                 </GroupBox>
 
+                <!--  
+                    BEREICH 3: SICHERHEIT
+                    Zugriff auf den Passwort-Änderungs-Dialog.
+                 -->
                 <GroupBox Grid.Column="2" 
                           Header="{DynamicResource Settings_Security}"
                           Style="{DynamicResource {x:Type GroupBox}}"
                           Margin="10,0,0,0">
                     <StackPanel VerticalAlignment="Center" Margin="5">
+
+                        <!--  
+                            PASSWORT-BUTTON:
+                            Löst den 'ChangePasswordCommand' im ViewModel aus.
+                            Dieser öffnet das 'ChangePasswordWindow' als modalen Dialog.
+                         -->
                         <Button Content="{DynamicResource Settings_ChangePassword}"
                                 Command="{Binding ChangePasswordCommand}"
                                 Padding="15,8"

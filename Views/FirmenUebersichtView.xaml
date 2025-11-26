@@ -6,12 +6,36 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
 
+    <!--  
+        LAYOUT-STRUKTUR:
+        Die View ist in zwei Zeilen unterteilt:
+        1. Die Liste der Firmen (nimmt den meisten Platz ein -> Height="*")
+        2. Ein Hinweis-Text am unteren Rand (nimmt nur so viel Platz wie nötig -> Height="Auto")
+    -->
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!--  
+            DIE LISTE (ListView):
+            Hier werden die Daten angezeigt.
+            
+            WICHTIGE EIGENSCHAFTEN:
+            - ItemsSource="{Binding FirmenListe}": Woher kommen die Daten? Aus der ObservableCollection im ViewModel.
+            - SelectedItem="{Binding AusgewaehlteFirma, Mode=TwoWay}": 
+              Wenn der User eine Zeile anklickt, wird das gewählte Objekt in die Eigenschaft 'AusgewaehlteFirma' 
+              im ViewModel geschrieben (TwoWay).
+            - AlternationCount="2": Ermöglicht abwechselnde Zeilenfarben (für bessere Lesbarkeit).
+
+            HINWEIS ZUM DOPPELKLICK (Interaktion):
+            In dieser Datei ist KEIN MouseBinding für den Doppelklick zu sehen.
+            Grund: Das Verhalten "Doppelklick -> BearbeitenCommand" ist zentral im globalen Style 
+            für "ListViewItem" definiert (siehe BasisStyles.xaml).
+            Dies sorgt für ein einheitliches Verhalten in der gesamten Anwendung, ohne dass jede 
+            View den Doppelklick neu definieren muss.
+        -->
         <ListView 
             Grid.Row="0"
             AlternationCount="2"
@@ -19,33 +43,21 @@
             BorderThickness="0"
             Background="Transparent"
             SelectedItem="{Binding AusgewaehlteFirma, Mode=TwoWay}">
-            
-            <!--<ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="FontSize" Value="14"/>
-                    <Setter Property="Foreground" Value="{DynamicResource TextForeground}"/>
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Style.Triggers>
-                        <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                            <Setter Property="Background" Value="{DynamicResource TextBoxBackground}"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ListView.ItemContainerStyle>-->
-            
-            <!--<ListView.InputBindings>
-                <MouseBinding MouseAction="LeftDoubleClick"
-                              Command="{Binding BearbeitenCommand}" />
-            </ListView.InputBindings>-->
-            
-            
+
+            <!--  
+                ANSICHTS-MODUS (GridView):
+                ListView kann Daten als Kacheln, Liste oder Tabelle anzeigen.
+                'GridView' sorgt für die klassische Tabellenansicht mit Spaltenüberschriften.
+            -->
             <ListView.View>
                 <GridView>
 
+                    <!--  SPALTE 1: FIRMA & ANSPRECHPARTNER -->
                     <GridViewColumn Header="{DynamicResource CompanyList_Header_Company}" 
                                     Width="250">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
+                                <!--  Ein StackPanel erlaubt mehrere Texte untereinander in einer Zelle -->
                                 <StackPanel Margin="5,10">
                                     <TextBlock Text="{Binding Firmenname}" 
                                                FontWeight="Bold" 
@@ -58,6 +70,7 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
+                    <!--  SPALTE 2: KONTAKT (Telefon & E-Mail) -->
                     <GridViewColumn Header="{DynamicResource CompanyList_Header_Contact}" 
                                     Width="250">
                         <GridViewColumn.CellTemplate>
@@ -72,26 +85,30 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
+                    <!--  SPALTE 3: STATUS -->
                     <GridViewColumn Header="{DynamicResource CompanyList_Header_Status}" 
                                     Width="120">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
+                                <!--  TargetNullValue='-': Zeigt einen Bindestrich, falls der Wert null ist -->
                                 <TextBlock Text="{Binding LetzterStatus, TargetNullValue='-'}" 
-                                               VerticalAlignment="Center" 
-                                               Margin="10"/>
+                                           VerticalAlignment="Center" 
+                                           Margin="10"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
+                    <!--  SPALTE 4: BEMERKUNGEN -->
                     <GridViewColumn Header="{DynamicResource CompanyList_Header_Notes}" 
                                     Width="300">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
+                                <!--  TextTrimming="CharacterEllipsis": Fügt "..." hinzu, wenn der Text zu lang ist -->
                                 <TextBlock Text="{Binding LetzteBemerkung, TargetNullValue='-'}" 
-                                               VerticalAlignment="Center" 
-                                               Margin="10"
-                                               TextWrapping="Wrap"
-                                               TextTrimming="CharacterEllipsis"/>
+                                           VerticalAlignment="Center" 
+                                           Margin="10"
+                                           TextWrapping="Wrap"
+                                           TextTrimming="CharacterEllipsis"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -100,6 +117,7 @@
             </ListView.View>
         </ListView>
 
+        <!--  FUSSZEILE: Hinweis für den Benutzer -->
         <TextBlock Grid.Row="1"
                    Text="{DynamicResource CompanyList_DoubleClickHint}"
                    Foreground="{DynamicResource TextForeground}"

@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=mscorlib">
+
+    <!-- TITEL -->
+    <s:String x:Key="Help_Title_Overview">Hilfe: Firmenübersicht</s:String>
+    <s:String x:Key="Help_Title_Details">Hilfe: Firmendetails</s:String>
+    <s:String x:Key="Help_Title_General">Hilfe: Allgemein</s:String>
+    <s:String x:Key="Help_Title_Welcome">Willkommen bei der BAT-Man Hilfe</s:String>
+
+    <!-- UI ELEMENTE IN DER HILFE -->
+    <s:String x:Key="Help_Button_Back">Zurück</s:String>
+    <s:String x:Key="Help_Legend_Title">Erklärung der Funktionen:</s:String>
+
+    <!-- ERKLÄRUNGEN (Die eigentlichen Texte) -->
+    <s:String x:Key="Help_Desc_Search">Suchfeld: Geben Sie hier den Firmennamen ein, um die Liste zu filtern.</s:String>
+    <s:String x:Key="Help_Desc_Table">Tabelle: Ein Doppelklick auf eine Zeile öffnet die Detailansicht.</s:String>
+    <s:String x:Key="Help_Desc_New">Button 'Neu': Öffnet den Dialog zum Erstellen einer neuen Firma.</s:String>
+
+    <!-- ... Weitere deutsche Texte hier ... -->
+
+</ResourceDictionary>

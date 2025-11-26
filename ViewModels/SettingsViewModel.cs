@@ -1,40 +1,48 @@
-﻿// Dateipfad: ViewModels/SettingsViewModel.cs
-// KORRIGIERTE VERSION (Themes + Sprachwahl + Passwort-Dialog)
-
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using WPF_Test.Services;
-// ==========================================================
-// NEUE USINGS (Wichtig für Commands und Fenster)
-// ==========================================================
-using System.Windows.Input; // Für ICommand
-using System.Windows;       // Für Application.Current
-using WPF_Test.Views;       // Damit wir 'ChangePasswordWindow' kennen
+using System.Windows.Input;
+using System.Windows;
+using WPF_Test.Views;
 
 namespace WPF_Test.ViewModels
 {
+    /// <summary>
+    /// Steuert die Einstellungs-Seite.
+    /// <para>
+    /// FUNKTIONALITÄT:
+    /// 1. Umschalten des Designs (Themes) über RadioButtons.
+    /// 2. Umschalten der Sprache (Lokalisierung) über RadioButtons.
+    /// 3. Öffnen des Passwort-Änderungs-Dialogs.
+    /// </para>
+    /// </summary>
     public class SettingsViewModel : INotifyPropertyChanged
     {
-        // --- 1. Eigenschaften für die Bindung ---
+        // --- Private Felder ---
+        private string _currentTheme = "dark"; // Standard-Wert beim Start
+        private string _currentLanguage = "de"; // Standard-Sprache
 
-        private string _currentTheme = "dark"; // Standard ist Dark
+        // --- 1. Theme-Eigenschaften (für RadioButtons) ---
 
-        // Property für RadioButton 1
+        /// <summary>
+        /// Steuert den "Dark Mode".
+        /// </summary>
         public bool IsDarkMode
         {
             get { return _currentTheme == "dark"; }
             set
             {
+                // Logik: Wenn der RadioButton aktiviert wird (value == true)
                 if (value)
                 {
                     _currentTheme = "dark";
+                    // Aufruf des globalen Dienstes zum Laden der XAML-Ressourcen
                     ThemeService.ChangeTheme("dark");
                     NotifyThemeChanged();
                 }
             }
         }
 
-        // Property für RadioButton 2
         public bool IsLightMode
         {
             get { return _currentTheme == "light"; }
@@ -49,7 +57,6 @@ namespace WPF_Test.ViewModels
             }
         }
 
-        // Property für RadioButton 3
         public bool IsBlueMode
         {
             get { return _currentTheme == "blue"; }
@@ -64,7 +71,6 @@ namespace WPF_Test.ViewModels
             }
         }
 
-        // Property für RadioButton 4
         public bool IsGreenMode
         {
             get { return _currentTheme == "green"; }
@@ -79,7 +85,10 @@ namespace WPF_Test.ViewModels
             }
         }
 
-        // Hilfsmethode, um Code-Duplizierung zu vermeiden (Optional, aber sauberer)
+        /// <summary>
+        /// Informiert die GUI, dass sich ALLE Theme-Properties geändert haben könnten.
+        /// Das ist notwendig, damit die RadioButtons ihren Status korrekt aktualisieren.
+        /// </summary>
         private void NotifyThemeChanged()
         {
             OnPropertyChanged(nameof(IsDarkMode));
@@ -88,8 +97,11 @@ namespace WPF_Test.ViewModels
             OnPropertyChanged(nameof(IsGreenMode));
         }
 
-        // --- Sprach-Eigenschaften ---
-        private string _currentLanguage = "de"; // Standard ist Deutsch
+        // --- 2. Sprach-Eigenschaften ---
+
+        /// <summary>
+        /// Steuert die Sprache Deutsch.
+        /// </summary>
         public bool IsGerman
         {
             get { return _currentLanguage == "de"; }
@@ -98,7 +110,10 @@ namespace WPF_Test.ViewModels
                 if (value)
                 {
                     _currentLanguage = "de";
+                    // Tauscht das Sprach-Wörterbuch in der App.xaml aus
                     LanguageService.Instance.ChangeLanguage("de");
+
+                    // UI-Update für beide Buttons auslösen
                     OnPropertyChanged(nameof(IsGerman));
                     OnPropertyChanged(nameof(IsEnglish));
                 }
@@ -120,45 +135,45 @@ namespace WPF_Test.ViewModels
             }
         }
 
-        // ==========================================================
-        // 2. NEUER COMMAND (Für den Button)
-        // ==========================================================
+        // --- 3. Commands ---
+
+        /// <summary>
+        /// Command zum Öffnen des Passwort-Fensters.
+        /// </summary>
         public ICommand ChangePasswordCommand { get; }
 
-
         // --- Konstruktor ---
+
         public SettingsViewModel()
         {
-            // ==========================================================
-            // 3. COMMAND INITIALISIEREN
-            // ==========================================================
             ChangePasswordCommand = new RelayCommand(ExecuteChangePassword);
         }
 
+        // --- Logik ---
 
-        // ==========================================================
-        // 4. DIE LOGIK ZUM ÖFFNEN DES FENSTERS
-        // ==========================================================
+        /// <summary>
+        /// Öffnet das Fenster 'ChangePasswordWindow' als modalen Dialog.
+        /// </summary>
         private void ExecuteChangePassword(object parameter)
         {
-            // A. Wir erstellen eine neue Instanz des Passwort-Fensters
+            // Neue Instanz des Fensters erstellen (dieses Fenster kennen wir aus Phase 2)
             ChangePasswordWindow passwordWindow = new ChangePasswordWindow();
 
-            // B. Wir setzen das Hauptfenster als "Besitzer".
-            //    Das sorgt dafür, dass das Pop-up immer VOR dem Hauptfenster bleibt.
+            // "Owner" setzen: Das Pop-up "gehört" dem Hauptfenster.
+            // Verhindert, dass das Pop-up hinter dem Hauptfenster verschwindet.
             if (Application.Current != null)
             {
                 passwordWindow.Owner = Application.Current.MainWindow;
             }
 
-            // C. Wir öffnen das Fenster "modal".
-            //    Der Benutzer muss es erst schließen, bevor er zurück kann.
+            // ShowDialog() pausiert diesen Code, bis das Fenster geschlossen wird.
             passwordWindow.ShowDialog();
         }
 
-
         // --- INotifyPropertyChanged Implementierung ---
+
         public event PropertyChangedEventHandler PropertyChanged;
+
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

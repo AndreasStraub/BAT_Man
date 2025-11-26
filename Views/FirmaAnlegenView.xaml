@@ -10,6 +10,7 @@
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Top">
 
+
         <Label Content="Firma:" Foreground="{DynamicResource TextForeground}"/>
         <TextBox Width="400"
                  Text="{Binding FirmaZumBearbeiten.Firmenname, UpdateSourceTrigger=PropertyChanged}"/>
@@ -50,22 +51,35 @@
         <TextBox Width="400"
                  Text="{Binding FirmaZumBearbeiten.EMail, UpdateSourceTrigger=PropertyChanged}"/>
 
+        <!--  BUTTONS -->
         <Grid Margin="0,30,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
+            <!--  
+                BUTTON SPEICHERN:
+                Der Text (Content) ist dynamisch und zeigt entweder "Speichern" oder "Aktualisieren" an,
+                je nachdem, was im ViewModel gesetzt wurde.
+                
+                CommandParameter: Übergibt das Fenster an das ViewModel, um es schließen zu können.
+            -->
             <Button Grid.Column="0"
-                    Content="{DynamicResource SaveButton}" 
+                    Content="{Binding SaveButtonText}" 
                     Command="{Binding SpeichernCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                     Width="150"
-                    HorizontalAlignment="Left"/>
+                    HorizontalAlignment="Left"
+                    IsDefault="True"/>
+
             <Button Grid.Column="1"
                     Content="{DynamicResource CancelButton}" 
                     Command="{Binding AbbrechenCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                     Width="150"
-                    HorizontalAlignment="Right"/>
+                    HorizontalAlignment="Right"
+                    IsCancel="True"/>
         </Grid>
 
     </StackPanel>

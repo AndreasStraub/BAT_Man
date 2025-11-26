@@ -1,7 +1,4 @@
-﻿// Dateipfad: ViewModels/AddAktivitaetViewModel.cs
-// KORRIGIERTE VERSION (Erklärt die Lambda-Funktion)
-
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -12,25 +9,35 @@ using System.Linq;
 namespace WPF_Test.ViewModels
 {
     /// <summary>
-    /// Das "Gehirn" (ViewModel) für den "Aktivität hinzufügen"-Dialog.
-    /// KORREKTUR: Verwaltet jetzt BEIDE Modi ("Neu" und "Bearbeiten")
+    /// Steuert den Dialog zum Anlegen oder Bearbeiten einer Aktivität.
+    /// Verwaltet den Zustand (Neu vs. Edit) und die Validierung.
     /// </summary>
     public class AddAktivitaetViewModel : INotifyPropertyChanged
     {
-        // --- 1. Private Felder ---
+        // --- Private Felder ---
         private readonly StatusRepository _statusRepository;
 
-        // --- 2. Öffentliche Eigenschaften (für Bindings) ---
+        // --- Öffentliche Eigenschaften ---
+
         private Aktivitaet _aktivitaetZumBearbeiten;
+        /// <summary>
+        /// Das Datenobjekt, das im Dialog bearbeitet wird.
+        /// </summary>
         public Aktivitaet AktivitaetZumBearbeiten
         {
             get { return _aktivitaetZumBearbeiten; }
             set { _aktivitaetZumBearbeiten = value; OnPropertyChanged(); }
         }
 
+        /// <summary>
+        /// Liste aller möglichen Status-Werte (für die Auswahl).
+        /// </summary>
         public ObservableCollection<Status> AlleStatusOptionen { get; set; }
 
         private Status _ausgewaehlterStatus;
+        /// <summary>
+        /// Der aktuell ausgewählte Status.
+        /// </summary>
         public Status AusgewaehlterStatus
         {
             get { return _ausgewaehlterStatus; }
@@ -41,43 +48,48 @@ namespace WPF_Test.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gibt an, ob wir eine bestehende Aktivität bearbeiten (true) oder eine neue anlegen (false).
+        /// </summary>
         public bool IsEditMode { get; private set; }
 
-
-        // --- 3. Konstruktor (JETZT MIT PARAMETER) ---
+        // --- Konstruktor ---
 
         /// <summary>
-        /// Konstruktor für den Dialog.
+        /// Initialisiert das ViewModel.
         /// </summary>
         /// <param name="aktivitaet">
         /// Die Aktivität, die bearbeitet werden soll.
-        /// Wenn 'null', wird der "Neu"-Modus gestartet.
+        /// Wenn 'null', wird der Modus "Neu" gestartet.
         /// </param>
         public AddAktivitaetViewModel(Aktivitaet aktivitaet)
         {
             _statusRepository = new StatusRepository();
             AlleStatusOptionen = new ObservableCollection<Status>();
+
+            // Entscheidung: Welcher Modus?
             this.IsEditMode = (aktivitaet != null);
 
-            // 1. Status-Liste laden (wie vorher)
+            // 1. Status-Liste laden
             LadeStatusOptionen();
 
-            // 2. Modus prüfen
+            // 2. Daten vorbereiten
             if (aktivitaet == null)
             {
                 // --- MODUS: NEU ---
-                IsEditMode = false;
                 AktivitaetZumBearbeiten = new Aktivitaet
                 {
-                    Datum = DateTime.Now
+                    Datum = DateTime.Now // Standard: Heute
                 };
+
+                // Standard-Status auswählen (z.B. der erste in der Liste)
+                if (AlleStatusOptionen.Count > 0)
+                    AusgewaehlterStatus = AlleStatusOptionen[0];
             }
             else
             {
                 // --- MODUS: BEARBEITEN ---
-                IsEditMode = true;
-
-                // Erstelle eine KOPIE (damit "Abbrechen" funktioniert)
+                // WICHTIG: Wir arbeiten auf einer KOPIE, damit "Abbrechen" möglich ist.
                 AktivitaetZumBearbeiten = new Aktivitaet
                 {
                     Aktivitaet_ID = aktivitaet.Aktivitaet_ID,
@@ -87,52 +99,36 @@ namespace WPF_Test.ViewModels
                     StatusBezeichnung = aktivitaet.StatusBezeichnung
                 };
 
-                // WICHTIG: Wähle den korrekten RadioButton
-                // (den Status, den die Aktivität bereits hat)
-
-                // ==========================================================
-                // HINWEIS: Erklärung der 'FirstOrDefault'-Alternative
-                // (Wie von dir gewünscht, ohne Lambda-Ausdruck)
-                // ==========================================================
-
-                // 
-                // DER "EINFACHE" (lange) WEG, UM DEN STATUS ZU FINDEN:
-                //
-                // 1. Erstelle eine temporäre Variable, um das Ergebnis zu halten.
-                Status tempStatus = null;
-
-                // 2. Durchlaufe jeden einzelnen Status (s) in der vollen Liste
-                //    (AlleStatusOptionen).
-                foreach (Status s in AlleStatusOptionen)
-                {
-                    // 3. Prüfe, ob die ID dieses Status (s.Status_ID)
-                    //    mit der ID der zu bearbeitenden Aktivität übereinstimmt.
-                    if (s.Status_ID == AktivitaetZumBearbeiten.Status_ID)
-                    {
-                        // 4. TREFFER! Speichere diesen Status...
-                        tempStatus = s;
-
-                        // 5. ...und verlasse die Schleife sofort
-                        //    (das ist der "First" in 'FirstOrDefault').
-                        break;
-                    }
-                }
-
-                // 6. Weise das Ergebnis (entweder der gefundene Status
-                //    oder 'null', falls nichts gefunden wurde) der
-                //    eigentlichen Eigenschaft zu.
-                AusgewaehlterStatus = tempStatus;
-
-                //
-                // DER "MODERNE" (kurze) WEG (Lambda / LINQ):
-                // AusgewaehlterStatus = AlleStatusOptionen.FirstOrDefault(
-                //     s => s.Status_ID == AktivitaetZumBearbeiten.Status_ID);
-                //
-                // --- ENDE HINWEIS ---
+                // Den passenden Status in der Liste finden und auswählen
+                SetzeStatusAuswahl(aktivitaet.Status_ID);
             }
         }
 
-        // (LadeStatusOptionen bleibt unverändert)
+        // --- Logik ---
+
+        /// <summary>
+        /// Sucht den Status mit der gegebenen ID in der Liste und setzt ihn als ausgewählt.
+        /// </summary>
+        private void SetzeStatusAuswahl(int gesuchteStatusId)
+        {
+            // DIDAKTISCHER HINWEIS:
+            // Wir nutzen hier eine klassische Schleife statt LINQ (FirstOrDefault),
+            // um den Suchvorgang explizit zu zeigen.
+
+            Status gefundenerStatus = null;
+
+            foreach (Status s in AlleStatusOptionen)
+            {
+                if (s.Status_ID == gesuchteStatusId)
+                {
+                    gefundenerStatus = s;
+                    break; // Gefunden -> Suche beenden
+                }
+            }
+
+            AusgewaehlterStatus = gefundenerStatus;
+        }
+
         private void LadeStatusOptionen()
         {
             AlleStatusOptionen.Clear();

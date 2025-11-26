@@ -1,62 +1,4 @@
-﻿// Dateipfad: ViewModels/BetriebAnzeigenViewModel.cs
-
-// ====================================================================
-// HINWEIS: WARUM WIR MVVM STATT OnClick VERWENDEN (KISS-Prinzip)
-// =Formatiert für Drag-and-Drop am 16.11.2025
-// ====================================================================
-//
-// FRAGE:
-// Warum ist dieser Code so "kompliziert"? Warum verwenden wir 
-// 'ICommand' (wie 'AddAktivitaetCommand') und 'Binding' 
-// (wie 'SelectedItem="{Binding AusgewaehlteAktivitaet}"') 
-// statt eines einfachen 'Click="Button_Click"' Events 
-// im Code-Behind (*.xaml.cs)?
-//
-// ANTWORT:
-// Das 'OnClick'-Verfahren ist nur für 5 Minuten "simpel".
-// Bei einem Projekt wie diesem (Shell, Navigationsleiste, 
-// mehrere Seiten, Pop-ups) führt 'OnClick' zu "Spaghetti-Code"
-// und einer "Gott-Klasse" im Code-Behind.
-//
-// Der MVVM-Weg (den wir hier verwenden) ist das 
-// WAHRE "KISS"-Prinzip für dieses Projekt, weil er 
-// die Verantwortlichkeiten sauber TRENNT (Entkopplung).
-//
-// --------------------------------------------------------------------
-// DER "ALTE" WEG (OnClick im Code-Behind - NICHT KISS)
-// --------------------------------------------------------------------
-// 1. KOPPLUNG: Das "Gesicht" (View / *.xaml.cs) ist fest mit der
-//    Logik (dem "Gehirn") verdrahtet.
-// 2. STEUERUNG: Das "Gesicht" (Code-Behind) MUSS das "Gehirn" (ViewModel)
-//    kennen und aktiv steuern (z.B. 'viewModel.LadeAktivitaeten();').
-// 3. TESTBARKEIT: Fast unmöglich zu testen. Man kann die Doppelklick-Logik
-//    nicht testen, ohne das Fenster zu laden und einen echten Klick
-//    zu simulieren.
-// 4. WARTBARKEIT: Schlecht. Wenn wir den 'AddAktivitaetDialog' ändern,
-//    müssen wir auch den Code-Behind dieser Seite (BetriebAnzeigenView) ändern.
-//
-// --------------------------------------------------------------------
-// DER "NEUE" WEG (MVVM - Dieser Code - ECHTES KISS)
-// --------------------------------------------------------------------
-// 1. ENTKOPPLUNG: Das "Gesicht" (View / *.xaml) ist "dumm".
-// 2. SIGNALE: Das "Gesicht" sendet nur Signale (z.B. "Doppelklick passiert!")
-//    über 'Command="{Binding EditAktivitaetCommand}"'.
-//    Es weiß nicht, WAS als Nächstes passiert.
-// 3. LOGIK: Das "Gehirn" (ViewModel / diese C#-Datei) ist "intelligent".
-//    Es fängt die Signale ab ('ExecuteEditAktivitaet') und 
-//    enthält die GESAMTE Logik (z.B. 'new AddAktivitaetDialog(...)').
-// 4. TESTBARKEIT: Perfekt. Wir können diese C#-Datei isoliert testen
-//    (Unit-Test), ohne je ein XAML-Fenster zu öffnen.
-// 5. WARTBARKEIT: Gut. Das "Gesicht" (XAML) und das "Gehirn" (C#)
-//    können unabhängig voneinander geändert werden.
-//
-// ====================================================================
-
-
-// Dateipfad: ViewModels/FirmaAnzeigenViewModel.cs
-// (Komplett, mit neuem Konstruktor und geänderter Lade-Logik)
-
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -65,31 +7,53 @@ using WPF_Test.Repositories;
 using WPF_Test.Services;
 using WPF_Test.Views;
 using System.Windows;
-using System.Linq;
+// using System.Linq; // Wurde entfernt, da wir jetzt klassische Schleifen statt LINQ verwenden
 
 namespace WPF_Test.ViewModels
 {
-    // (Unveränderter Summary...)
+    /// <summary>
+    /// Steuert die Detailansicht einer Firma.
+    /// <para>
+    /// FUNKTIONALITÄT:
+    /// 1. Zeigt Details der ausgewählten Firma an.
+    /// 2. Lädt und verwaltet die Historie (Aktivitäten) dieser Firma.
+    /// 3. Ermöglicht das Bearbeiten, Löschen und Hinzufügen von Daten.
+    /// </para>
+    /// </summary>
     public class FirmaAnzeigenViewModel : INotifyPropertyChanged
     {
-        // --- 1. Private Felder ---
+        // --- Private Felder (Interne Datenspeicher und Dienste) ---
+
         private readonly FirmaRepository _firmaRepository;
         private readonly AktivitaetRepository _aktivitaetRepository;
 
-        // ==========================================================
-        // NEUES FELD (Schritt 1 des Plans)
-        // ==========================================================
-        // Speichert die ID der Firma, die vorausgewählt werden soll
+        // Speichert optional die ID einer Firma, die beim Laden vorselektiert werden soll.
+        // Dies wird benötigt, wenn man per Doppelklick aus der Übersicht kommt.
         private readonly int? _firmaIdToPreselect = null;
 
+        // --- Öffentliche Eigenschaften (Datenquellen für die View) ---
 
-        // --- 2. Öffentliche Eigenschaften (für Bindings) ---
-        public ObservableCollection<Firma> AlleFirmen { get; set; }
-            = new ObservableCollection<Firma>();
-        public ObservableCollection<Aktivitaet> AktivitaetenListe { get; set; }
-            = new ObservableCollection<Aktivitaet>();
+        /// <summary>
+        /// Beinhaltet alle Firmen aus der Datenbank.
+        /// Wird an die ComboBox gebunden, damit der Benutzer die Firma wechseln kann.
+        /// </summary>
+        public ObservableCollection<Firma> AlleFirmen { get; set; } = new ObservableCollection<Firma>();
+
+        /// <summary>
+        /// Beinhaltet die Aktivitäten (Anrufe, Notizen) der aktuell ausgewählten Firma.
+        /// Wird an die untere ListView gebunden.
+        /// </summary>
+        public ObservableCollection<Aktivitaet> AktivitaetenListe { get; set; } = new ObservableCollection<Aktivitaet>();
 
         private Firma _ausgewaehlteFirma;
+        /// <summary>
+        /// Die aktuell angezeigte Firma.
+        /// <para>
+        /// LOGIK IM SETTER:
+        /// Wenn eine neue Firma gesetzt wird (durch ComboBox oder Navigation),
+        /// löst dies automatisch das Nachladen der zugehörigen Aktivitäten aus (LadeAktivitaeten).
+        /// </para>
+        /// </summary>
         public Firma AusgewaehlteFirma
         {
             get { return _ausgewaehlteFirma; }
@@ -97,134 +61,213 @@ namespace WPF_Test.ViewModels
             {
                 _ausgewaehlteFirma = value;
                 OnPropertyChanged();
+
+                // WICHTIG: Kaskadierendes Laden. Neue Firma = Neue Aktivitätenliste.
                 LadeAktivitaeten();
             }
         }
 
         private Aktivitaet _ausgewaehlteAktivitaet;
+        /// <summary>
+        /// Die aktuell in der unteren Liste markierte Aktivität.
+        /// Wird benötigt, um zu entscheiden, welche Aktivität bearbeitet werden soll.
+        /// </summary>
         public Aktivitaet AusgewaehlteAktivitaet
         {
             get { return _ausgewaehlteAktivitaet; }
             set { _ausgewaehlteAktivitaet = value; OnPropertyChanged(); }
         }
 
-        // --- 3. Befehle (Commands) ---
+        // --- Befehle (Commands) ---
+
+        /// <summary>Öffnet den Dialog zum Bearbeiten der Firmendaten.</summary>
         public ICommand FirmaBearbeitenCommand { get; }
-        public ICommand AddAktivitaetCommand { get; }
-        public ICommand BearbeitenCommand { get; } // (Der umbenannte Befehl)
+
+        /// <summary>Löscht die aktuelle Firma nach Sicherheitsabfrage.</summary>
         public ICommand FirmaLoeschenCommand { get; }
 
+        /// <summary>Öffnet den Dialog zum Hinzufügen einer neuen Aktivität.</summary>
+        public ICommand AddAktivitaetCommand { get; }
+
+        /// <summary>Öffnet den Dialog zum Bearbeiten einer existierenden Aktivität (Doppelklick).</summary>
+        public ICommand BearbeitenCommand { get; }
+
+        // --- Konstruktoren ---
+
         /// <summary>
-        /// Standard-Konstruktor: Wird aufgerufen, wenn die Seite
-        /// normal (über die Sidebar) geladen wird.
+        /// Standard-Konstruktor: Wird aufgerufen, wenn die Seite über das Menü geöffnet wird.
+        /// Initialisiert Repositories und Commands.
         /// </summary>
         public FirmaAnzeigenViewModel()
         {
             _firmaRepository = new FirmaRepository();
             _aktivitaetRepository = new AktivitaetRepository();
 
+            // Initiales Laden aller Firmen für die Dropdown-Liste
             LadeAlleFirmenFuerComboBox();
 
+            // Commands initialisieren
             AddAktivitaetCommand = new RelayCommand(ExecuteAddAktivitaet, CanExecuteAddAktivitaet);
             FirmaBearbeitenCommand = new RelayCommand(ExecuteFirmaBearbeiten, CanExecuteFirmaBearbeiten);
             BearbeitenCommand = new RelayCommand(ExecuteEditAktivitaet, CanExecuteEditAktivitaet);
             FirmaLoeschenCommand = new RelayCommand(ExecuteFirmaLoeschen, CanExecuteFirmaLoeschen);
         }
 
-        // ==========================================================
-        // NEUER KONSTRUKTOR (Schritt 1 des Plans)
-        // ==========================================================
         /// <summary>
-        /// Navigations-Konstruktor: Wird bei Doppelklick
-        /// aus der Firmenübersicht aufgerufen.
+        /// Navigations-Konstruktor: Wird aufgerufen, wenn aus der Firmenübersicht navigiert wird.
         /// </summary>
-        /// <param name="firmaToSelect">Die Firma, die direkt angezeigt werden soll.</param>
-        public FirmaAnzeigenViewModel(Firma firmaToSelect) : this() // Ruft Standard-Konstruktor auf
+        /// <param name="firmaToSelect">Das Firmen-Objekt, das direkt angezeigt werden soll.</param>
+        public FirmaAnzeigenViewModel(Firma firmaToSelect) : this() // Ruft zuerst den Standard-Konstruktor auf (Code-Reuse)
         {
-            // 1. Speichere die ID (das :this() hat bereits die Liste geladen)
+            // Speichere die ID der gewünschten Firma für später
             _firmaIdToPreselect = firmaToSelect?.Firma_ID;
 
-            // 2. Wähle die Firma in der ComboBox aus
+            // Suche die Firma in der geladenen Liste und setze sie als ausgewählt
             if (_firmaIdToPreselect != null)
             {
-                // (Die Liste "AlleFirmen" wurde bereits von :this() geladen)
-                AusgewaehlteFirma = AlleFirmen.FirstOrDefault(f => f.Firma_ID == _firmaIdToPreselect);
+                // DIDAKTISCHER HINWEIS:
+                // Anstatt LINQ (FirstOrDefault) nutzen wir hier eine klassische Schleife,
+                // damit der Suchvorgang klarer wird.
+                foreach (Firma f in AlleFirmen)
+                {
+                    if (f.Firma_ID == _firmaIdToPreselect)
+                    {
+                        AusgewaehlteFirma = f;
+                        break; // Gefunden -> Suche beenden
+                    }
+                }
             }
         }
 
-
-        // --- Lade-Methoden ---
+        // --- Lade-Logik (Datenbeschaffung) ---
 
         /// <summary>
-        /// Lädt alle Firmen (für die ComboBox) neu aus der DB.
+        /// Lädt die Liste aller Firmen aus der Datenbank neu.
+        /// Versucht dabei, die aktuell ausgewählte Firma wiederherzustellen (Selection Restore).
         /// </summary>
         private void LadeAlleFirmenFuerComboBox()
         {
-            // Merke dir die aktuell ausgewählte ID
+            // Merke die ID der aktuellen Auswahl, bevor wir die Liste löschen
             int? alteId = AusgewaehlteFirma?.Firma_ID;
 
             AlleFirmen.Clear();
             var firmenAusDb = _firmaRepository.GetAlleFirmen();
             foreach (var firma in firmenAusDb) { AlleFirmen.Add(firma); }
 
-            // ==========================================================
-            // GEÄNDERTE LOGIK (Schritt 1 des Plans)
-            // ==========================================================
-            // Stelle die Auswahl nur wieder her, wenn wir NICHT
-            // gerade per Navigation eine Vorauswahl treffen.
+            // Auswahl wiederherstellen (nur wenn wir nicht gerade frisch navigiert sind)
             if (_firmaIdToPreselect == null && alteId != null)
             {
-                AusgewaehlteFirma = AlleFirmen.FirstOrDefault(f => f.Firma_ID == alteId);
+                // DIDAKTISCHER HINWEIS:
+                // Wir suchen "zu Fuß" nach der Firma mit der gemerkten ID.
+                foreach (Firma f in AlleFirmen)
+                {
+                    if (f.Firma_ID == alteId)
+                    {
+                        AusgewaehlteFirma = f;
+                        break; // Gefunden -> Suche beenden
+                    }
+                }
             }
+            /*
+             Obige if-Abfrage kann man auch durchführen mit:
+                if (_firmaIdToPreselect == null && alteId != null)
+                {
+                    AusgewaehlteFirma = AlleFirmen.FirstOrDefault(f => f.Firma_ID == alteId);
+                }
+
+            Erklärung:
+                FirstOrDefault(f => ...): Das ist die "Kurzform".
+                    Sie sagt: "Durchsuche die Liste und gib mir das erste Element f,
+                    für das die Bedingung wahr ist."
+            
+                foreach: Das ist der "lange Weg".
+                    Er macht technisch genau dasselbe, zeigt aber explizit,
+                    wie der Computer sucht (Liste durchgehen -> Vergleichen -> Merken -> Abbrechen).
+            */
         }
 
-        // (Der Rest der Datei: LadeAktivitaeten, Execute-Methoden, etc.
-        // bleibt exakt gleich wie in Ihrer BetriebAnzeigenViewModel.cs)
+        /// <summary>
+        /// Lädt die Aktivitäten passend zur aktuell ausgewählten Firma.
+        /// Wird automatisch aufgerufen, wenn sich 'AusgewaehlteFirma' ändert.
+        /// </summary>
         private void LadeAktivitaeten()
         {
             AktivitaetenListe.Clear();
+
+            // Wenn keine Firma gewählt ist (null), zeigen wir eine leere Liste
             if (AusgewaehlteFirma == null) return;
-            var aktivitaetenAusDb =
-                _aktivitaetRepository.GetAktivitaetenFuerFirma(AusgewaehlteFirma.Firma_ID);
+
+            var aktivitaetenAusDb = _aktivitaetRepository.GetAktivitaetenFuerFirma(AusgewaehlteFirma.Firma_ID);
             foreach (var akt in aktivitaetenAusDb) { AktivitaetenListe.Add(akt); }
         }
 
+        // --- Command-Logik (Was passiert beim Klick?) ---
+
+        /// <summary>
+        /// Prüft, ob eine Firma zum Bearbeiten ausgewählt ist.
+        /// </summary>
         private bool CanExecuteFirmaBearbeiten(object p) { return AusgewaehlteFirma != null; }
+
+        /// <summary>
+        /// Öffnet den Dialog zum Bearbeiten der Firmendaten.
+        /// </summary>
         private void ExecuteFirmaBearbeiten(object p)
         {
-            // Wir übergeben 'null' als ersten Parameter, da wir im Dialog sind!
+            // ViewModel für den Dialog erstellen (Modus: Bearbeiten)
             FirmaAnlegenViewModel viewModel = new FirmaAnlegenViewModel(null, AusgewaehlteFirma);
 
             EditFirmaDialogWindow dialog = new EditFirmaDialogWindow();
             dialog.DataContext = viewModel;
-            bool? dialogResult = dialog.ShowDialog();
-            if (dialogResult == true) { LadeAlleFirmenFuerComboBox(); }
+
+            // Wenn Dialog mit "Speichern" geschlossen wurde -> Liste aktualisieren
+            if (dialog.ShowDialog() == true)
+            {
+                LadeAlleFirmenFuerComboBox();
+            }
         }
 
+        /// <summary>
+        /// Prüft, ob eine Firma ausgewählt ist, zu der man eine Aktivität hinzufügen kann.
+        /// </summary>
         private bool CanExecuteAddAktivitaet(object parameter) { return AusgewaehlteFirma != null; }
+
+        /// <summary>
+        /// Öffnet den Dialog zum Erstellen einer neuen Aktivität.
+        /// </summary>
         private void ExecuteAddAktivitaet(object parameter)
         {
             AddAktivitaetDialog dialog = new AddAktivitaetDialog(null);
-            bool? dialogResult = dialog.ShowDialog();
-            if (dialogResult == true)
+
+            if (dialog.ShowDialog() == true)
             {
                 var dialogViewModel = dialog.DataContext as AddAktivitaetViewModel;
                 Aktivitaet neueAktivitaet = dialogViewModel.AktivitaetZumBearbeiten;
+
+                // Speichern in DB
                 _aktivitaetRepository.AddAktivitaet(
                     neueAktivitaet,
                     AusgewaehlteFirma.Firma_ID,
                     dialogViewModel.AusgewaehlterStatus.Status_ID
                 );
+
+                // Ansicht aktualisieren
                 LadeAktivitaeten();
             }
         }
 
+        /// <summary>
+        /// Prüft, ob eine Aktivität in der unteren Liste ausgewählt wurde.
+        /// </summary>
         private bool CanExecuteEditAktivitaet(object parameter) { return AusgewaehlteAktivitaet != null; }
+
+        /// <summary>
+        /// Öffnet den Dialog zum Bearbeiten oder Löschen einer Aktivität.
+        /// </summary>
         private void ExecuteEditAktivitaet(object parameter)
         {
             AddAktivitaetDialog dialog = new AddAktivitaetDialog(AusgewaehlteAktivitaet);
-            bool? dialogResult = dialog.ShowDialog();
-            if (dialogResult == true)
+
+            if (dialog.ShowDialog() == true)
             {
                 if (dialog.WurdeGeloescht)
                 {
@@ -233,9 +276,8 @@ namespace WPF_Test.ViewModels
                 else
                 {
                     var dialogViewModel = dialog.DataContext as AddAktivitaetViewModel;
-                    Aktivitaet bearbeiteteAktivitaet = dialogViewModel.AktivitaetZumBearbeiten;
                     _aktivitaetRepository.UpdateAktivitaet(
-                        bearbeiteteAktivitaet,
+                        dialogViewModel.AktivitaetZumBearbeiten,
                         dialogViewModel.AusgewaehlterStatus.Status_ID
                     );
                 }
@@ -243,38 +285,31 @@ namespace WPF_Test.ViewModels
             }
         }
 
+        /// <summary>
+        /// Prüft, ob eine Firma zum Löschen ausgewählt ist.
+        /// </summary>
+        private bool CanExecuteFirmaLoeschen(object p) { return AusgewaehlteFirma != null; }
 
-        // ==========================================================
-        // 3. DIE LÖSCH-LOGIK (mit Sicherheitsabfrage)
-        // ==========================================================
-
-        private bool CanExecuteFirmaLoeschen(object p)
-        {
-            // Nur löschbar, wenn eine Firma ausgewählt ist
-            return AusgewaehlteFirma != null;
-        }
-
+        /// <summary>
+        /// Führt den Löschvorgang mit vorheriger Sicherheitsabfrage durch.
+        /// </summary>
         private void ExecuteFirmaLoeschen(object p)
         {
-            // A. Sicherheitsabfrage
             var result = MessageBox.Show(
-                $"Möchten Sie die Firma '{AusgewaehlteFirma.Firmenname}' wirklich löschen?\n\nACHTUNG: Alle Aktivitäten und Notizen zu dieser Firma werden ebenfalls unwiderruflich gelöscht!",
+                $"Möchten Sie die Firma '{AusgewaehlteFirma.Firmenname}' wirklich löschen?\n\nACHTUNG: Alle Aktivitäten und Notizen werden ebenfalls unwiderruflich gelöscht!",
                 "Firma löschen",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning,
-                MessageBoxResult.No); // Standardauswahl auf "Nein" zur Sicherheit
+                MessageBoxResult.No);
 
             if (result == MessageBoxResult.Yes)
             {
                 try
                 {
-                    // B. Löschen durchführen (ruft unsere neue Repo-Methode auf)
                     _firmaRepository.DeleteFirma(AusgewaehlteFirma.Firma_ID);
-
                     MessageBox.Show("Die Firma wurde erfolgreich gelöscht.", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    // C. UI aktualisieren
-                    // Wir setzen die Auswahl zurück und laden die Liste neu.
+                    // Auswahl zurücksetzen
                     AusgewaehlteFirma = null;
                     LadeAlleFirmenFuerComboBox();
                 }
@@ -286,7 +321,15 @@ namespace WPF_Test.ViewModels
         }
 
         // --- INotifyPropertyChanged Implementierung ---
+
+        /// <summary>
+        /// Event, das die GUI über Änderungen informiert.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Löst das PropertyChanged-Event sicher aus.
+        /// </summary>
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

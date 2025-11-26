@@ -1,37 +1,34 @@
-﻿// Dateipfad: Repositories/StatusRepository.cs
-
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Windows;
-// WICHTIG: Imports für unsere eigenen Klassen
 using WPF_Test.Models;
 using WPF_Test.Services;
 
-// WICHTIG: Der Namespace MUSS so lauten
 namespace WPF_Test.Repositories
 {
     /// <summary>
-    /// Holt die 'Status'-Einträge (z.B. "Anruf", "Email")
-    /// aus der Datenbank.
-    /// Erbt von BaseRepository, um GetConnection() zu erhalten.
+    /// Repository für die Verwaltung von Status-Einträgen.
+    /// Lädt die verfügbaren Optionen (z.B. "Anruf", "E-Mail") aus der Datenbank.
+    /// Erbt von BaseRepository, um die zentrale Verbindungslogik zu nutzen.
     /// </summary>
     public class StatusRepository : BaseRepository
     {
         /// <summary>
-        /// Holt ALLE Status-Optionen in der AKTUELL ausgewählten Sprache.
-        /// (Diese Methode wird vom 'AddAktivitaetViewModel' aufgerufen)
+        /// Ruft alle Status-Optionen in der aktuell gewählten Sprache ab.
         /// </summary>
-        /// <returns>Eine Liste von Status-Objekten</returns>
+        /// <returns>Eine Liste von Status-Objekten (ID und Bezeichnung).</returns>
         public List<Status> GetAlleStatus()
         {
             var statusListe = new List<Status>();
 
-            // 1. Hole die aktuelle Sprache (z.B. "de" oder "en")
+            // 1. Ermittlung der aktuellen Sprache (z.B. "de" oder "en") über den globalen Service.
             string aktuelleSprache = LanguageService.Instance.AktuelleSprache;
 
-            // 2. Die SQL-Abfrage (JOIN über 2 Tabellen)
-            //    Wir verknüpfen 'status' (s) mit 'status_translation' (st)
+            // 2. SQL-Abfrage mit JOIN
+            // Die Tabelle 'status' enthält nur die IDs.
+            // Die Tabelle 'status_translation' enthält die Texte in verschiedenen Sprachen.
+            // Beide werden über die 'Status_ID' verknüpft.
             string query = @"
                 SELECT 
                     s.Status_ID, 
@@ -45,22 +42,21 @@ namespace WPF_Test.Repositories
 
             try
             {
-                // 3. Verbindung holen (von BaseRepository)
+                // 3. Verbindung aufbauen (Using-Statement stellt das Schließen sicher)
                 using (MySqlConnection connection = GetConnection())
                 {
-                    // 4. Command erstellen
+                    // 4. Befehl vorbereiten
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        // 5. Den Sprach-Parameter an die Abfrage binden
+                        // 5. Parameter binden (Verhindert SQL-Injection)
                         command.Parameters.AddWithValue("@Sprache", aktuelleSprache);
 
-                        // 6. Reader ausführen
+                        // 6. Datenbankabfrage ausführen
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
-                            // 7. Jede Zeile lesen
+                            // 7. Ergebnisse zeilenweise lesen
                             while (reader.Read())
                             {
-                                // 8. 'Status'-Objekt füllen
                                 Status status = new Status
                                 {
                                     Status_ID = reader.GetInt32("Status_ID"),
@@ -70,11 +66,11 @@ namespace WPF_Test.Repositories
                             }
                         }
                     }
-                } // 9. Verbindung wird hier automatisch geschlossen
+                }
             }
             catch (Exception ex)
             {
-                // BESSER: Echten Logger verwenden
+                // Fehlerbehandlung: Anzeige einer MessageBox (in Produktion: Logging)
                 MessageBox.Show($"Fehler beim Lesen der Status-Tabelle: {ex.Message}");
             }
 

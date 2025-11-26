@@ -1,7 +1,4 @@
-﻿// Dateipfad: ViewModels/FirmaAnlegenViewModel.cs
-// KORRIGIERTE VERSION (Methodenname korrigiert)
-
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using WPF_Test.Models;
 using WPF_Test.Repositories;
@@ -12,17 +9,27 @@ using System.Windows;
 namespace WPF_Test.ViewModels
 {
     /// <summary>
-    /// Das "Gehirn" (ViewModel) für das Firma-Formular.
-    /// Es verwaltet BEIDE Modi: "Neu" und "Bearbeiten".
+    /// Das "Gehirn" für das Firma-Formular.
+    /// <para>
+    /// DRY-PRINZIP (Don't Repeat Yourself):
+    /// Dieses ViewModel wird sowohl für das Anlegen (Neu) als auch für das Bearbeiten (Edit) genutzt.
+    /// Der Konstruktor entscheidet anhand der Parameter, in welchem Modus wir sind.
+    /// </para>
     /// </summary>
     public class FirmaAnlegenViewModel : INotifyPropertyChanged
     {
-        // --- 1. Private Felder ---
+        // --- Private Felder ---
         private readonly FirmaRepository _firmaRepository;
+
+        // Referenz auf das Hauptfenster (nur im "Neu"-Modus vorhanden, sonst null)
         private readonly MainWindowViewModel _mainVm;
 
-        // --- 2. Öffentliche Eigenschaften (für Bindings) ---
+        // --- Öffentliche Eigenschaften ---
+
         private Firma _firmaZumBearbeiten;
+        /// <summary>
+        /// Das Datenobjekt, das im Formular angezeigt wird.
+        /// </summary>
         public Firma FirmaZumBearbeiten
         {
             get { return _firmaZumBearbeiten; }
@@ -32,38 +39,50 @@ namespace WPF_Test.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        /// <summary>
+        /// Gibt an, ob wir eine bestehende Firma bearbeiten (true) oder eine neue anlegen (false).
+        /// </summary>
         public bool IsEditMode { get; private set; }
+
+        /// <summary>
+        /// Dynamischer Text für den Button (z.B. "Speichern" oder "Aktualisieren").
+        /// </summary>
         public string SaveButtonText { get; set; }
 
-        // --- 3. Befehle (Commands) ---
+        // --- Commands ---
         public ICommand SpeichernCommand { get; }
-
         public ICommand AbbrechenCommand { get; }
 
-        // --- 4. Konstruktor ---
-        // Wir fügen 'MainWindowViewModel mainVm' als ersten Parameter hinzu.
-        // 'firma' bleibt optional (null = Neu, Objekt = Bearbeiten)
+        // --- Konstruktor ---
+
+        /// <summary>
+        /// Initialisiert das ViewModel.
+        /// </summary>
+        /// <param name="mainVm">Referenz zum Hauptfenster (für Navigation bei "Neu"). Kann null sein bei Dialogen.</param>
+        /// <param name="firma">Die zu bearbeitende Firma. Wenn null -> Modus "Neu".</param>
         public FirmaAnlegenViewModel(MainWindowViewModel mainVm, Firma firma = null)
         {
             _firmaRepository = new FirmaRepository();
-            _mainVm = mainVm; // Speichern für später
+            _mainVm = mainVm;
 
-            // DIESE ZEILE ist der Grund, warum der Methodenname
-            // 'ExecuteSpeichern' lauten muss.
             SpeichernCommand = new RelayCommand(ExecuteSpeichern);
-
             AbbrechenCommand = new RelayCommand(ExecuteAbbrechen);
 
             if (firma == null)
             {
-                // --- MODUS: NEU ---
+                // --- FALL A: MODUS NEU ---
+                // Wir erstellen ein leeres Objekt, damit die TextBoxen nicht abstürzen.
                 FirmaZumBearbeiten = new Firma();
                 IsEditMode = false;
-                SaveButtonText = "Speichern"; // (Holt Text aus Sprachdatei)
+                SaveButtonText = "Speichern";
             }
             else
             {
-                // --- MODUS: BEARBEITEN ---
+                // --- FALL B: MODUS BEARBEITEN ---
+                // WICHTIG: Wir erstellen eine KOPIE der Daten!
+                // Würden wir das Originalobjekt direkt binden, würden Änderungen in der TextBox
+                // sofort in der Liste sichtbar sein, auch wenn man "Abbrechen" klickt.
                 FirmaZumBearbeiten = new Firma
                 {
                     Firma_ID = firma.Firma_ID,
@@ -82,61 +101,69 @@ namespace WPF_Test.ViewModels
             }
         }
 
-        // ==========================================================
-        // HIER IST DIE KORREKTUR
-        // ==========================================================
+        // --- Logik ---
 
         /// <summary>
-        /// Die Haupt-Logik (wird von "OK" oder "Speichern" aufgerufen).
+        /// Speichert die Daten in der Datenbank.
         /// </summary>
-        // VORHER (FEHLERHAFT):
-        // public void Speichern()
-        //
-        // NACHHER (KORREKT):
-        // Die Methode muss 'ExecuteSpeichern' heißen und '(object parameter)'
-        // annehmen, damit der 'RelayCommand' sie findet.
+        /// <param name="parameter">
+        /// Optional: Das Fenster (Window), das geschlossen werden soll (im Dialog-Modus).
+        /// </summary>
         public void ExecuteSpeichern(object parameter)
         {
-            // Validierung
+            // 1. Validierung (Minimal-Anforderung)
             if (string.IsNullOrEmpty(FirmaZumBearbeiten.Firmenname))
             {
-                MessageBox.Show("Der Firmenname darf nicht leer sein.", "Eingabefehler");
-                return; // Abbruch
+                MessageBox.Show("Der Firmenname darf nicht leer sein.", "Eingabefehler", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
 
-            if (IsEditMode)
+            try
             {
-                _firmaRepository.UpdateFirma(FirmaZumBearbeiten);
-                MessageBox.Show("Firma erfolgreich aktualisiert!");
-            }
-            else
-            {
-                _firmaRepository.AddFirma(FirmaZumBearbeiten);
-                MessageBox.Show("Firma erfolgreich gespeichert!");
+                // 2. Datenbank-Operation je nach Modus
+                if (IsEditMode)
+                {
+                    _firmaRepository.UpdateFirma(FirmaZumBearbeiten);
+                    MessageBox.Show("Firma erfolgreich aktualisiert!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    _firmaRepository.AddFirma(FirmaZumBearbeiten);
+                    MessageBox.Show("Firma erfolgreich angelegt!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // Formular leeren (nur im "Neu"-Modus)
-                FirmaZumBearbeiten = new Firma();
+                    // Reset für nächste Eingabe
+                    FirmaZumBearbeiten = new Firma();
+                }
+
+                // 3. Dialog schließen (falls wir in einem Fenster sind)
+                if (parameter is Window window)
+                {
+                    window.DialogResult = true; // Signalisiert "Erfolg" an den Aufrufer (FirmaAnzeigenViewModel)
+                    window.Close();
+                }
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show("Fehler beim Speichern: " + ex.Message, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void ExecuteAbbrechen(object parameter)
         {
-            // Wenn wir eine Referenz zum Hauptfenster haben (also im "Neu"-Modus sind),
-            // navigieren wir zurück zur Willkommensseite.
             if (_mainVm != null)
             {
-                // Wir rufen einfach den Befehl des Hauptfensters auf
+                // Modus "Neu": Zurück zur Startseite navigieren
                 _mainVm.ShowWelcomeViewCommand.Execute(null);
             }
-            else
+            else if (parameter is Window window)
             {
-                // Falls wir im Dialog-Modus sind (Bearbeiten), könnten wir hier
-                // das Fenster schließen. Aber meistens hat der Dialog eigene Buttons.
-                // Für jetzt reicht es, nichts zu tun oder eine Meldung.
+                // Modus "Bearbeiten": Fenster schließen ohne Speichern
+                window.DialogResult = false;
+                window.Close();
             }
         }
 
-        // --- INotifyPropertyChanged Implementierung ---
+        // --- INotifyPropertyChanged ---
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

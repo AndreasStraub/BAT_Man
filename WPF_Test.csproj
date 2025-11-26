@@ -24,10 +24,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Images\Help_FirmenListe.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Remove="Styles\BasisStyles01.xaml" />
     <Page Remove="Styles\BasisStyles02.xaml" />
     <Page Remove="Styles\BasisStyles03.xaml" />
     <Page Remove="Styles\BasisStyles04.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\Help_FirmenListe.png" />
   </ItemGroup>
 
   <ItemGroup>

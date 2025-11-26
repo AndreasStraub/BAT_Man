@@ -10,27 +10,60 @@
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource AppBackground}">
 
+    <!--  
+        1. DATEN-KONTEXT (Verbindung zur Logik)
+        Hier wird eine Instanz des 'MainWindowViewModel' erstellt und dem Fenster zugewiesen.
+        Dadurch wissen alle Steuerelemente in diesem Fenster, woher sie ihre Daten beziehen sollen.
+        Dies ist die essenzielle Verbindung für das MVVM-Pattern.
+        -> (Siehe Dokumentation: MainWindow.md > 3. Exkurs: Der DataContext)
+    -->
     <Window.DataContext>
         <viewmodels:MainWindowViewModel/>
     </Window.DataContext>
 
+    <!--  
+        2. HAUPT-LAYOUT
+        Das Fenster wird durch ein Grid in zwei Bereiche unterteilt.
+    -->
     <Grid>
         <Grid.ColumnDefinitions>
+            <!--  Spalte 0: Linke Seite für die Navigation (feste Breite) -->
             <ColumnDefinition Width="180"/>
+            <!--  Spalte 1: Rechte Seite für den Inhalt (variabel/restlicher Platz) -->
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <!--  
+            3. NAVIGATIONS-LEISTE (Linke Spalte)
+            Ein DockPanel eignet sich gut, um Elemente oben oder unten zu fixieren.
+        -->
         <DockPanel Grid.Column="0" Background="{DynamicResource BorderColor}">
 
+            <!--  OBERE BUTTON-GRUPPE (Fixiert am oberen Rand) -->
             <StackPanel DockPanel.Dock="Top" Margin="0,40,0,0">
 
+                <!--  
+                    NAVIGATION: Button "Willkommen"
+                    Beim Klicken wird das Command 'ShowWelcomeViewCommand' ausgeführt.
+                -->
                 <Button Content="{DynamicResource Nav_Welcome}" 
                         Command="{Binding ShowWelcomeViewCommand}">
                     <Button.Style>
+                        <!--  
+                            VISUELLES FEEDBACK:
+                            Der Button soll sein Aussehen ändern, wenn die zugehörige Seite aktiv ist.
+                            Dazu wird ein DataTrigger verwendet.
+                        -->
                         <Style TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
                             <Style.Triggers>
+                                <!--  
+                                    Prüfung: Ist das 'AktuellesViewModel' vom Typ 'WelcomeViewModel'?
+                                    Der 'InstanceToTypeConverter' wandelt das Objekt in den Typ um, damit der Vergleich funktioniert.
+                                    -> (Siehe Dokumentation: MainWindow.md > 4. Detail-Analyse: Dynamische Farben & Converter)
+                                -->
                                 <DataTrigger Binding="{Binding AktuellesViewModel, Converter={StaticResource InstanceToTypeConverter}}" 
                                              Value="{x:Type viewmodels:WelcomeViewModel}">
+                                    <!--  Wenn JA: Ändere Hintergrund und Textfarbe -->
                                     <Setter Property="Background" Value="{DynamicResource AppBackground}"/>
                                     <Setter Property="Foreground" Value="{DynamicResource TextForeground}"/>
                                     <Setter Property="Panel.ZIndex" Value="10"/>
@@ -40,11 +73,13 @@
                     </Button.Style>
                 </Button>
 
+                <!--  NAVIGATION: Button "Firmen Übersicht" -->
                 <Button Content="{DynamicResource Nav_Companies}"
                         Command="{Binding ShowFirmenUebersichtCommand}">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
                             <Style.Triggers>
+                                <!--  Prüfung: Ist 'FirmenUebersichtViewModel' aktiv? -->
                                 <DataTrigger Binding="{Binding AktuellesViewModel, Converter={StaticResource InstanceToTypeConverter}}" 
                                              Value="{x:Type viewmodels:FirmenUebersichtViewModel}">
                                     <Setter Property="Background" Value="{DynamicResource AppBackground}"/>
@@ -56,11 +91,13 @@
                     </Button.Style>
                 </Button>
 
+                <!--  NAVIGATION: Button "Neue Firma" -->
                 <Button Content="{DynamicResource Nav_CompanyAdd}"
                         Command="{Binding ShowFirmaAnlegenCommand}">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
                             <Style.Triggers>
+                                <!--  Prüfung: Ist 'FirmaAnlegenViewModel' aktiv? -->
                                 <DataTrigger Binding="{Binding AktuellesViewModel, Converter={StaticResource InstanceToTypeConverter}}" 
                                              Value="{x:Type viewmodels:FirmaAnlegenViewModel}">
                                     <Setter Property="Background" Value="{DynamicResource AppBackground}"/>
@@ -72,11 +109,13 @@
                     </Button.Style>
                 </Button>
 
+                <!--  NAVIGATION: Button "Betrieb anzeigen" (Detailansicht) -->
                 <Button Content="{DynamicResource Nav_CompanyShow}"
                         Command="{Binding ShowBetriebAnzeigenCommand}">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
                             <Style.Triggers>
+                                <!--  Prüfung: Ist 'FirmaAnzeigenViewModel' aktiv? -->
                                 <DataTrigger Binding="{Binding AktuellesViewModel, Converter={StaticResource InstanceToTypeConverter}}" 
                                              Value="{x:Type viewmodels:FirmaAnzeigenViewModel}">
                                     <Setter Property="Background" Value="{DynamicResource AppBackground}"/>
@@ -90,10 +129,12 @@
 
             </StackPanel>
 
+            <!--  UNTERE GRUPPE (Fixiert am unteren Rand) -->
             <StackPanel DockPanel.Dock="Bottom" 
                         VerticalAlignment="Bottom" 
                         Margin="0,0,0,20">
 
+                <!--  Button Einstellungen -->
                 <Button Content="{DynamicResource Nav_Settings}" 
                         Command="{Binding ShowSettingsViewCommand}"
                         Margin="10,20,0,5">
@@ -111,9 +152,33 @@
                     </Button.Style>
                 </Button>
 
+                <!--  
+                    [NEU] NAVIGATION: Button "Hilfe"
+                    Hier wurde der Platzhalter durch einen echten Navigations-Button ersetzt.
+                    Er nutzt das 'ShowHilfeViewCommand' und reagiert auf das 'HilfeViewModel'.
+                -->
                 <Button Content="{DynamicResource Nav_Help}" 
-                        Style="{StaticResource NavButtonStyle}"/>
+                        Command="{Binding ShowHilfeViewCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
+                            <Style.Triggers>
+                                <!--  Prüfung: Ist 'HilfeViewModel' aktiv? (Wird im nächsten Schritt erstellt) -->
+                                <DataTrigger Binding="{Binding AktuellesViewModel, Converter={StaticResource InstanceToTypeConverter}}" 
+                                             Value="{x:Type viewmodels:HilfeViewModel}">
+                                    <Setter Property="Background" Value="{DynamicResource AppBackground}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource TextForeground}"/>
+                                    <Setter Property="Panel.ZIndex" Value="10"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
 
+                <!--  
+                    BENUTZER-INFORMATIONEN:
+                    Zeigt an, wer aktuell angemeldet ist.
+                    Die Daten werden per Binding aus dem ViewModel geladen.
+                -->
                 <StackPanel Margin="20,20,0,0">
                     <TextBlock Text="{DynamicResource Nav_LoggedInAs}" 
                                Foreground="{DynamicResource TextForeground}" Opacity="0.7"/>
@@ -125,6 +190,12 @@
             </StackPanel>
         </DockPanel>
 
+        <!--  
+            4. INHALTS-BEREICH (Rechte Spalte)
+            Das ContentControl ist ein Platzhalter für wechselnde Inhalte.
+            Es zeigt das ViewModel an, das in der Eigenschaft 'AktuellesViewModel' gespeichert ist.
+            WPF sucht automatisch das passende DataTemplate (aus App.xaml), um die Grafik darzustellen.
+        -->
         <Border Grid.Column="1" Padding="10,20,20,20">
             <ContentControl Content="{Binding AktuellesViewModel}" />
         </Border>

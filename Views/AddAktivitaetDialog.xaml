@@ -6,26 +6,26 @@
         xmlns:viewmodels="clr-namespace:WPF_Test.ViewModels"
         mc:Ignorable="d"
         
-        
         Height="450" Width="800"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Background="{DynamicResource AppBackground}">
 
+    <!-- 
+        FENSTER-TITEL (Dynamisch):
+        Der Titel ändert sich automatisch je nach Modus ("Aktivität hinzufügen" vs. "Bearbeiten").
+        Dies geschieht über einen DataTrigger im Style.
+    -->
     <Window.Style>
         <Style TargetType="Window">
             <Setter Property="Title" Value="{DynamicResource AddActivityDialog_Title}"/>
-
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsEditMode}" Value="True">
-
                     <Setter Property="Title" Value="{DynamicResource EditActivityDialog_Title}"/>
-
                 </DataTrigger>
             </Style.Triggers>
         </Style>
     </Window.Style>
-    
 
     <Grid>
         <Grid.RowDefinitions>
@@ -33,6 +33,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- INHALTSBEREICH -->
         <Grid Grid.Row="0" Margin="20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
@@ -40,54 +41,65 @@
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
 
+            <!-- 1. SPALTE: DATUM -->
             <GroupBox Grid.Column="0" 
                       Header="{DynamicResource AddActivityDialog_Date}"
                       Style="{DynamicResource {x:Type GroupBox}}">
-
+                <!-- DatePicker für komfortable Datumsauswahl -->
                 <DatePicker Margin="10"
                             SelectedDate="{Binding AktivitaetZumBearbeiten.Datum, Mode=TwoWay}"/>
             </GroupBox>
 
+            <!-- 2. SPALTE: STATUS -->
             <GroupBox Grid.Column="1" 
                       Header="{DynamicResource AddActivityDialog_Status}"
                       Style="{DynamicResource {x:Type GroupBox}}"
                       Margin="10,0,0,0">
 
+                <!-- 
+                    LISTBOX FÜR STATUS:
+                    Wir nutzen eine ListBox mit einem speziellen Style ('RadioListBoxStyle'),
+                    der die Einträge wie RadioButtons aussehen lässt.
+                    Das ist intuitiver als eine Liste, da man nur EINEN Status wählen kann.
+                -->
                 <ListBox Margin="10"
                          Style="{StaticResource RadioListBoxStyle}"
                          ItemsSource="{Binding AlleStatusOptionen}"
                          SelectedItem="{Binding AusgewaehlterStatus, Mode=TwoWay}"/>
-
             </GroupBox>
 
+            <!-- 3. SPALTE: KOMMENTAR -->
             <GroupBox Grid.Column="2" 
                       Header="{DynamicResource AddActivityDialog_Comment}"
                       Style="{DynamicResource {x:Type GroupBox}}"
                       Margin="10,0,0,0">
 
+                <!-- MultiLineTextBoxStyle erlaubt Zeilenumbrüche -->
                 <TextBox Margin="10"
                          Style="{StaticResource MultiLineTextBoxStyle}"
                          Text="{Binding AktivitaetZumBearbeiten.Kommentar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </GroupBox>
-
         </Grid>
 
+        <!-- FUSSLEISTE (Buttons) -->
         <StackPanel Grid.Row="1" 
                     Orientation="Horizontal" 
                     HorizontalAlignment="Right"
                     Background="{DynamicResource AppBackground}"
                     Height="60">
 
+            <!-- 
+                LÖSCHEN-BUTTON:
+                Dieser Button ist nur sichtbar, wenn wir im Bearbeiten-Modus sind ('IsEditMode' == True).
+                Neue Aktivitäten können hier noch nicht gelöscht werden (da noch nicht gespeichert).
+            -->
             <Button x:Name="btnDelete" 
                     Content="{DynamicResource AddActivityDialog_DeleteButton}" 
                     Margin="10"
                     Click="btnDelete_Click">
-
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-
                         <Setter Property="Visibility" Value="Collapsed" />
-
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsEditMode}" Value="True">
                                 <Setter Property="Visibility" Value="Visible" />
@@ -97,18 +109,19 @@
                 </Button.Style>
             </Button>
 
+            <!-- OK & ABBRECHEN -->
+            <!-- IsDefault="True": Enter-Taste löst diesen Button aus -->
             <Button x:Name="btnOK" 
                     Content="{DynamicResource Dialog_OK}" 
                     Margin="10"
                     IsDefault="True"
                     Click="btnOK_Click"/>
 
+            <!-- IsCancel="True": ESC-Taste löst diesen Button aus -->
             <Button x:Name="btnCancel" 
                     Content="{DynamicResource Dialog_Cancel}" 
                     Margin="0,10,10,10"
                     IsCancel="True"/>
-
         </StackPanel>
-
     </Grid>
 </Window>

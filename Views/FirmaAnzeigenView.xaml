@@ -6,12 +6,22 @@
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="800">
 
+    <!--  
+        AUFBAU DER VIEW:
+        Diese Seite ist in zwei Hauptbereiche unterteilt:
+        1. Die Firmen-Details (Oben) - Auswahl, Anzeige, Bearbeiten, Löschen.
+        2. Die Aktivitäten-Liste (Unten) - Historie der Kontakte zur ausgewählten Firma.
+    -->
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!--  
+            BEREICH 1: FIRMEN-DETAILS
+            Ein GroupBox fasst die Elemente optisch zusammen.
+        -->
         <GroupBox Grid.Row="0" 
                   Header="{DynamicResource ShowCompany_Title}"
                   Style="{DynamicResource {x:Type GroupBox}}">
@@ -22,15 +32,24 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
+                <!--  LINKER TEIL: Auswahl & Buttons -->
                 <StackPanel Grid.Column="0" Margin="0,0,20,0">
                     <Label Content="{DynamicResource ShowCompany_Select}" 
                            Foreground="{DynamicResource TextForeground}"/>
 
+                    <!--  
+                        COMBOBOX ZUR AUSWAHL:
+                        - ItemsSource: Liste aller verfügbaren Firmen.
+                        - SelectedItem: Schreibt die gewählte Firma direkt ins ViewModel.
+                        - Mode=TwoWay: Wenn das ViewModel die Auswahl ändert (z.B. nach Navigation), 
+                          folgt die ComboBox automatisch.
+                    -->
                     <ComboBox x:Name="comboFirmen" Width="250"
                               ItemsSource="{Binding AlleFirmen}"
                               SelectedItem="{Binding AusgewaehlteFirma, Mode=TwoWay}"
                               DisplayMemberPath="Firmenname"/>
 
+                    <!--  ACTION BUTTONS -->
                     <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
                         <Button Content="{DynamicResource ShowCompany_EditButton}"
                                 Command="{Binding FirmaBearbeitenCommand}"/>
@@ -39,20 +58,26 @@
                                 Margin="10,0,0,0"
                                 Command="{Binding FirmaLoeschenCommand}"/>
                     </StackPanel>
-
                 </StackPanel>
 
+                <!--  RECHTER TEIL: Lese-Ansicht der Daten -->
                 <Border Grid.Column="1" 
                         Background="{DynamicResource TextBoxBackground}" 
                         Padding="15" CornerRadius="8"
                         MaxWidth="550">
 
+                    <!--  
+                        DATEN-ANZEIGE:
+                        Hier werden die Details der 'AusgewaehlteFirma' angezeigt.
+                        Ist keine Firma ausgewählt (null), bleiben die Felder leer.
+                    -->
                     <Grid TextBlock.FontSize="14">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*"/>
                             <ColumnDefinition Width="1.5*"/>
                         </Grid.ColumnDefinitions>
 
+                        <!--  Adresse -->
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="{Binding AusgewaehlteFirma.Firmenname}" 
                                        FontSize="16" FontWeight="Bold"
@@ -71,6 +96,7 @@
                             </TextBlock>
                         </StackPanel>
 
+                        <!--  Kontakt -->
                         <StackPanel Grid.Column="1" Margin="10,0,0,0">
                             <TextBlock Text="{Binding AusgewaehlteFirma.Ansprechpartner}" 
                                        Foreground="{DynamicResource TextForeground}"
@@ -82,12 +108,15 @@
                                        Foreground="{DynamicResource TextForeground}"
                                        TextWrapping="Wrap"/>
                         </StackPanel>
-
                     </Grid>
                 </Border>
             </Grid>
         </GroupBox>
 
+        <!--  
+            BEREICH 2: AKTIVITÄTEN
+            Hier wird die Historie (Anrufe, Notizen) zur gewählten Firma angezeigt.
+        -->
         <GroupBox Grid.Row="1" 
                   Header="{DynamicResource Activity_Title}"
                   Margin="0,10,0,0"
@@ -99,6 +128,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
+                <!--  LISTE DER AKTIVITÄTEN -->
                 <ListView Grid.Row="0"
                           ItemsSource="{Binding AktivitaetenListe}"
                           SelectedItem="{Binding AusgewaehlteAktivitaet}"
@@ -106,10 +136,11 @@
                           BorderThickness="0"
                           Background="Transparent">
 
-                    <!--<ListView.InputBindings>
-                        <MouseBinding MouseAction="LeftDoubleClick"
-                                      Command="{Binding EditAktivitaetCommand}" />
-                    </ListView.InputBindings>-->
+                    <!--  
+                        INTERAKTION:
+                        Auch hier gilt: Der Doppelklick ist global im ListViewItem-Style definiert
+                        und ruft den 'BearbeitenCommand' im DataContext auf.
+                    -->
 
                     <ListView.View>
                         <GridView>
@@ -125,6 +156,7 @@
                     </ListView.View>
                 </ListView>
 
+                <!--  UNTERE LEISTE (Hinzufügen-Button & Hinweis) -->
                 <Border Grid.Row="1" 
                         Margin="0,10,0,0" 
                         BorderBrush="{DynamicResource BorderColor}" 

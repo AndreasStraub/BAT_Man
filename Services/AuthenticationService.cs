@@ -44,7 +44,7 @@ namespace WPF_Test.Services
                 EMail = "andreas.straub-fiae202407@bfw-neueslernen.de",
 
                 // HIER: Zwang aktivieren!
-                MussPasswortAendern = true
+                MussPasswortAendern = false
             };
 
             return testUser;

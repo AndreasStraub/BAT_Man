@@ -5,40 +5,27 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         mc:Ignorable="d" 
         
-        Title="{Binding DialogTitle}" 
-        
-        Height="600" Width="500"
+        Title="Firma bearbeiten" 
+        Height="650" Width="500"
         WindowStartupLocation="CenterScreen"
-        
         ResizeMode="NoResize"
-        Background="{DynamicResource AppBackground}">
+        Background="{DynamicResource AppBackground}"
+        
+        SizeToContent="Height">
+    <!--  SizeToContent sorgt dafür, dass sich das Fenster der Höhe des Inhalts anpasst -->
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <ContentControl Grid.Row="0" Content="{Binding}"/>
+    <!--  
+        INHALT:
+        Das Fenster ist nur ein Container.
+        Der Inhalt wird über Binding gesetzt. Da wir im C#-Code (FirmaAnzeigenViewModel) schreiben:
+        "dialog.DataContext = viewModel", wird hier automatisch die passende View angezeigt,
+        sofern ein DataTemplate in der App.xaml existiert.
+        
+        Alternativ (einfacher für Azubis): 
+        Wir könnten hier direkt
+    <local:FirmaAnlegenView /> einbinden, wenn wir sicher sind, 
+        dass dieses Fenster NUR dafür genutzt wird.
+    -->
+    <ContentControl Content="{Binding}" />
 
-        <Grid Grid.Row="1" 
-              Background="{DynamicResource AppBackground}"
-              Height="60">
-
-            <StackPanel Orientation="Horizontal" 
-                        HorizontalAlignment="Right">
-
-                <Button x:Name="btnOK" 
-                        Content="{DynamicResource Dialog_OK}" 
-                        Margin="10"
-                        IsDefault="True"
-                        Click="btnOK_Click"/>
-
-                <Button x:Name="btnCancel" 
-                        Content="{DynamicResource Dialog_Cancel}" 
-                        Margin="0,10,10,10"
-                        IsCancel="True"/>
-            </StackPanel>
-
-        </Grid>
-    </Grid>
 </Window>
