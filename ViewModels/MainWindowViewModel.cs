@@ -43,7 +43,7 @@ namespace WPF_Test.ViewModels
         public ICommand ShowFirmaAnlegenCommand { get; }
         public ICommand ShowFirmenUebersichtCommand { get; }
         public ICommand ShowBetriebAnzeigenCommand { get; }
-        public ICommand OpenHelpPdfCommand { get; }
+        
 
 
 
