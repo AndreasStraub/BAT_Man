@@ -35,7 +35,7 @@
                         HorizontalAlignment="Left" Margin="0,0,0,30" CornerRadius="5">
                     <Image Source="{Binding BildPfad}" 
                            Stretch="Uniform" 
-                           MaxHeight="350"
+                           MaxHeight="550"
                            RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Border>
 

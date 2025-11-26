@@ -24,6 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Images\Help_FirmaAnlegen.png" />
+    <None Remove="Images\Help_FirmenAnzeigen.png" />
     <None Remove="Images\Help_FirmenListe.png" />
   </ItemGroup>
 
@@ -35,11 +37,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Images\Help_FirmenListe.png" />
+    <PackageReference Include="MySql.Data" Version="9.5.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="9.5.0" />
+    <Resource Include="Images\Help_FirmaAnlegen.png" />
+    <Resource Include="Images\Help_FirmenAnzeigen.png" />
+    <Resource Include="Images\Help_FirmenListe.png" />
   </ItemGroup>
 
   <ItemGroup>

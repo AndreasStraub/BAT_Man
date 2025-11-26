@@ -48,7 +48,7 @@ namespace WPF_Test.ViewModels
                 // --- 1. FIRMEN ÜBERSICHT ---
                 case "FirmenUebersichtViewModel":
                     Titel = GetText("Help_Title_Overview");
-                    BildPfad = "/WPF_Test;component/Images/Help_FirmenListe.png";
+                    BildPfad = "/Images/Help_FirmenListe.png";
 
                     Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_Search") });
                     Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_Table") });
@@ -58,7 +58,7 @@ namespace WPF_Test.ViewModels
                 // --- 2. FIRMEN DETAILS ---
                 case "FirmaAnzeigenViewModel":
                     Titel = GetText("Help_Title_Details");
-                    BildPfad = "/WPF_Test;component/Images/Help_Details.png";
+                    BildPfad = "/Images/Help_FirmenAnzeigen.png";
 
                     Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_DetailHeader") });
                     Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_Activities") });
@@ -67,7 +67,7 @@ namespace WPF_Test.ViewModels
                 // --- 3. FIRMEN EDITOR (NEU / BEARBEITEN) ---
                 case "FirmaAnlegenViewModel":
                     Titel = GetText("Help_Title_Edit");
-                    BildPfad = "/WPF_Test;component/Images/Help_Edit.png";
+                    BildPfad = "/Images/Help_FirmaAnlegen.png";
 
                     Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_Mandatory") });
                     Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_Save") });
