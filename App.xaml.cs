@@ -85,8 +85,17 @@ namespace WPF_Test
             MainWindow mainWindow = new MainWindow();
 
             mainWindow.DataContext = mainVm;
-
+  
+            this.MainWindow = mainWindow;
             mainWindow.Show();
+
+            // ============================================================
+            // DER TRICK: Modus jetzt umschalten!
+            // ============================================================
+            // Jetzt, wo das Hauptfenster offen ist, ändern wir die Regel.
+            // Ab jetzt gilt: "Wenn das Hauptfenster zugeht, beende dich."
+            // ============================================================
+            this.ShutdownMode = ShutdownMode.OnMainWindowClose;
         }
     }
 }
