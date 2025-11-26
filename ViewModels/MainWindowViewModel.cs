@@ -78,7 +78,7 @@ namespace WPF_Test.ViewModels
             ShowFirmaAnlegenCommand = new RelayCommand(ExecuteShowFirmaAnlegen);
             ShowFirmenUebersichtCommand = new RelayCommand(ExecuteShowFirmenUebersicht);
             ShowBetriebAnzeigenCommand = new RelayCommand(ExecuteShowBetriebAnzeigen);
-            OpenHelpPdfCommand = new RelayCommand(_ => OpenHelpPdf()); // HILFE BUTTON  -> BAT_Man/bin/Debug/net8.0-windows/Hilfe/hilfe.pdf
+           
 
 
             // --- Standard-Seite festlegen ---
@@ -128,34 +128,7 @@ namespace WPF_Test.ViewModels
 
 
 
-        // HILFE BUTTON
-        private void OpenHelpPdf()
-        {
-            string pdfPath = System.IO.Path.Combine(
-                AppDomain.CurrentDomain.BaseDirectory,
-                "Hilfe",
-                "hilfe.pdf");
 
-            if (System.IO.File.Exists(pdfPath))
-            {
-                try
-                {
-                    var psi = new ProcessStartInfo(pdfPath)
-                    {
-                        UseShellExecute = true
-                    };
-                    Process.Start(psi);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("PDF konnte nicht geöffnet werden:\n" + ex.Message);
-                }
-            }
-            else
-            {
-                MessageBox.Show("Hilfedatei wurde nicht gefunden:\n" + pdfPath);
-            }
-        }
 
 
 

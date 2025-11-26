@@ -111,10 +111,10 @@
                     </Button.Style>
                 </Button>
 
-               
+
                 <Button Content="{DynamicResource Nav_Help}" 
-                        Style="{StaticResource NavButtonStyle}"
-                        Command="{Binding OpenHelpPdfCommand}" /> <!--HILFE COMMAND-->
+                        Style="{StaticResource NavButtonStyle}"/>
+                
                 
 
                 <StackPanel Margin="20,20,0,0">
