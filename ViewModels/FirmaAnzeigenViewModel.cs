@@ -147,43 +147,28 @@ namespace WPF_Test.ViewModels
         /// </summary>
         private void LadeAlleFirmenFuerComboBox()
         {
-            // Merke die ID der aktuellen Auswahl, bevor wir die Liste löschen
+            // 1. Merke die ID der aktuellen Auswahl, bevor die Liste gelöscht wird
             int? alteId = AusgewaehlteFirma?.Firma_ID;
 
+            // 2. Liste leeren und neu aus der DB füllen
             AlleFirmen.Clear();
             var firmenAusDb = _firmaRepository.GetAlleFirmen();
             foreach (var firma in firmenAusDb) { AlleFirmen.Add(firma); }
 
-            // Auswahl wiederherstellen (nur wenn wir nicht gerade frisch navigiert sind)
-            if (_firmaIdToPreselect == null && alteId != null)
+            // 3. Auswahl wiederherstellen
+            if (alteId != null)
             {
-                // DIDAKTISCHER HINWEIS:
-                // Wir suchen "zu Fuß" nach der Firma mit der gemerkten ID.
                 foreach (Firma f in AlleFirmen)
                 {
                     if (f.Firma_ID == alteId)
                     {
+                        // Setzt die ComboBox wieder auf den richtigen Eintrag.
+                        // Dies löst automatisch 'LadeAktivitaeten()' aus (durch den Setter).
                         AusgewaehlteFirma = f;
-                        break; // Gefunden -> Suche beenden
+                        break;
                     }
                 }
             }
-            /*
-             Obige if-Abfrage kann man auch durchführen mit:
-                if (_firmaIdToPreselect == null && alteId != null)
-                {
-                    AusgewaehlteFirma = AlleFirmen.FirstOrDefault(f => f.Firma_ID == alteId);
-                }
-
-            Erklärung:
-                FirstOrDefault(f => ...): Das ist die "Kurzform".
-                    Sie sagt: "Durchsuche die Liste und gib mir das erste Element f,
-                    für das die Bedingung wahr ist."
-            
-                foreach: Das ist der "lange Weg".
-                    Er macht technisch genau dasselbe, zeigt aber explizit,
-                    wie der Computer sucht (Liste durchgehen -> Vergleichen -> Merken -> Abbrechen).
-            */
         }
 
         /// <summary>

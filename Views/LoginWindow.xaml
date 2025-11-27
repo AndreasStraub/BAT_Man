@@ -13,14 +13,14 @@
 
     <StackPanel Margin="20" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-        <Label Content="E-Mail:" Foreground="{DynamicResource TextForeground}"/>
+        <Label Content="Reha-Nummer:" Foreground="{DynamicResource TextForeground}"/>
 
         <!-- 
-            Binding: Email
-            Verbindet diese Textbox mit der Eigenschaft 'Email' im LoginViewModel.
+            Binding: RehaNummer
+            Verbindet diese Textbox mit der Eigenschaft 'RehaNummer' im LoginViewModel.
             UpdateSourceTrigger=PropertyChanged sorgt dafür, dass jeder Tastendruck sofort im ViewModel ankommt.
         -->
-        <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" 
+        <TextBox Text="{Binding RehaNummer, UpdateSourceTrigger=PropertyChanged}" 
                  Width="250" Margin="0,0,0,10"/>
 
         <Label Content="Passwort:" Foreground="{DynamicResource TextForeground}"/>
@@ -28,7 +28,7 @@
         <!-- 
             PasswordBox:
             Kann nicht direkt gebunden werden (Sicherheitsfeature von WPF).
-            Wir geben dem Element einen Namen (x:Name="textPasswort"), um es später referenzieren zu können.
+            Dem Element wird ein Namen (x:Name="textPasswort") gegeben, um es später referenzieren zu können.
         -->
         <PasswordBox x:Name="textPasswort" Width="250" Margin="0,0,0,20"/>
 
@@ -43,7 +43,6 @@
                 Command: Löst die Methode 'ExecuteLogin' im ViewModel aus.
                 CommandParameter: Übergibt das gesamte PasswordBox-Element an das ViewModel.
                 Dies ist ein "Trick", um das Passwort sicher ins ViewModel zu bekommen, ohne Binding.
-                -> (Siehe Dokumentation: 02_Login.md > 4. Passwort-Sicherheit)
             -->
             <Button x:Name="btnLogin" 
                     Grid.Column="0" 

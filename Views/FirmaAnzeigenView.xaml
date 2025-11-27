@@ -150,8 +150,16 @@
                             <GridViewColumn Header="{DynamicResource Activity_Col_Status}" Width="150"
                                             DisplayMemberBinding="{Binding StatusBezeichnung}"/>
 
-                            <GridViewColumn Header="{DynamicResource Activity_Col_Notes}" Width="400"
-                                            DisplayMemberBinding="{Binding Kommentar}"/>
+                            <GridViewColumn Header="{DynamicResource Activity_Col_Notes}" Width="400">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                         <TextBlock Text="{Binding Kommentar}" 
+                                            TextWrapping="Wrap" 
+                                            Margin="5,0"/>
+                                     </DataTemplate>
+                              </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
                         </GridView>
                     </ListView.View>
                 </ListView>

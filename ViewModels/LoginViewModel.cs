@@ -16,22 +16,21 @@ namespace WPF_Test.ViewModels
     /// </summary>
     public class LoginViewModel : INotifyPropertyChanged
     {
-        // Privates Feld für die Eigenschaft Email.
-        // Wurde im vorherigen Code vermisst (Fehler CS0103).
-        private string _email;
+        // Privates Feld für die Eigenschaft RehaNummer.
+        private string _rehaNummer;
 
         // --- Eigenschaften (Data Binding) ---
 
         /// <summary>
-        /// Gebunden an die TextBox für die E-Mail-Adresse.
+        /// Gebunden an die TextBox für die RehaNummer.
         /// Löst bei Änderung das PropertyChanged-Event aus, damit die UI synchron bleibt.
         /// </summary>
-        public string Email
+        public string RehaNummer
         {
-            get { return _email; }
+            get { return _rehaNummer; }
             set
             {
-                _email = value;
+                _rehaNummer = value;
                 OnPropertyChanged();
             }
         }
@@ -82,7 +81,7 @@ namespace WPF_Test.ViewModels
 
             // Aufruf des AuthenticationService zur Überprüfung der Daten.
             // Das ViewModel delegiert die "Arbeit" an den Service (Trennung der Zuständigkeiten).
-            Teilnehmer user = AuthenticationService.Instance.Login(Email, passwort);
+            Teilnehmer user = AuthenticationService.Instance.Login(RehaNummer, passwort);
 
             if (user != null)
             {
@@ -97,7 +96,7 @@ namespace WPF_Test.ViewModels
             else
             {
                 // Fall: Login fehlgeschlagen
-                MessageBox.Show("E-Mail oder Passwort falsch.",
+                MessageBox.Show("Reha-Nummer oder Passwort falsch.",
                                 "Fehler",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Error);

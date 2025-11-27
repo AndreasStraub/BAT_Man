@@ -34,9 +34,9 @@ namespace WPF_Test.Repositories
                     s.Status_ID, 
                     st.Bezeichnung 
                 FROM 
-                    status s
+                    Status s
                 JOIN 
-                    status_translation st ON s.Status_ID = st.Status_ID
+                    Status_Translation st ON s.Status_ID = st.Status_ID
                 WHERE 
                     st.LanguageCode = @Sprache";
 

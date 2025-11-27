@@ -35,8 +35,8 @@ namespace WPF_Test.Repositories
             // Server: Hostadresse des Datenbankservers (localhost für lokale Entwicklung).
             // Database: Name der Ziel-Datenbank.
             // User ID / Password: Authentifizierungsdaten für den MySQL-Server.
-            //_connectionString = "Server=192.168.9.123;Database=it202407;User ID=batman;Password=;";
-            _connectionString = "Server=localhost;Database=bat_man;User ID=root;Password=;";
+            _connectionString = "Server=192.168.9.123;Database=it202407;User ID=batman;Password=batman;";
+            //_connectionString = "Server=localhost;Database=bat_man;User ID=root;Password=;";
         }
 
         /// <summary>

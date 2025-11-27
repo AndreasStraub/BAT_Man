@@ -136,11 +136,30 @@ namespace WPF_Test.ViewModels
                 }
 
                 // 3. Dialog schließen (falls wir in einem Fenster sind)
-                if (parameter is Window window)
+                //if (parameter is Window window)
+                //{
+                //    window.DialogResult = true; // Signalisiert "Erfolg" an den Aufrufer (FirmaAnzeigenViewModel)
+                //    window.Close();
+                //}
+
+                // FALL A: Wir sind im Hauptfenster (Modus "Neu")
+                if (_mainVm != null)
                 {
-                    window.DialogResult = true; // Signalisiert "Erfolg" an den Aufrufer (FirmaAnzeigenViewModel)
+                    // Wir schließen das Fenster NICHT, sondern navigieren z.B. zur Übersicht oder Willkommensseite
+                    // Oder wir lassen den User einfach auf der Seite, um noch eine Firma anzulegen (dann haben wir oben schon resettet).
+
+                    // Optional: Zurück zur Übersicht navigieren
+                    _mainVm.ShowFirmenUebersichtCommand.Execute(null);
+                }
+                // FALL B: Wir sind in einem Pop-up Dialog (Modus "Bearbeiten")
+                else if (parameter is Window window)
+                {
+                    // Nur hier darf DialogResult gesetzt werden!
+                    window.DialogResult = true;
                     window.Close();
                 }
+
+
             }
             catch (System.Exception ex)
             {

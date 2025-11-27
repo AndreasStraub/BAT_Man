@@ -38,7 +38,7 @@ namespace WPF_Test.Repositories
         {
             var firmenListe = new List<Firma>();
             int teilnehmerId = GetAktuelleTeilnehmerID();
-            string query = "SELECT * FROM firma WHERE Teilnehmer_ID = @TeilnehmerID";
+            string query = "SELECT * FROM Firma WHERE Teilnehmer_ID = @TeilnehmerID";
 
             try
             {
@@ -103,7 +103,7 @@ namespace WPF_Test.Repositories
                     la.StatusBezeichnung AS LetzterStatus, 
                     la.Kommentar AS LetzteBemerkung
                 FROM 
-                    firma f
+                    Firma f
                 LEFT JOIN 
                 (
                     SELECT 
@@ -112,11 +112,11 @@ namespace WPF_Test.Repositories
                         st.Bezeichnung AS StatusBezeichnung,
                         ROW_NUMBER() OVER(PARTITION BY a.Firma_ID ORDER BY a.Datum DESC) as rn
                     FROM 
-                        aktivitaet a
+                        Aktivitaet a
                     JOIN 
-                        status s ON a.Status_ID = s.Status_ID
+                        Status s ON a.Status_ID = s.Status_ID
                     JOIN 
-                        status_translation st ON s.Status_ID = st.Status_ID
+                        Status_Translation st ON s.Status_ID = st.Status_ID
                     WHERE 
                         st.LanguageCode = @Sprache
                 ) AS la ON f.Firma_ID = la.Firma_ID AND la.rn = 1
@@ -179,7 +179,7 @@ namespace WPF_Test.Repositories
             int teilnehmerId = GetAktuelleTeilnehmerID();
 
             string query = @"
-                INSERT INTO firma 
+                INSERT INTO Firma 
                 (Teilnehmer_ID, Firmenname, Strasse, Hausnummer, PLZ, Ort, Ansprechpartner, Telefon, EMail) 
                 VALUES 
                 (@Teilnehmer_ID, @Firmenname, @Strasse, @Hausnummer, @PLZ, @Ort, @Ansprechpartner, @Telefon, @EMail)";
@@ -220,7 +220,7 @@ namespace WPF_Test.Repositories
             int teilnehmerId = GetAktuelleTeilnehmerID();
 
             string query = @"
-                UPDATE firma SET 
+                UPDATE Firma SET 
                     Firmenname = @Firmenname,
                     Strasse = @Strasse,
                     Hausnummer = @Hausnummer,
@@ -280,7 +280,7 @@ namespace WPF_Test.Repositories
                     try
                     {
                         // 1. Zuerst alle Aktivitäten dieser Firma löschen (Referenzielle Integrität)
-                        string deleteAktivitaetenQuery = "DELETE FROM aktivitaet WHERE Firma_ID = @FirmaID";
+                        string deleteAktivitaetenQuery = "DELETE FROM Aktivitaet WHERE Firma_ID = @FirmaID";
                         using (MySqlCommand cmd1 = new MySqlCommand(deleteAktivitaetenQuery, connection, transaction))
                         {
                             cmd1.Parameters.AddWithValue("@FirmaID", firmaId);
@@ -288,7 +288,7 @@ namespace WPF_Test.Repositories
                         }
 
                         // 2. Dann die Firma selbst löschen
-                        string deleteFirmaQuery = "DELETE FROM firma WHERE Firma_ID = @FirmaID AND Teilnehmer_ID = @TeilnehmerID";
+                        string deleteFirmaQuery = "DELETE FROM Firma WHERE Firma_ID = @FirmaID AND Teilnehmer_ID = @TeilnehmerID";
                         using (MySqlCommand cmd2 = new MySqlCommand(deleteFirmaQuery, connection, transaction))
                         {
                             cmd2.Parameters.AddWithValue("@FirmaID", firmaId);

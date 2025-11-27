@@ -32,7 +32,7 @@
     <system:String x:Key="CompanyList_Header_Company">Firma / Ansprechpartner</system:String>
     <system:String x:Key="CompanyList_Header_Contact">Kontakt (Telefon / E-Mail)</system:String>
     <system:String x:Key="CompanyList_Header_Status">Status</system:String>
-    <system:String x:Key="CompanyList_Header_Notes">Bemerkung</system:String>
+    <system:String x:Key="CompanyList_Header_Notes">Kommentar</system:String>
 
     <system:String x:Key="ShowCompany_Title">Firma bearbeiten</system:String>
     <system:String x:Key="ShowCompany_Select">Betrieb auswählen:</system:String>

@@ -38,11 +38,11 @@ namespace WPF_Test.Repositories
                     a.Status_ID,
                     st.Bezeichnung AS StatusBezeichnung
                 FROM 
-                    aktivitaet a
+                    Aktivitaet a
                 JOIN 
-                    status s ON a.Status_ID = s.Status_ID
+                    Status s ON a.Status_ID = s.Status_ID
                 JOIN 
-                    status_translation st ON s.Status_ID = st.Status_ID
+                    Status_Translation st ON s.Status_ID = st.Status_ID
                 WHERE 
                     a.Firma_ID = @FirmaID 
                 AND 
@@ -106,7 +106,7 @@ namespace WPF_Test.Repositories
         public void AddAktivitaet(Aktivitaet neueAktivitaet, int firmaId, int statusId)
         {
             string query = @"
-                INSERT INTO aktivitaet
+                INSERT INTO Aktivitaet
                 (Firma_ID, Status_ID, Datum, Kommentar)
                 VALUES
                 (@FirmaID, @StatusID, @Datum, @Kommentar)";
@@ -142,7 +142,7 @@ namespace WPF_Test.Repositories
         public void UpdateAktivitaet(Aktivitaet aktivitaet, int statusId)
         {
             string query = @"
-                UPDATE aktivitaet SET
+                UPDATE Aktivitaet SET
                     Status_ID = @StatusID,
                     Datum = @Datum,
                     Kommentar = @Kommentar
@@ -178,7 +178,7 @@ namespace WPF_Test.Repositories
         public void DeleteAktivitaet(int aktivitaetId)
         {
             string query = @"
-                DELETE FROM aktivitaet 
+                DELETE FROM Aktivitaet 
                 WHERE Aktivitaet_ID = @AktivitaetID";
 
             try

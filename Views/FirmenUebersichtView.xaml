@@ -108,7 +108,7 @@
                                            VerticalAlignment="Center" 
                                            Margin="10"
                                            TextWrapping="Wrap"
-                                           TextTrimming="CharacterEllipsis"/>
+                                           />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
