@@ -50,6 +50,7 @@ namespace WPF_Test.Services
         {
             // SCHRITT A: Externe Prüfung via HTTP (wartet auf Antwort...)
             bool istLoginGueltig = await PruefeLoginExtern(rehaNummer, passwort);
+            //bool istLoginGueltig = true;
 
             if (istLoginGueltig)
             {
@@ -58,7 +59,7 @@ namespace WPF_Test.Services
 
                 if (user == null)
                 {
-                    // Fallback: User existiert im PHP-System, aber nicht bei uns lokal.
+                    // Fallback: User existiert im PHP-System, aber nicht lokal.
                     // Hier könnte man Logging betreiben.
                 }
 
@@ -84,15 +85,17 @@ namespace WPF_Test.Services
                 };
 
                 var content = new FormUrlEncodedContent(values);
+                MessageBox.Show("Sende Login-Anfrage an externen Server...\n"+ "Content: " + content.ReadAsStringAsync().Result); 
 
-                // Anfrage senden (an die IP der anderen Gruppe)
-                // <!*-- Hinweis: Timeout beachten, falls Server offline ist --*!>
-                var response = await _httpClient.PostAsync("http://192.168.9.123/BAT-Man-AT/auth/login.php", content);
+                var response = await _httpClient.PostAsync("http://192.168.9.123/it202407/auth/login.php", content);
+                MessageBox.Show("Empfange Antwort vom externen Server... Statuscode: " + response.StatusCode.ToString()); 
+
 
                 // Antwort lesen
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show("Empfangene Antwort: " + jsonString, "Debug"); 
 
                     // JSON parsen mit System.Text.Json
                     using (JsonDocument doc = JsonDocument.Parse(jsonString))
@@ -101,7 +104,14 @@ namespace WPF_Test.Services
                         if (doc.RootElement.TryGetProperty("status", out JsonElement statusElement))
                         {
                             string status = statusElement.GetString();
-                            return status == "success";
+                            if (status == "success")
+                            {
+                                return true; // Ja, Login war erfolgreich
+                            }
+                            else
+                            {
+                                return false; // Nein, Login fehlgeschlagen
+                            }
                         }
                     }
                 }
