@@ -10,7 +10,7 @@
     <system:String x:Key="Nav_Help">Hilfe</system:String>
     <system:String x:Key="Nav_LoggedInAs">Angemeldet als:</system:String>
 
-    <system:String x:Key="Welcome_Message">Willkommen beim BAT-Man Prototyp!</system:String>
+    <system:String x:Key="Welcome_Message">Willkommen bei BAT-Man!</system:String>
 
     <system:String x:Key="SaveButton">Speichern</system:String>
     <system:String x:Key="CancelButton">Abbrechen</system:String>
@@ -27,7 +27,6 @@
     <system:String x:Key="Settings_Language_German">Deutsch</system:String>
     <system:String x:Key="Settings_Language_English">English</system:String>
     
-    <!--<system:String x:Key="Settings_Title">Einstellungen</system:String>-->
     <system:String x:Key="CompanyList_RefreshButton">Liste aktualisieren</system:String>
     <system:String x:Key="CompanyList_Header_Company">Firma / Ansprechpartner</system:String>
     <system:String x:Key="CompanyList_Header_Contact">Kontakt (Telefon / E-Mail)</system:String>
@@ -56,5 +55,8 @@
     <system:String x:Key="Dialog_Cancel">Abbrechen</system:String>
 
     <system:String x:Key="CompanyList_DoubleClickHint">Doppelklick auf eine Zeile für Detailansicht</system:String>
+
+    <system:String x:Key="Password_RequirementsHint">Das Passwort muss mindestens 8 Zeichen lang sein und Großbuchstaben, Kleinbuchstaben, Ziffern sowie Sonderzeichen enthalten.</system:String>
+
 
 </ResourceDictionary>

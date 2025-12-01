@@ -62,8 +62,6 @@
                 BUTTON SPEICHERN:
                 Der Text (Content) ist dynamisch und zeigt entweder "Speichern" oder "Aktualisieren" an,
                 je nachdem, was im ViewModel gesetzt wurde.
-                
-                CommandParameter: Übergibt das Fenster an das ViewModel, um es schließen zu können.
             -->
             <Button Grid.Column="0"
                     Content="{Binding SaveButtonText}" 

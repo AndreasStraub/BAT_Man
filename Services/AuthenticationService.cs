@@ -1,7 +1,10 @@
-﻿// Dateipfad: Services/AuthenticationService.cs
-
-using System;
-using System.Linq; // WICHTIG: Für .Any() (Sonst geht IsPasswordStrong nicht)
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http; // <!*-- WICHTIG: Für HttpClient --*!>
+using System.Text.Json; // <!*-- WICHTIG: Für JSON Parsing (statt Newtonsoft) --*!>
+using System.Threading.Tasks; // <!*-- WICHTIG: Für async/await --*!>
+using System.Windows;
 using WPF_Test.Models;
 using WPF_Test.Repositories;
 
@@ -9,20 +12,23 @@ namespace WPF_Test.Services
 {
     public class AuthenticationService
     {
-        // --- Singleton-Implementierung ---
         public static AuthenticationService Instance { get; } = new AuthenticationService();
 
         private readonly TeilnehmerRepository _teilnehmerRepository;
+
+        // <!*-- 
+        // HttpClient sollte statisch sein und wiederverwendet werden, 
+        // um "Socket Exhaustion" zu vermeiden.
+        // --*!>
+        private static readonly HttpClient _httpClient = new HttpClient();
 
         private AuthenticationService()
         {
             _teilnehmerRepository = new TeilnehmerRepository();
         }
 
-
-
         // ==========================================================
-        // 1. HILFSMETHODE (Muss INNERHALB der Klasse stehen)
+        // 1. HILFSMETHODE
         // ==========================================================
         private bool IsPasswordStrong(string password)
         {
@@ -36,75 +42,90 @@ namespace WPF_Test.Services
             return true;
         }
 
-
         // ==========================================================
-        // 1. Die Logik-Methode (Der Orchestrator)
+        // 2. Die Logik-Methode (Jetzt ASYNCHRON)
         // ==========================================================
-        public Teilnehmer Login(string rehaNummer, string passwort)
+        // <!*-- ÄNDERUNG: Rückgabetyp ist jetzt Task<Teilnehmer> statt nur Teilnehmer --*!>
+        public async Task<Teilnehmer> Login(string rehaNummer, string passwort)
         {
-            // SCHRITT A: Externe Prüfung (Die "Blackbox" der anderen Gruppe)
-            // Wir fragen: "Ist die Anmeldung gültig?"
-            bool istLoginGueltig = PruefeLoginExtern(rehaNummer, passwort);
+            // SCHRITT A: Externe Prüfung via HTTP (wartet auf Antwort...)
+            bool istLoginGueltig = await PruefeLoginExtern(rehaNummer, passwort);
 
             if (istLoginGueltig)
             {
-                // SCHRITT B: Wenn JA -> Lade UNSERE Daten
-                // Wir nutzen die RehaNummer als Schlüssel, um den Datensatz aus unserer DB zu holen.
+                // SCHRITT B: Wenn JA -> Lade UNSERE Daten aus lokaler DB
                 Teilnehmer user = _teilnehmerRepository.GetTeilnehmerByRehaNummer(rehaNummer);
 
-                // Falls der User extern "Ja" sagt, aber bei uns in der DB fehlt:
                 if (user == null)
                 {
-                    // Optional: Fehler werfen oder null zurückgeben
-                    // System.Windows.MessageBox.Show("User extern bestätigt, aber lokal nicht gefunden!");
+                    // Fallback: User existiert im PHP-System, aber nicht bei uns lokal.
+                    // Hier könnte man Logging betreiben.
                 }
 
                 return user;
             }
 
-            // Wenn Login ungültig -> null zurückgeben
             return null;
         }
 
         // ==========================================================
-        // 2. Die Flexibilitäts-Methode (Platzhalter für die PHP-Gruppe)
+        // 3. Die externe Prüfung (Implementiert mit Code der Auth-Gruppe)
         // ==========================================================
-        /// <summary>
-        /// Diese Methode simuliert die Anfrage an das externe System der anderen Gruppe.
-        /// </summary>
-        private bool PruefeLoginExtern(string rehaNummer, string passwort)
+        private async Task<bool> PruefeLoginExtern(string rehaNummer, string passwort)
         {
-            // <!*-- 
-            // PLATZHALTER LOGIK:
-            // Aktuell simulieren wir einfach: "Wenn etwas eingegeben wurde, ist es okay".
-            // 
-            // SPÄTER: Hier kommt der Code der anderen Gruppe rein.
-            // Zum Beispiel ein HTTP Request an deren API:
-            // var response = await httpClient.PostAsync("https://php-server/login", ...);
-            // return response.IsSuccessStatusCode;
-            // --*!>
-
-            if (!string.IsNullOrEmpty(rehaNummer) && !string.IsNullOrEmpty(passwort))
+            try
             {
-                // Simulation: Login immer erfolgreich, wenn Felder nicht leer sind.
-                return true;
+                // Datenpaket schnüren (wie von der anderen Gruppe vorgegeben)
+                var values = new Dictionary<string, string>
+                {
+                    { "login_type", "Teilnehmer" },
+                    { "reha_nr", rehaNummer },
+                    { "passwort", passwort }
+                };
+
+                var content = new FormUrlEncodedContent(values);
+
+                // Anfrage senden (an die IP der anderen Gruppe)
+                // <!*-- Hinweis: Timeout beachten, falls Server offline ist --*!>
+                var response = await _httpClient.PostAsync("http://192.168.9.123/BAT-Man-AT/auth/login.php", content);
+
+                // Antwort lesen
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+
+                    // JSON parsen mit System.Text.Json
+                    using (JsonDocument doc = JsonDocument.Parse(jsonString))
+                    {
+                        // Wir suchen nach dem Feld "status"
+                        if (doc.RootElement.TryGetProperty("status", out JsonElement statusElement))
+                        {
+                            string status = statusElement.GetString();
+                            return status == "success";
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Es gab einen Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.");
+                // Bei Netzwerkfehlern (Server nicht erreichbar) geben wir "false" zurück.
+                // In einer echten App würde man hier eine spezifische Fehlermeldung speichern.
+                return false;
             }
 
             return false;
         }
 
         // ==========================================================
-        // 3. CHANGE PASSWORD (Nutzt die Hilfsmethode)
+        // 4. Change Password
         // ==========================================================
         public bool ChangePassword(int teilnehmerId, string neuesPasswort)
         {
-            // Prüfung aufrufen
             if (!IsPasswordStrong(neuesPasswort))
             {
                 throw new ArgumentException("Das Passwort muss mind. 8 Zeichen, Groß-/Kleinbuchstaben, Ziffern und Sonderzeichen enthalten.");
             }
-
-            // Simuliertes Speichern
             return true;
         }
     }

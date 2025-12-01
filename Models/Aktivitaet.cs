@@ -12,8 +12,7 @@ namespace WPF_Test.Models
         public DateTime Datum { get; set; }
         public string Kommentar { get; set; }
 
-        // Wird benötigt, um den RadioButton im "Bearbeiten"-Dialog
-        // korrekt vor-auszuwählen
+        // Wird benötigt, um den RadioButton im "Bearbeiten"-Dialog korrekt vor-auszuwählen
         public int Status_ID { get; set; }
 
         // Wird für die Anzeige in der ListView benötigt

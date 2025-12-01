@@ -41,8 +41,8 @@
             <!-- 
                 Login Button:
                 Command: Löst die Methode 'ExecuteLogin' im ViewModel aus.
-                CommandParameter: Übergibt das gesamte PasswordBox-Element an das ViewModel.
-                Dies ist ein "Trick", um das Passwort sicher ins ViewModel zu bekommen, ohne Binding.
+                CommandParameter: Übergibt das gesamte PasswordBox-Element an das ViewModel,
+                um das Passwort sicher ins ViewModel zu bekommen, ohne Binding.
             -->
             <Button x:Name="btnLogin" 
                     Grid.Column="0" 

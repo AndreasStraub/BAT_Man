@@ -138,7 +138,7 @@
 
                     <!--  
                         INTERAKTION:
-                        Auch hier gilt: Der Doppelklick ist global im ListViewItem-Style definiert
+                        Der Doppelklick ist global im ListViewItem-Style definiert
                         und ruft den 'BearbeitenCommand' im DataContext auf.
                     -->
 

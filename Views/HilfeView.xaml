@@ -85,22 +85,11 @@
 
         <!--  FOOTER / BUTTON (Zeile 2 - Unten Rechts)  -->
         <Grid Grid.Row="2">
-            <!--  
-                 Wir nutzen hier den Standard-Style. 
-                 Falls du einen speziellen Button-Style hast (z.B. 'MainButtonStyle'), 
-                 trage diesen bei Style="{StaticResource ...}" ein.
-                 Hier nutzen wir DynamicResource für den Text.
-             -->
             <Button Command="{Binding SchliessenCommand}" 
                     Content="{DynamicResource Help_Button_Back}"
                     HorizontalAlignment="Right" 
                     Width="150" Height="40"
                     FontSize="16">
-                <!--  
-                     Falls du KEINEN globalen Style hast, entferne diesen Kommentarblock 
-                     und nutze einfach deinen Standard-Button. 
-                     Oder binde deinen 'NavButtonStyle' ein, falls gewünscht.
-                 -->
             </Button>
         </Grid>
 

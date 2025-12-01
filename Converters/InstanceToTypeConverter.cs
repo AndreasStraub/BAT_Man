@@ -1,6 +1,4 @@
-﻿// Dateipfad: Converters/InstanceToTypeConverter.cs
-
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
 
@@ -8,7 +6,7 @@ namespace WPF_Test.Converters
 {
     /// <summary>
     /// Wandelt ein Objekt (z.B. das aktuelle ViewModel) in seinen Typ um.
-    /// Das ermöglicht uns, im XAML zu prüfen: "Ist das aktuelle ViewModel vom Typ XY?"
+    /// Das ermöglicht, im XAML zu prüfen: "Ist das aktuelle ViewModel vom Typ XY?"
     /// </summary>
     public class InstanceToTypeConverter : IValueConverter
     {

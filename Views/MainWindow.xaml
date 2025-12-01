@@ -11,18 +11,17 @@
         Background="{DynamicResource AppBackground}">
 
     <!--  
-        1. DATEN-KONTEXT (Verbindung zur Logik)
+        DATEN-KONTEXT (Verbindung zur Logik)
         Hier wird eine Instanz des 'MainWindowViewModel' erstellt und dem Fenster zugewiesen.
         Dadurch wissen alle Steuerelemente in diesem Fenster, woher sie ihre Daten beziehen sollen.
         Dies ist die essenzielle Verbindung für das MVVM-Pattern.
-        -> (Siehe Dokumentation: MainWindow.md > 3. Exkurs: Der DataContext)
     -->
     <Window.DataContext>
         <viewmodels:MainWindowViewModel/>
     </Window.DataContext>
 
     <!--  
-        2. HAUPT-LAYOUT
+        HAUPT-LAYOUT
         Das Fenster wird durch ein Grid in zwei Bereiche unterteilt.
     -->
     <Grid>
@@ -34,7 +33,7 @@
         </Grid.ColumnDefinitions>
 
         <!--  
-            3. NAVIGATIONS-LEISTE (Linke Spalte)
+            NAVIGATIONS-LEISTE (Linke Spalte)
             Ein DockPanel eignet sich gut, um Elemente oben oder unten zu fixieren.
         -->
         <DockPanel Grid.Column="0" Background="{DynamicResource BorderColor}">
@@ -59,7 +58,6 @@
                                 <!--  
                                     Prüfung: Ist das 'AktuellesViewModel' vom Typ 'WelcomeViewModel'?
                                     Der 'InstanceToTypeConverter' wandelt das Objekt in den Typ um, damit der Vergleich funktioniert.
-                                    -> (Siehe Dokumentation: MainWindow.md > 4. Detail-Analyse: Dynamische Farben & Converter)
                                 -->
                                 <DataTrigger Binding="{Binding AktuellesViewModel, Converter={StaticResource InstanceToTypeConverter}}" 
                                              Value="{x:Type viewmodels:WelcomeViewModel}">
@@ -153,7 +151,7 @@
                 </Button>
 
                 <!--  
-                    [NEU] NAVIGATION: Button "Hilfe"
+                    NAVIGATION: Button "Hilfe"
                     Hier wurde der Platzhalter durch einen echten Navigations-Button ersetzt.
                     Er nutzt das 'ShowHilfeViewCommand' und reagiert auf das 'HilfeViewModel'.
                 -->
@@ -162,7 +160,7 @@
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
                             <Style.Triggers>
-                                <!--  Prüfung: Ist 'HilfeViewModel' aktiv? (Wird im nächsten Schritt erstellt) -->
+                                <!--  Prüfung: Ist 'HilfeViewModel' aktiv? -->
                                 <DataTrigger Binding="{Binding AktuellesViewModel, Converter={StaticResource InstanceToTypeConverter}}" 
                                              Value="{x:Type viewmodels:HilfeViewModel}">
                                     <Setter Property="Background" Value="{DynamicResource AppBackground}"/>
@@ -191,10 +189,10 @@
         </DockPanel>
 
         <!--  
-            4. INHALTS-BEREICH (Rechte Spalte)
+            INHALTS-BEREICH (Rechte Spalte)
             Das ContentControl ist ein Platzhalter für wechselnde Inhalte.
             Es zeigt das ViewModel an, das in der Eigenschaft 'AktuellesViewModel' gespeichert ist.
-            WPF sucht automatisch das passende DataTemplate (aus App.xaml), um die Grafik darzustellen.
+            WPF sucht automatisch das passende DataTemplate (aus App.xaml), um die View darzustellen.
         -->
         <Border Grid.Column="1" Padding="10,20,20,20">
             <ContentControl Content="{Binding AktuellesViewModel}" />

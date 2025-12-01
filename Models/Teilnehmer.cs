@@ -17,22 +17,20 @@ namespace WPF_Test.Models
         public int Fachrichtung_ID { get; set; }
 
         // WICHTIG: tinyint(1) in MySQL wird in C# meist als bool behandelt.
-        // Falls der MySQL-Treiber zickt, müsste man hier 'sbyte' oder 'int' nehmen und konvertieren.
-        // Wir gehen davon aus, dass es als bool ankommt.
         public bool Erstanmeldung { get; set; }
 
         // ==========================================================
         // 2. LOGIK-BRÜCKEN (Für Kompatibilität zur App)
         // ==========================================================
 
-        // Deine App nutzt "TeilnehmerID" (ohne Unterstrich). Wir leiten es weiter.
+        // Die App nutzt "TeilnehmerID" (ohne Unterstrich). Es wird weitergeleitet.
         public int TeilnehmerID => Teilnehmer_ID;
 
-        // Deine App nutzt "RehaNummer" (als String).
-        // LOGIK: Da RehaNummer == Teilnehmer_ID ist, geben wir die ID einfach als String zurück.
+        // Die App nutzt "RehaNummer" (als String).
+        // LOGIK: Da RehaNummer == Teilnehmer_ID ist, wird die ID einfach als String zurück gegeben.
         public string RehaNummer => Teilnehmer_ID.ToString();
 
-        // Deine App nutzt "MussPasswortAendern".
+        // Die App nutzt "MussPasswortAendern".
         // Das entspricht jetzt dem Feld "Erstanmeldung".
         public bool MussPasswortAendern
         {
@@ -40,8 +38,9 @@ namespace WPF_Test.Models
             set { Erstanmeldung = value; }
         }
 
-        // Deine App erwartet einen Kurs-Namen (String).
-        // Da wir nur die Kurs_ID haben, bauen wir einen provisorischen String.
+        // TODO: Kurs-Name ergänzen
+        // Die App erwartet einen Kurs-Namen (String).
+        // Da wir nur die Kurs_ID haben, wird ein provisorischer String gebaut.
         // (Für den echten Namen bräuchte man später einen SQL-JOIN auf die Kurs-Tabelle).
         public string Kurs => $"Kurs-ID: {Kurs_ID}";
     }

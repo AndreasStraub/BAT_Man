@@ -17,14 +17,9 @@
     <!--  
         INHALT:
         Das Fenster ist nur ein Container.
-        Der Inhalt wird über Binding gesetzt. Da wir im C#-Code (FirmaAnzeigenViewModel) schreiben:
+        Der Inhalt wird über Binding gesetzt. Da im C#-Code (FirmaAnzeigenViewModel) geschrieben wird:
         "dialog.DataContext = viewModel", wird hier automatisch die passende View angezeigt,
         sofern ein DataTemplate in der App.xaml existiert.
-        
-        Alternativ (einfacher für Azubis): 
-        Wir könnten hier direkt
-    <local:FirmaAnlegenView /> einbinden, wenn wir sicher sind, 
-        dass dieses Fenster NUR dafür genutzt wird.
     -->
     <ContentControl Content="{Binding}" />
 

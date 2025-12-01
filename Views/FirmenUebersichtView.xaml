@@ -103,7 +103,6 @@
                                     Width="300">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <!--  TextTrimming="CharacterEllipsis": Fügt "..." hinzu, wenn der Text zu lang ist -->
                                 <TextBlock Text="{Binding LetzteBemerkung, TargetNullValue='-'}" 
                                            VerticalAlignment="Center" 
                                            Margin="10"

@@ -58,7 +58,7 @@
 
                 <!-- 
                     LISTBOX FÜR STATUS:
-                    Wir nutzen eine ListBox mit einem speziellen Style ('RadioListBoxStyle'),
+                    Hier wird eine ListBox mit einem speziellen Style ('RadioListBoxStyle') genutzt,
                     der die Einträge wie RadioButtons aussehen lässt.
                     Das ist intuitiver als eine Liste, da man nur EINEN Status wählen kann.
                 -->
@@ -90,7 +90,7 @@
 
             <!-- 
                 LÖSCHEN-BUTTON:
-                Dieser Button ist nur sichtbar, wenn wir im Bearbeiten-Modus sind ('IsEditMode' == True).
+                Dieser Button ist nur sichtbar, wenn der Bearbeiten-Modus aktiv ist ('IsEditMode' == True).
                 Neue Aktivitäten können hier noch nicht gelöscht werden (da noch nicht gespeichert).
             -->
             <Button x:Name="btnDelete" 

@@ -5,8 +5,7 @@ namespace WPF_Test.Models
 {
     /// <summary>
     /// Repräsentiert eine einzelne Status-Option (z.B. "Anruf", "Email").
-    /// Dies ist der "Bauplan" für die Objekte, die in der
-    /// RadioButton-Liste im "Aktivität hinzufügen"-Dialog angezeigt werden.
+    /// Dies ist der "Bauplan" für die Objekte, die in der RadioButton-Liste im "Aktivität hinzufügen"-Dialog angezeigt werden.
     /// </summary>
     public class Status
     {
@@ -16,8 +15,7 @@ namespace WPF_Test.Models
         public int Status_ID { get; set; }
 
         /// <summary>
-        /// Der übersetzte Text (z.B. "Anruf" oder "Call")
-        /// aus der 'status_translation'-Tabelle.
+        /// Der übersetzte Text (z.B. "Anruf" oder "Call") aus der 'status_translation'-Tabelle.
         /// </summary>
         public string Bezeichnung { get; set; }
     }
