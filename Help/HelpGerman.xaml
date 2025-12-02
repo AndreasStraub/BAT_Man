@@ -5,7 +5,7 @@
     <!-- TITEL -->
     <s:String x:Key="Help_Title_Overview">Hilfe: Firmenübersicht</s:String>
     <s:String x:Key="Help_Title_Details">Hilfe: Firmendetails</s:String>
-    <s:String x:Key="Help_Title_Edit">Hilfe: Firma anlegen</s:String>
+    <s:String x:Key="Help_Title_Add">Hilfe: Firma anlegen</s:String>
     <s:String x:Key="Help_Title_Settings">Hilfe: Einstellungen</s:String>
     <s:String x:Key="Help_Title_Welcome">Willkommen bei der BAT-Man Hilfe</s:String>
 
@@ -13,11 +13,30 @@
     <s:String x:Key="Help_Button_Back">Zurück</s:String>
     <s:String x:Key="Help_Legend_Title">Erklärung der Funktionen:</s:String>
 
-    <!-- ERKLÄRUNGEN (Die eigentlichen Texte) -->
-    <s:String x:Key="Help_Desc_Search">Suchfeld: Geben Sie hier den Firmennamen ein, um die Liste zu filtern.</s:String>
-    <s:String x:Key="Help_Desc_Table">Tabelle: Ein Doppelklick auf eine Zeile öffnet die Detailansicht.</s:String>
-    <s:String x:Key="Help_Desc_New">Button 'Neu': Öffnet den Dialog zum Erstellen einer neuen Firma.</s:String>
+    <!-- ERKLÄRUNGEN (Firmenübersicht) -->
+    <s:String x:Key="Help_Desc_Table">Tabelle: Hier werden alle angelegten Firmen angezeigt. Ein Doppelklick auf die Zeile öffnet die Detailansicht.</s:String>
+    <s:String x:Key="Help_Desc_CurrentStatus">Status: Hier wird der aktuellste Status mit Kommentar angezeigt.</s:String>
 
-    <!-- ... Weitere deutsche Texte hier ... -->
+    <!-- ERKLÄRUNGEN (Willkommesseite) -->
+    <s:String x:Key="Help_Desc_Overview">Button 'Firmenübersicht': Öffnet eine Übersicht aller angelegten Firmen.</s:String>
+    <s:String x:Key="Help_Desc_Add">Button 'Firma anlegen': Öffnet den Dialog, um eine Firma neu anzulegen.</s:String>
+    <s:String x:Key="Help_Desc_Details">Button 'Firma anzeigen': Zeigt eine Firma Im Detail.</s:String>
+    <s:String x:Key="Help_Desc_Settings">Button Einstellungen': Öffnet die Einstellungen.</s:String>
+    <s:String x:Key="Help_Desc_Help">Button Hilfe': Öffnet die Hilfe - Hast du ja schon gefunden ;-).</s:String>
+
+    <!-- ERKLÄRUNGEN (Firma anzeigen) -->
+    <s:String x:Key="Help_Desc_Choose">Hier kann eine Firma für die Detailansicht ausgewählt werden.</s:String>
+    <s:String x:Key="Help_Desc_ButtonsEdit_Delete">Ruft den Dialog zum Bearbeiten einer Firma auf oder löscht die ausgewählte Firma.</s:String>
+    <s:String x:Key="Help_Desc_StatusList">Übersicht aller Aktivitäten. Ein Doppelklick öffnet den Dialog zum Bearbeiten oder Löschen einer Aktivität.</s:String>
+    <s:String x:Key="Help_Desc_ButtonActivities">Hier öffnet sich der Dialog zum Hinzufügen einer Aktivität Hier wird das Datum, Art der Aktivität und ein Kommentar festgelegt.</s:String>
+
+    <!-- ERKLÄRUNGEN (Firma anlegen) -->
+    <s:String x:Key="Help_Desc_AddCompany">Hier kann eine Firma und der entsprechende Ansprechpartner angelegt werden.</s:String>
+
+    <!-- ERKLÄRUNGEN (Einstellungen) -->
+    <s:String x:Key="Help_Desc_ChangeDesign">Hier kann das Design geändert werden.</s:String>
+    <s:String x:Key="Help_Desc_ChangeLanguage">Hier kann die Sparache geändert werden.</s:String>
+    <s:String x:Key="Help_Desc_ChangePassword">Ruft den Dialog zum Ändern des Passwortes auf.</s:String>
+
 
 </ResourceDictionary>

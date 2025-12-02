@@ -166,7 +166,7 @@ namespace BAT_Man.Services
 
                 var content = new FormUrlEncodedContent(values);
 
-                var response = await _httpClient.PostAsync("http://192.168.9.123/it202407/auth/change_password.php", content);
+                var response = await _httpClient.PostAsync("http://192.168.9.123/it202407/auth/teilnehmer/change_password.php", content);
 
                 if (response.IsSuccessStatusCode)
                 {

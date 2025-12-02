@@ -48,8 +48,8 @@ namespace BAT_Man.ViewModels
                     Titel = GetText("Help_Title_Overview");
                     BildPfad = "/Images/FirmenUebersicht.png";
 
-                    Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_Search") });
-                    Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_Table") });
+                    Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_Table") });
+                    Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_CurrentStatus") });
 
                     break;
 
@@ -58,18 +58,18 @@ namespace BAT_Man.ViewModels
                     Titel = GetText("Help_Title_Details");
                     BildPfad = "/Images/FirmaAnzeigen.png";
 
-                    Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_DetailHeader") });
-                    Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_Table") });
-                    Legende.Add(new LegendenPunkt { Nummer = "3", Beschreibung = GetText("Help_Desc_New") });
-                    Legende.Add(new LegendenPunkt { Nummer = "4", Beschreibung = GetText("Help_Desc_Activities") });
+                    Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_Choose") });
+                    Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_ButtonsEdit_Delete") });
+                    Legende.Add(new LegendenPunkt { Nummer = "3", Beschreibung = GetText("Help_Desc_StatusList") });
+                    Legende.Add(new LegendenPunkt { Nummer = "4", Beschreibung = GetText("Help_Desc_ButtonActivities") });
                     break;
 
                 // --- 3. FIRMEN EDITOR (NEU / BEARBEITEN) ---
                 case "FirmaAnlegenViewModel":
-                    Titel = GetText("Help_Title_Edit");
+                    Titel = GetText("Help_Title_Add");
                     BildPfad = "/Images/FirmaAnlegen.png";
 
-                    Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_Mandatory") });
+                    Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_AddCompany") });
 
                     break;
 
@@ -78,9 +78,9 @@ namespace BAT_Man.ViewModels
                     Titel = GetText("Help_Title_Settings");
                     BildPfad = "/BAT_Man;component/Images/Einstellungen.png"; 
 
-                    Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_Language") });
-                    Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_Theme") });
-                    Legende.Add(new LegendenPunkt { Nummer = "3", Beschreibung = GetText("Help_Desc_Password") });
+                    Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_ChangeDesign") });
+                    Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_ChangeLanguage") });
+                    Legende.Add(new LegendenPunkt { Nummer = "3", Beschreibung = GetText("Help_Desc_ChangePassword") });
 
                     break;
 
@@ -90,9 +90,9 @@ namespace BAT_Man.ViewModels
                     Titel = GetText("Help_Title_Welcome");
                     BildPfad = "/BAT_Man;component/Images/WillkommensSeite.png";
 
-                    Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_Nav") });
-                    Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_Table") });
-                    Legende.Add(new LegendenPunkt { Nummer = "3", Beschreibung = GetText("Help_Desc_New") });
+                    Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_Overview") });
+                    Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_Add") });
+                    Legende.Add(new LegendenPunkt { Nummer = "3", Beschreibung = GetText("Help_Desc_Details") });
                     Legende.Add(new LegendenPunkt { Nummer = "4", Beschreibung = GetText("Help_Desc_Settings") });
                     Legende.Add(new LegendenPunkt { Nummer = "5", Beschreibung = GetText("Help_Desc_Help") });
                     break;

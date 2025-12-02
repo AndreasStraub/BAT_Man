@@ -33,7 +33,6 @@
     <None Remove="Images\Help_FirmaAnlegen.png" />
     <None Remove="Images\Help_FirmenAnzeigen.png" />
     <None Remove="Images\Help_FirmenListe.png" />
-    <None Remove="Images\WilkommensSeite.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,7 +51,7 @@
     <Resource Include="Images\FirmaAnlegen.png" />
     <Resource Include="Images\FirmaAnzeigen.png" />
     <Resource Include="Images\FirmenUebersicht.png" />
-    <Resource Include="Images\WilkommensSeite.png" />
+    <Resource Include="Images\WillkommensSeite.png" />
   </ItemGroup>
 
   <ItemGroup>

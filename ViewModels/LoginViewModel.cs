@@ -44,7 +44,7 @@ namespace BAT_Man.ViewModels
             // Optional: Hier könnte man einen Ladebalken aktivieren (IsBusy = true)
 
             Teilnehmer user = await AuthenticationService.Instance.Login(RehaNummer, passwort);
-            MessageBox.Show("User:" + user.Teilnehmer_ID);
+            //MessageBox.Show("User:" + user.Teilnehmer_ID);
 
             // Optional: Ladebalken deaktivieren (IsBusy = false)
 
