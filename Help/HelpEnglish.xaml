@@ -5,16 +5,37 @@
     <!-- TITLES -->
     <s:String x:Key="Help_Title_Overview">Help: Company Overview</s:String>
     <s:String x:Key="Help_Title_Details">Help: Company Details</s:String>
-    <s:String x:Key="Help_Title_General">Help: General</s:String>
+    <s:String x:Key="Help_Title_Add">Help: Add Company</s:String>
+    <s:String x:Key="Help_Title_Settings">Help: Settings</s:String>
     <s:String x:Key="Help_Title_Welcome">Welcome to BAT-Man Help</s:String>
 
-    <!-- UI ELEMENTS -->
+    <!-- UI ELEMENTS IN HELP -->
     <s:String x:Key="Help_Button_Back">Back</s:String>
     <s:String x:Key="Help_Legend_Title">Explanation of functions:</s:String>
 
-    <!-- DESCRIPTIONS -->
-    <s:String x:Key="Help_Desc_Search">Search Box: Enter the company name here to filter the list.</s:String>
-    <s:String x:Key="Help_Desc_Table">Table: Double-click a row to open the details.</s:String>
-    <s:String x:Key="Help_Desc_New">Button 'New': Opens the dialog to create a new company.</s:String>
+    <!-- EXPLANATIONS (Company Overview) -->
+    <s:String x:Key="Help_Desc_Table">Table: All created companies are displayed here. Double-clicking a row opens the detailed view.</s:String>
+    <s:String x:Key="Help_Desc_CurrentStatus">Status: The most current status with comment is displayed here.</s:String>
+
+    <!-- EXPLANATIONS (Welcome Page) -->
+    <s:String x:Key="Help_Desc_Overview">Button 'Company Overview': Opens an overview of all created companies.</s:String>
+    <s:String x:Key="Help_Desc_Add">Button 'Add Company': Opens the dialog to create a new company.</s:String>
+    <s:String x:Key="Help_Desc_Details">Button 'Show Company': Shows a company in detail.</s:String>
+    <s:String x:Key="Help_Desc_Settings">Button 'Settings': Opens the settings.</s:String>
+    <s:String x:Key="Help_Desc_Help">Button 'Help': Opens the help - You already found it ;-).</s:String>
+
+    <!-- EXPLANATIONS (Show Company) -->
+    <s:String x:Key="Help_Desc_Choose">Here you can select a company for the detailed view.</s:String>
+    <s:String x:Key="Help_Desc_ButtonsEdit_Delete">Opens the dialog to edit a company or deletes the selected company.</s:String>
+    <s:String x:Key="Help_Desc_StatusList">Overview of all activities. Double-clicking opens the dialog to edit or delete an activity.</s:String>
+    <s:String x:Key="Help_Desc_ButtonActivities">Here opens the dialog to add an activity. Here, the date, type of activity, and a comment are set.</s:String>
+
+    <!-- EXPLANATIONS (Add Company) -->
+    <s:String x:Key="Help_Desc_AddCompany">Here, a company and the corresponding contact person can be created.</s:String>
+
+    <!-- EXPLANATIONS (Settings) -->
+    <s:String x:Key="Help_Desc_ChangeDesign">Here, the design can be changed.</s:String>
+    <s:String x:Key="Help_Desc_ChangeLanguage">Here, the language can be changed.</s:String>
+    <s:String x:Key="Help_Desc_ChangePassword">Opens the dialog to change the password.</s:String>
 
 </ResourceDictionary>

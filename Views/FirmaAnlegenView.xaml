@@ -59,17 +59,30 @@
             </Grid.ColumnDefinitions>
 
             <!--  
-                BUTTON SPEICHERN:
-                Der Text (Content) ist dynamisch und zeigt entweder "Speichern" oder "Aktualisieren" an,
-                je nachdem, was im ViewModel gesetzt wurde.
+                Statt Binding an einen starren C#-Text nutzen wir jetzt einen Style mit Trigger.
+                Standard: "Speichern" (SaveButton)
+                Wenn IsEditMode=True: "Aktualisieren" (UpdateButton)
+                Dadurch greifen die DynamicResources und die Sprache schaltet um!
             -->
             <Button Grid.Column="0"
-                    Content="{Binding SaveButtonText}" 
                     Command="{Binding SpeichernCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                     Width="150"
                     HorizontalAlignment="Left"
-                    IsDefault="True"/>
+                    IsDefault="True">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                        <!-- Standard-Text: Speichern -->
+                        <Setter Property="Content" Value="{DynamicResource SaveButton}"/>
+                        <Style.Triggers>
+                            <!-- Wenn wir im Bearbeiten-Modus sind -> Aktualisieren -->
+                            <DataTrigger Binding="{Binding IsEditMode}" Value="True">
+                                <Setter Property="Content" Value="{DynamicResource UpdateButton}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
 
             <Button Grid.Column="1"
                     Content="{DynamicResource CancelButton}" 

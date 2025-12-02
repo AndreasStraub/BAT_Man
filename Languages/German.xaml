@@ -13,6 +13,7 @@
     <system:String x:Key="Welcome_Message">Willkommen bei BAT-Man!</system:String>
 
     <system:String x:Key="SaveButton">Speichern</system:String>
+    <system:String x:Key="UpdateButton">Aktualisieren</system:String>
     <system:String x:Key="CancelButton">Abbrechen</system:String>
 
     <system:String x:Key="Settings_Title">Einstellungen</system:String>

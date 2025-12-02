@@ -45,10 +45,10 @@ namespace BAT_Man.ViewModels
         /// </summary>
         public bool IsEditMode { get; private set; }
 
-        /// <summary>
-        /// Dynamischer Text für den Button (z.B. "Speichern" oder "Aktualisieren").
-        /// </summary>
-        public string SaveButtonText { get; set; }
+        ///// <summary>
+        ///// Dynamischer Text für den Button (z.B. "Speichern" oder "Aktualisieren").
+        ///// </summary>
+        //public string SaveButtonText { get; set; }
 
         // --- Commands ---
         public ICommand SpeichernCommand { get; }
@@ -75,7 +75,7 @@ namespace BAT_Man.ViewModels
                 // Wir erstellen ein leeres Objekt, damit die TextBoxen nicht abstürzen.
                 FirmaZumBearbeiten = new Firma();
                 IsEditMode = false;
-                SaveButtonText = "Speichern";
+                //SaveButtonText = "Speichern";
             }
             else
             {
@@ -97,7 +97,7 @@ namespace BAT_Man.ViewModels
                     EMail = firma.EMail
                 };
                 IsEditMode = true;
-                SaveButtonText = "Aktualisieren";
+                //SaveButtonText = "Aktualisieren";
             }
         }
 
