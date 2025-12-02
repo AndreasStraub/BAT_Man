@@ -2,11 +2,11 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using WPF_Test.Models;
-using WPF_Test.Repositories;
+using BAT_Man.Models;
+using BAT_Man.Repositories;
 using System.Linq;
 
-namespace WPF_Test.ViewModels
+namespace BAT_Man.ViewModels
 {
     /// <summary>
     /// Steuert den Dialog zum Anlegen oder Bearbeiten einer Aktivität.

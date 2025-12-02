@@ -1,7 +1,7 @@
 ﻿// Dateipfad: Models/Status.cs
 
 // WICHTIG: Der Namespace MUSS so lauten
-namespace WPF_Test.Models
+namespace BAT_Man.Models
 {
     /// <summary>
     /// Repräsentiert eine einzelne Status-Option (z.B. "Anruf", "Email").

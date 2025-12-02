@@ -4,10 +4,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
-using WPF_Test.Services;
-using WPF_Test.Models;
+using BAT_Man.Services;
+using BAT_Man.Models;
 
-namespace WPF_Test.ViewModels
+namespace BAT_Man.ViewModels
 {
     public class LoginViewModel : INotifyPropertyChanged
     {
@@ -43,8 +43,8 @@ namespace WPF_Test.ViewModels
 
             // Optional: Hier könnte man einen Ladebalken aktivieren (IsBusy = true)
 
-            // <!*-- ÄNDERUNG: 'await' wartet auf die Antwort vom PHP-Server --*!>
             Teilnehmer user = await AuthenticationService.Instance.Login(RehaNummer, passwort);
+            MessageBox.Show("User:" + user.Teilnehmer_ID);
 
             // Optional: Ladebalken deaktivieren (IsBusy = false)
 

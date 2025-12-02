@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace WPF_Test.Views
+namespace BAT_Man.Views
 {
     public partial class MainWindow : Window
     {

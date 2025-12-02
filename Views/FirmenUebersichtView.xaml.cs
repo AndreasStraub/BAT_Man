@@ -3,10 +3,10 @@
 // Imports für die Basis-Funktionen
 using System.Windows.Controls;
 // Imports für unsere ViewModels (wird später vielleicht gebraucht)
-using WPF_Test.ViewModels;
+using BAT_Man.ViewModels;
 
 // Der Namespace MUSS so lauten (wegen des Ordners 'Views')
-namespace WPF_Test.Views
+namespace BAT_Man.Views
 {
     /// <summary>
     /// Interaktionslogik für FirmenUebersichtView.xaml

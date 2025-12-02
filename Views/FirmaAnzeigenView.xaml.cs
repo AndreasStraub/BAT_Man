@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WPF_Test.Views
+namespace BAT_Man.Views
 {
     /// <summary>
     /// Interaktionslogik für BetriebAnzeigenView.xaml

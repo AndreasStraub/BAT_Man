@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace WPF_Test.Services
+namespace BAT_Man.Services
 {
     /// <summary>
     /// Verwaltet die Lokalisierung (Spracheinstellung) der Anwendung.

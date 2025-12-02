@@ -3,7 +3,7 @@
 using System.Windows;
 
 // WICHTIG: Namespace anpassen, falls du die Datei verschoben hast
-namespace WPF_Test.Views
+namespace BAT_Man.Views
 {
     public partial class LoginWindow : Window
     {

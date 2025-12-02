@@ -1,9 +1,9 @@
 ﻿// Dateipfad: Views/ChangePasswordWindow.xaml.cs
 
 using System.Windows;
-using WPF_Test.ViewModels; // WICHTIG: Damit er das ViewModel findet
+using BAT_Man.ViewModels; // WICHTIG: Damit er das ViewModel findet
 
-namespace WPF_Test.Views
+namespace BAT_Man.Views
 {
     public partial class ChangePasswordWindow : Window
     {

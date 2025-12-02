@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF_Test", "WPF_Test.csproj", "{BC64CB49-6618-4466-BA8A-853B34D1225C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAT_Man", "BAT_Man.csproj", "{BC64CB49-6618-4466-BA8A-853B34D1225C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,8 +18,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {4C448456-27DE-4CB0-BBDF-AED2FA0B43AA}
 	EndGlobalSection
 EndGlobal

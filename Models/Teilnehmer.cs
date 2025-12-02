@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WPF_Test.Models
+namespace BAT_Man.Models
 {
     public class Teilnehmer
     {

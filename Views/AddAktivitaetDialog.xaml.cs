@@ -1,11 +1,11 @@
 ﻿// Dateipfad: Views/AddAktivitaetDialog.xaml.cs
 
 using System.Windows;
-using WPF_Test.ViewModels;
+using BAT_Man.ViewModels;
 // NEU: Wir brauchen das Model
-using WPF_Test.Models;
+using BAT_Man.Models;
 
-namespace WPF_Test.Views
+namespace BAT_Man.Views
 {
     public partial class AddAktivitaetDialog : Window
     {

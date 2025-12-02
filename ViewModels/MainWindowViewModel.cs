@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using WPF_Test.Models;
-using WPF_Test.Services;
+using BAT_Man.Models;
+using BAT_Man.Services;
 using System.Windows.Input;
-using WPF_Test.ViewModels;
-using WPF_Test.Views;
+using BAT_Man.ViewModels;
+using BAT_Man.Views;
 
-namespace WPF_Test.ViewModels
+namespace BAT_Man.ViewModels
 {
     /// <summary>
     /// Das Haupt-ViewModel ("MainViewModel").

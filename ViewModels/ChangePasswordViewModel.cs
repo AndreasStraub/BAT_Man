@@ -5,10 +5,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
-using WPF_Test.Services;
-using WPF_Test.Models;
+using BAT_Man.Services;
+using BAT_Man.Models;
 
-namespace WPF_Test.ViewModels
+namespace BAT_Man.ViewModels
 {
     /// <summary>
     /// Steuert die Logik für den Passwort-Änderungs-Dialog.
@@ -34,7 +34,8 @@ namespace WPF_Test.ViewModels
         /// Führt die Speicherlogik aus.
         /// </summary>
         /// <param name="parameter">Erwartet das PasswordBox-Objekt aus der View.</param>
-        private void ExecuteSave(object parameter)
+        // <!*-- ÄNDERUNG: 'async void' ermöglicht das Warten auf den Service (await) --*!>
+        private async void ExecuteSave(object parameter)
         {
             // 1. Parameter-Prüfung: Ist der Parameter wirklich eine PasswordBox?
             if (parameter is PasswordBox pb)
@@ -49,29 +50,22 @@ namespace WPF_Test.ViewModels
                     return;
                 }
 
-                try
-                {
-                    // 2. Aufruf des Business-Services (Validierung und Speicherung)
-                    bool erfolg = AuthenticationService.Instance.ChangePassword(currentUser.TeilnehmerID, neuesPasswort);
+                // <!*-- ÄNDERUNG: Aufruf der neuen API-Methode --*!>
+                // Der Service kümmert sich um Validierung, HTTP-Request und Fehler-Anzeige.
+                // Wir müssen hier nur auf das Ergebnis (true/false) warten.
+                bool erfolg = await AuthenticationService.Instance.ChangePasswordAsync(
+                    currentUser.TeilnehmerID,
+                    currentUser.RehaNummer,
+                    neuesPasswort);
 
-                    if (erfolg)
-                    {
-                        MessageBox.Show("Passwort erfolgreich geändert.", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (erfolg)
+                {
+                    MessageBox.Show("Passwort erfolgreich geändert.", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                        // Schließt das Fenster mit positivem Ergebnis
-                        CloseWindow(true);
-                    }
+                    // Schließt das Fenster mit positivem Ergebnis
+                    CloseWindow(true);
                 }
-                catch (ArgumentException ex)
-                {
-                    // Fängt Validierungsfehler ab (z.B. "Passwort zu kurz")
-                    MessageBox.Show(ex.Message, "Passwort unsicher", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
-                catch (Exception ex)
-                {
-                    // Fängt allgemeine Fehler ab (z.B. Datenbank nicht erreichbar)
-                    MessageBox.Show("Fehler: " + ex.Message);
-                }
+                // Else: Im Fehlerfall hat der Service bereits eine Meldung angezeigt.
             }
         }
 

@@ -1,4 +1,4 @@
-﻿<Window x:Class="WPF_Test.Views.EditFirmaDialogWindow"
+﻿<Window x:Class="BAT_Man.Views.EditFirmaDialogWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 

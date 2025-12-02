@@ -1,7 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System.Data;
 
-namespace WPF_Test.Repositories
+namespace BAT_Man.Repositories
 {
     /// <summary>
     /// Abstrakte Basisklasse für die Implementierung des Repository-Patterns.

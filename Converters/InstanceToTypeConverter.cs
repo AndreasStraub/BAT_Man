@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace WPF_Test.Converters
+namespace BAT_Man.Converters
 {
     /// <summary>
     /// Wandelt ein Objekt (z.B. das aktuelle ViewModel) in seinen Typ um.

@@ -1,6 +1,6 @@
-﻿using WPF_Test.Models;
+﻿using BAT_Man.Models;
 
-namespace WPF_Test.Services
+namespace BAT_Man.Services
 {
     /// <summary>
     /// Verwaltet den globalen Status der aktuellen Benutzersitzung.

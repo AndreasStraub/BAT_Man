@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using WPF_Test.Models;
-using WPF_Test.Services;
+using BAT_Man.Models;
+using BAT_Man.Services;
 
-namespace WPF_Test.Repositories
+namespace BAT_Man.Repositories
 {
     /// <summary>
     /// Repository für die Verwaltung von Status-Einträgen.

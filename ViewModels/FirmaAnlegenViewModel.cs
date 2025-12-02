@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using WPF_Test.Models;
-using WPF_Test.Repositories;
+using BAT_Man.Models;
+using BAT_Man.Repositories;
 using System.Windows.Input;
-using WPF_Test.Services;
+using BAT_Man.Services;
 using System.Windows;
 
-namespace WPF_Test.ViewModels
+namespace BAT_Man.ViewModels
 {
     /// <summary>
     /// Das "Gehirn" für das Firma-Formular.

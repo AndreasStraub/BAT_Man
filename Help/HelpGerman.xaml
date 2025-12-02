@@ -5,7 +5,8 @@
     <!-- TITEL -->
     <s:String x:Key="Help_Title_Overview">Hilfe: Firmenübersicht</s:String>
     <s:String x:Key="Help_Title_Details">Hilfe: Firmendetails</s:String>
-    <s:String x:Key="Help_Title_General">Hilfe: Allgemein</s:String>
+    <s:String x:Key="Help_Title_Edit">Hilfe: Firma anlegen</s:String>
+    <s:String x:Key="Help_Title_Settings">Hilfe: Einstellungen</s:String>
     <s:String x:Key="Help_Title_Welcome">Willkommen bei der BAT-Man Hilfe</s:String>
 
     <!-- UI ELEMENTE IN DER HILFE -->

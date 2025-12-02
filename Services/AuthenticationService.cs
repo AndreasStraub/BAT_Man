@@ -5,10 +5,10 @@ using System.Net.Http; // <!*-- WICHTIG: Für HttpClient --*!>
 using System.Text.Json; // <!*-- WICHTIG: Für JSON Parsing (statt Newtonsoft) --*!>
 using System.Threading.Tasks; // <!*-- WICHTIG: Für async/await --*!>
 using System.Windows;
-using WPF_Test.Models;
-using WPF_Test.Repositories;
+using BAT_Man.Models;
+using BAT_Man.Repositories;
 
-namespace WPF_Test.Services
+namespace BAT_Man.Services
 {
     public class AuthenticationService
     {
@@ -45,12 +45,11 @@ namespace WPF_Test.Services
         // ==========================================================
         // 2. Die Logik-Methode (Jetzt ASYNCHRON)
         // ==========================================================
-        // <!*-- ÄNDERUNG: Rückgabetyp ist jetzt Task<Teilnehmer> statt nur Teilnehmer --*!>
+
         public async Task<Teilnehmer> Login(string rehaNummer, string passwort)
         {
             // SCHRITT A: Externe Prüfung via HTTP (wartet auf Antwort...)
             bool istLoginGueltig = await PruefeLoginExtern(rehaNummer, passwort);
-            //bool istLoginGueltig = true;
 
             if (istLoginGueltig)
             {
@@ -60,7 +59,7 @@ namespace WPF_Test.Services
                 if (user == null)
                 {
                     // Fallback: User existiert im PHP-System, aber nicht lokal.
-                    // Hier könnte man Logging betreiben.
+                    MessageBox.Show("Benutzer im externen System gefunden, aber nicht in der lokalen Datenbank.", "Daten-Inkonsistenz");
                 }
 
                 return user;
@@ -70,13 +69,13 @@ namespace WPF_Test.Services
         }
 
         // ==========================================================
-        // 3. Die externe Prüfung (Implementiert mit Code der Auth-Gruppe)
+        // 3. Die externe Prüfung (Login)
         // ==========================================================
         private async Task<bool> PruefeLoginExtern(string rehaNummer, string passwort)
         {
             try
             {
-                // Datenpaket schnüren (wie von der anderen Gruppe vorgegeben)
+                // Datenpaket schnüren
                 var values = new Dictionary<string, string>
                 {
                     { "login_type", "Teilnehmer" },
@@ -85,42 +84,55 @@ namespace WPF_Test.Services
                 };
 
                 var content = new FormUrlEncodedContent(values);
-                MessageBox.Show("Sende Login-Anfrage an externen Server...\n"+ "Content: " + content.ReadAsStringAsync().Result); 
 
+                // Hinweis: URL ggf. anpassen, wenn sich IP ändert
                 var response = await _httpClient.PostAsync("http://192.168.9.123/it202407/auth/login.php", content);
-                MessageBox.Show("Empfange Antwort vom externen Server... Statuscode: " + response.StatusCode.ToString()); 
-
 
                 // Antwort lesen
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show("Empfangene Antwort: " + jsonString, "Debug"); 
 
                     // JSON parsen mit System.Text.Json
                     using (JsonDocument doc = JsonDocument.Parse(jsonString))
                     {
-                        // Wir suchen nach dem Feld "status"
                         if (doc.RootElement.TryGetProperty("status", out JsonElement statusElement))
                         {
                             string status = statusElement.GetString();
+
+                            // <!*-- HINWEIS: message ist optional, daher TryGet --*!>
+                            string meldung = "";
+                            if (doc.RootElement.TryGetProperty("message", out JsonElement msgElement))
+                            {
+                                meldung = msgElement.GetString();
+                            }
+
                             if (status == "success")
                             {
-                                return true; // Ja, Login war erfolgreich
+                                return true; // Login erfolgreich
+                            }
+                            else if (status == "password_change_required")
+                            {
+                                // <!*-- WICHTIG: KEINE Rekursion hier! --*!>
+                                // Wir geben 'true' zurück. Das bedeutet: "Nutzerdaten sind korrekt."
+                                // Dass das Passwort geändert werden MUSS, steht in der Datenbank (Feld: Erstanmeldung).
+                                // Die App.xaml.cs prüft dieses Feld NACH dem Login und öffnet dann den Dialog.
+                                MessageBox.Show(meldung, "Hinweis", MessageBoxButton.OK, MessageBoxImage.Information);
+                                return true;
                             }
                             else
                             {
-                                return false; // Nein, Login fehlgeschlagen
+                                // Fehler anzeigen (z.B. falsches Passwort)
+                                if (!string.IsNullOrEmpty(meldung)) MessageBox.Show(meldung);
+                                return false;
                             }
                         }
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                MessageBox.Show("Es gab einen Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.");
-                // Bei Netzwerkfehlern (Server nicht erreichbar) geben wir "false" zurück.
-                // In einer echten App würde man hier eine spezifische Fehlermeldung speichern.
+                MessageBox.Show("Fehler beim Login-Server: " + ex.Message);
                 return false;
             }
 
@@ -128,15 +140,68 @@ namespace WPF_Test.Services
         }
 
         // ==========================================================
-        // 4. Change Password
+        // 4. Change Password (API Variante)
         // ==========================================================
-        public bool ChangePassword(int teilnehmerId, string neuesPasswort)
+        // <!*-- Implementierung von 'Möglichkeit 1' via API --*!>
+        public async Task<bool> ChangePasswordAsync(int teilnehmerId, string rehaNummer, string neuesPasswort)
         {
+            // 1. Validierung
             if (!IsPasswordStrong(neuesPasswort))
             {
-                throw new ArgumentException("Das Passwort muss mind. 8 Zeichen, Groß-/Kleinbuchstaben, Ziffern und Sonderzeichen enthalten.");
+                MessageBox.Show("Das Passwort muss mind. 8 Zeichen, Groß-/Kleinbuchstaben, Ziffern und Sonderzeichen enthalten.", "Passwort unsicher");
+                return false;
             }
-            return true;
+
+            //return true; // VORÜBERGEHEND, bis die API fertig ist.
+
+            try
+            {
+                // 2. Datenpaket für change_password.php
+                var values = new Dictionary<string, string>
+                {
+                    //{ "action", "change_password" },
+                    { "reha_nr", rehaNummer }, // API identifiziert User über RehaNr
+                    { "neues_passwort", neuesPasswort }
+                };
+
+                var content = new FormUrlEncodedContent(values);
+
+                var response = await _httpClient.PostAsync("http://192.168.9.123/it202407/auth/change_password.php", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+
+                    // Einfache Prüfung auf Erfolg
+                    if (jsonString.Contains("success"))
+                    {
+                        // <!*-- WICHTIG: RAM-UPDATE --*!>
+                        // Wir müssen dem Singleton sagen, dass der User sein Passwort jetzt geändert hat.
+                        // Sonst fragt die App beim nächsten Klick wieder nach.
+                        var sitzung = AktiveSitzung.Instance;
+                        if (sitzung.IstAngemeldet() && sitzung.AngemeldeterTeilnehmer.TeilnehmerID == teilnehmerId)
+                        {
+                            sitzung.AngemeldeterTeilnehmer.MussPasswortAendern = false;
+                        }
+
+                        return true;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Server meldet Fehler beim Ändern: " + jsonString);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Server-Fehler: " + response.StatusCode);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Verbindungsfehler beim Passwort-Ändern: " + ex.Message);
+            }
+
+            return false;
         }
     }
 }

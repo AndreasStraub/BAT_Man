@@ -3,7 +3,7 @@
 using System.Windows.Controls; // WICHTIG: 'Window' zu 'UserControl' geändert
 
 // WICHTIG: Der Namespace MUSS so lauten
-namespace WPF_Test.Views
+namespace BAT_Man.Views
 {
     /// <summary>
     /// Interaktionslogik für FirmaAnlegenView.xaml

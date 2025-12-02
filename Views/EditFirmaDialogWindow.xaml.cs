@@ -2,9 +2,9 @@
 // KORRIGIERTE VERSION (Ruft die korrekte Methode auf)
 
 using System.Windows;
-using WPF_Test.ViewModels;
+using BAT_Man.ViewModels;
 
-namespace WPF_Test.Views
+namespace BAT_Man.Views
 {
     /// <summary>
     /// Interaktionslogik für EditFirmaDialogWindow.xaml

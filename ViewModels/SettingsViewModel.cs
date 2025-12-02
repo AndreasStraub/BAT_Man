@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using WPF_Test.Services;
+using BAT_Man.Services;
 using System.Windows.Input;
 using System.Windows;
-using WPF_Test.Views;
+using BAT_Man.Views;
 
-namespace WPF_Test.ViewModels
+namespace BAT_Man.ViewModels
 {
     /// <summary>
     /// Steuert die Einstellungs-Seite.

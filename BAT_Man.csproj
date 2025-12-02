@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <RootNamespace>BAT_Man</RootNamespace>
+    <AssemblyName>BAT_Man</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,9 +26,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Images\Einstellungen.png" />
+    <None Remove="Images\FirmaAnlegen.png" />
+    <None Remove="Images\FirmaAnzeigen.png" />
+    <None Remove="Images\FirmenUebersicht.png" />
     <None Remove="Images\Help_FirmaAnlegen.png" />
     <None Remove="Images\Help_FirmenAnzeigen.png" />
     <None Remove="Images\Help_FirmenListe.png" />
+    <None Remove="Images\WilkommensSeite.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,9 +48,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Images\Help_FirmaAnlegen.png" />
-    <Resource Include="Images\Help_FirmenAnzeigen.png" />
-    <Resource Include="Images\Help_FirmenListe.png" />
+    <Resource Include="Images\Einstellungen.png" />
+    <Resource Include="Images\FirmaAnlegen.png" />
+    <Resource Include="Images\FirmaAnzeigen.png" />
+    <Resource Include="Images\FirmenUebersicht.png" />
+    <Resource Include="Images\WilkommensSeite.png" />
   </ItemGroup>
 
   <ItemGroup>

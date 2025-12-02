@@ -2,10 +2,10 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows; // Wichtig für Application.Current
+using System.Windows; 
 using System.Windows.Input;
 
-namespace WPF_Test.ViewModels
+namespace BAT_Man.ViewModels
 {
     public class LegendenPunkt
     {
@@ -15,7 +15,6 @@ namespace WPF_Test.ViewModels
 
     public class HilfeViewModel : INotifyPropertyChanged
     {
-        // ... (Properties Titel, BildPfad, Legende wie gehabt) ...
         private string _titel;
         public string Titel { get => _titel; set { _titel = value; OnPropertyChanged(); } }
 
@@ -31,7 +30,6 @@ namespace WPF_Test.ViewModels
             LadeHilfeDaten(kontextKey);
         }
 
-        // [NEU] Hilfsmethode, um Texte aus der Strings.de.xaml zu holen
         private string GetText(string resourceKey)
         {
             var text = Application.Current.TryFindResource(resourceKey) as string;
@@ -48,50 +46,55 @@ namespace WPF_Test.ViewModels
                 // --- 1. FIRMEN ÜBERSICHT ---
                 case "FirmenUebersichtViewModel":
                     Titel = GetText("Help_Title_Overview");
-                    BildPfad = "/Images/Help_FirmenListe.png";
+                    BildPfad = "/Images/FirmenUebersicht.png";
 
                     Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_Search") });
                     Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_Table") });
-                    Legende.Add(new LegendenPunkt { Nummer = "3", Beschreibung = GetText("Help_Desc_New") });
+
                     break;
 
                 // --- 2. FIRMEN DETAILS ---
                 case "FirmaAnzeigenViewModel":
                     Titel = GetText("Help_Title_Details");
-                    BildPfad = "/Images/Help_FirmenAnzeigen.png";
+                    BildPfad = "/Images/FirmaAnzeigen.png";
 
                     Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_DetailHeader") });
-                    Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_Activities") });
+                    Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_Table") });
+                    Legende.Add(new LegendenPunkt { Nummer = "3", Beschreibung = GetText("Help_Desc_New") });
+                    Legende.Add(new LegendenPunkt { Nummer = "4", Beschreibung = GetText("Help_Desc_Activities") });
                     break;
 
                 // --- 3. FIRMEN EDITOR (NEU / BEARBEITEN) ---
                 case "FirmaAnlegenViewModel":
                     Titel = GetText("Help_Title_Edit");
-                    BildPfad = "/Images/Help_FirmaAnlegen.png";
+                    BildPfad = "/Images/FirmaAnlegen.png";
 
                     Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_Mandatory") });
-                    Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_Save") });
-                    Legende.Add(new LegendenPunkt { Nummer = "!", Beschreibung = GetText("Help_Desc_Validation") });
+
                     break;
 
                 // --- 4. EINSTELLUNGEN ---
                 case "SettingsViewModel":
                     Titel = GetText("Help_Title_Settings");
-                    BildPfad = "/WPF_Test;component/Images/Help_Settings.png"; // Bild müsstest du noch erstellen
+                    BildPfad = "/BAT_Man;component/Images/Einstellungen.png"; 
 
                     Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_Language") });
                     Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_Theme") });
                     Legende.Add(new LegendenPunkt { Nummer = "3", Beschreibung = GetText("Help_Desc_Password") });
+
                     break;
 
                 // --- 5. WILLKOMMEN / FALLBACK ---
                 case "WelcomeViewModel":
                 default:
                     Titel = GetText("Help_Title_Welcome");
-                    BildPfad = "/WPF_Test;component/Images/Help_Welcome.png";
+                    BildPfad = "/BAT_Man;component/Images/WillkommensSeite.png";
 
-                    Legende.Add(new LegendenPunkt { Nummer = "A", Beschreibung = GetText("Help_Desc_Nav") });
-                    Legende.Add(new LegendenPunkt { Nummer = "B", Beschreibung = GetText("Help_Desc_Status") });
+                    Legende.Add(new LegendenPunkt { Nummer = "1", Beschreibung = GetText("Help_Desc_Nav") });
+                    Legende.Add(new LegendenPunkt { Nummer = "2", Beschreibung = GetText("Help_Desc_Table") });
+                    Legende.Add(new LegendenPunkt { Nummer = "3", Beschreibung = GetText("Help_Desc_New") });
+                    Legende.Add(new LegendenPunkt { Nummer = "4", Beschreibung = GetText("Help_Desc_Settings") });
+                    Legende.Add(new LegendenPunkt { Nummer = "5", Beschreibung = GetText("Help_Desc_Help") });
                     break;
             }
         }

@@ -1,7 +1,7 @@
 ﻿// Dateipfad: Models/Aktivitaet.cs
 using System;
 
-namespace WPF_Test.Models
+namespace BAT_Man.Models
 {
     /// <summary>
     /// Repräsentiert einen einzelnen Aktivitäts-Eintrag (eine Zeile).

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace WPF_Test.Services
+namespace BAT_Man.Services
 {
     /// <summary>
     /// Eine Standard-Implementierung des ICommand-Interfaces für MVVM.

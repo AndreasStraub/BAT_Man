@@ -1,7 +1,7 @@
 ﻿// Dateipfad: ViewModels/WelcomeViewModel.cs
 
 // Wichtig: Sicherstellen, dass der Namespace korrekt ist.
-namespace WPF_Test.ViewModels
+namespace BAT_Man.ViewModels
 {
     /// <summary>
     /// Das "Gehirn" (ViewModel) für die Willkommens-Seite (WelcomeView).

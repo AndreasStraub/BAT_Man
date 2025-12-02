@@ -1,9 +1,9 @@
 ﻿using System.Windows;
-using WPF_Test.Views;
-using WPF_Test.ViewModels;
-using WPF_Test.Services;
+using BAT_Man.Views;
+using BAT_Man.ViewModels;
+using BAT_Man.Services;
 
-namespace WPF_Test
+namespace BAT_Man
 {
     /// <summary>
     /// Interaktionslogik für "App.xaml".

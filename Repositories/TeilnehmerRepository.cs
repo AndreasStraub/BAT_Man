@@ -1,8 +1,8 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using WPF_Test.Models;
+using BAT_Man.Models;
 
-namespace WPF_Test.Repositories
+namespace BAT_Man.Repositories
 {
     public class TeilnehmerRepository : BaseRepository
     {

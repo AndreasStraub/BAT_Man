@@ -2,14 +2,14 @@
 using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using WPF_Test.Models;
-using WPF_Test.Repositories;
-using WPF_Test.Services;
-using WPF_Test.Views;
+using BAT_Man.Models;
+using BAT_Man.Repositories;
+using BAT_Man.Services;
+using BAT_Man.Views;
 using System.Windows;
 // using System.Linq; // Wurde entfernt, da wir jetzt klassische Schleifen statt LINQ verwenden
 
-namespace WPF_Test.ViewModels
+namespace BAT_Man.ViewModels
 {
     /// <summary>
     /// Steuert die Detailansicht einer Firma.
