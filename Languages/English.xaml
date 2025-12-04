@@ -10,7 +10,10 @@
     <system:String x:Key="Nav_Help">Help</system:String>
     <system:String x:Key="Nav_LoggedInAs">Logged in as:</system:String>
 
-    <system:String x:Key="Welcome_Message">Welcome to BAT-Man!</system:String>
+    <system:String x:Key="Welcome_Intro">Welcome to</system:String>
+    <system:String x:Key="Welcome_Title">BAT-Man</system:String>
+    <system:String x:Key="Welcome_Subtitle">Management system for participant application activities</system:String>
+    <system:String x:Key="Welcome_Instruction">Please select a function on the left.</system:String>
 
     <system:String x:Key="SaveButton">Save</system:String>
     <system:String x:Key="UpdateButton">Update</system:String>

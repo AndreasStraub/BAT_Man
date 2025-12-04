@@ -151,6 +151,7 @@ namespace BAT_Man.ViewModels
         /// </summary>
         private void ExecuteShowBetriebAnzeigen(object p)
         {
+            _betriebAnzeigenViewModel.RefreshDaten();
             AktuellesViewModel = _betriebAnzeigenViewModel;
         }
 

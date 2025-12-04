@@ -8,7 +8,6 @@ namespace BAT_Man
     /// <summary>
     /// Interaktionslogik für "App.xaml".
     /// Steuert den manuellen Programmstart, die Authentifizierung und die Initialisierung des Hauptfensters.
-    /// -> (Siehe Dokumentation: 01_Start_App.md)
     /// </summary>
     public partial class App : Application
     {
@@ -20,11 +19,6 @@ namespace BAT_Man
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
-            // ------------------------------------------------------------
-            // PHASE 1: Authentifizierung (Login)
-            // -> (Siehe Dokumentation: 01_Start_App.md > Programmablauf Phase 1)
-            // ------------------------------------------------------------
 
             // Instanziierung von ViewModel und View
             LoginViewModel loginVm = new LoginViewModel();
@@ -43,28 +37,21 @@ namespace BAT_Man
                 return;
             }
 
-            // ------------------------------------------------------------
-            // PHASE 2: Sicherheitsprüfung (Passwort-Zwang)
-            // -> (Siehe Dokumentation: 01_Start_App.md > Programmablauf Phase 2)
-            // ------------------------------------------------------------
-
             // Zugriff auf den globalen Singleton-Status des angemeldeten Benutzers
             var aktuellerUser = AktiveSitzung.Instance.AngemeldeterTeilnehmer;
 
             if (aktuellerUser != null && aktuellerUser.MussPasswortAendern)
             {
-                MessageBox.Show("Sie müssen Ihr Passwort ändern, bevor Sie fortfahren können.",
-                                "Sicherheitshinweis",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Information);
+                // Diese Meldung ist jetzt im ChangePasswordWindow integriert.
+                //MessageBox.Show("Sie müssen Ihr Passwort ändern, bevor Sie fortfahren können.",
+                //                "Sicherheitshinweis",
+                //                MessageBoxButton.OK,
+                //                MessageBoxImage.Information);
 
-                // KORREKTUR: Wir nutzen den Standard-Konstruktor, passend zu deinem aktuellen Code-Stand.
                 ChangePasswordViewModel pwVm = new ChangePasswordViewModel();
 
                 ChangePasswordWindow pwWindow = new ChangePasswordWindow();
 
-                // Wir setzen den DataContext explizit, falls er nicht schon in der View gesetzt ist.
-                // Falls deine View den DataContext im XAML setzt, überschreibt dies hier nichts Kritisches.
                 pwWindow.DataContext = pwVm;
 
                 bool? pwResult = pwWindow.ShowDialog();
@@ -76,11 +63,6 @@ namespace BAT_Man
                 }
             }
 
-            // ------------------------------------------------------------
-            // PHASE 3: Initialisierung Hauptfenster
-            // -> (Siehe Dokumentation: 01_Start_App.md > Programmablauf Phase 3)
-            // ------------------------------------------------------------
-
             MainWindowViewModel mainVm = new MainWindowViewModel();
             MainWindow mainWindow = new MainWindow();
 
@@ -90,9 +72,8 @@ namespace BAT_Man
             mainWindow.Show();
 
             // ============================================================
-            // DER TRICK: Modus jetzt umschalten!
-            // ============================================================
-            // Jetzt, wo das Hauptfenster offen ist, ändern wir die Regel.
+            // Modus wird jetzt geändert:    
+            // Jetzt, wo das Hauptfenster offen ist, wird die Regel geändert.
             // Ab jetzt gilt: "Wenn das Hauptfenster zugeht, beende dich."
             // ============================================================
             this.ShutdownMode = ShutdownMode.OnMainWindowClose;

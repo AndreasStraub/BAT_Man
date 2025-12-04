@@ -6,10 +6,50 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <TextBlock Text="{DynamicResource Welcome_Message}"
-                   FontSize="24" 
+        <!-- 
+            ZENTRALER BLOCK
+            Beinhaltet die Begrüßung, den Titel und den Untertitel.
+            Alles ist horizontal zentriert.
+        -->
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
+            <!-- Zeile 1: "Willkommen bei" -->
+            <TextBlock Text="{DynamicResource Welcome_Intro}"
+                       FontSize="24" 
+                       Foreground="{DynamicResource TextForeground}"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,5"/>
+
+            <!-- Zeile 2: "BAT-Man" (Groß und Fett) -->
+            <TextBlock Text="{DynamicResource Welcome_Title}"
+                       FontSize="48" 
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource TextForeground}"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,10"/>
+
+            <!-- Zeile 3: "Managementsystem..." -->
+            <TextBlock Text="{DynamicResource Welcome_Subtitle}"
+                       FontSize="20" 
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextForeground}"
+                       HorizontalAlignment="Center"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <!-- 
+            HINWEIS-TEXT (Unten Links)
+            "Bitte wählen Sie links eine Funktion"
+            Kursiv gesetzt, wie im Screenshot.
+        -->
+        <TextBlock Text="{DynamicResource Welcome_Instruction}"
+                   FontSize="16"
+                   FontStyle="Italic"
                    Foreground="{DynamicResource TextForeground}"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
+                   Opacity="0.8"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Left"
+                   Margin="20"/>
     </Grid>
 </UserControl>

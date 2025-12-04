@@ -35,7 +35,7 @@
 
     <!-- ERKLÄRUNGEN (Einstellungen) -->
     <s:String x:Key="Help_Desc_ChangeDesign">Hier kann das Design geändert werden.</s:String>
-    <s:String x:Key="Help_Desc_ChangeLanguage">Hier kann die Sparache geändert werden.</s:String>
+    <s:String x:Key="Help_Desc_ChangeLanguage">Hier kann die Sprache geändert werden.</s:String>
     <s:String x:Key="Help_Desc_ChangePassword">Ruft den Dialog zum Ändern des Passwortes auf.</s:String>
 
 

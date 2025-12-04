@@ -104,7 +104,9 @@ namespace BAT_Man.ViewModels
             _aktivitaetRepository = new AktivitaetRepository();
 
             // Initiales Laden aller Firmen für die Dropdown-Liste
-            LadeAlleFirmenFuerComboBox();
+            // LadeAlleFirmenFuerComboBox();
+            // <!*-- Initiales Laden ist gut, reicht aber nicht für spätere Änderungen --*!>
+            RefreshDaten();
 
             // Commands initialisieren
             AddAktivitaetCommand = new RelayCommand(ExecuteAddAktivitaet, CanExecuteAddAktivitaet);
@@ -141,6 +143,11 @@ namespace BAT_Man.ViewModels
 
         // --- Lade-Logik (Datenbeschaffung) ---
 
+        public void RefreshDaten()
+        {
+            LadeAlleFirmenFuerComboBox();
+        }
+
         /// <summary>
         /// Lädt die Liste aller Firmen aus der Datenbank neu.
         /// Versucht dabei, die aktuell ausgewählte Firma wiederherzustellen (Selection Restore).
@@ -169,7 +176,14 @@ namespace BAT_Man.ViewModels
                     }
                 }
             }
+            else if (AlleFirmen.Count > 0)
+            {
+                AusgewaehlteFirma = AlleFirmen[0];
+            }
         }
+
+
+
 
         /// <summary>
         /// Lädt die Aktivitäten passend zur aktuell ausgewählten Firma.

@@ -11,10 +11,10 @@
         ShutdownMode: "OnExplicitShutdown".
         Verhindert das automatische Beenden der App beim Wechsel vom Login- zum Hauptfenster.
     -->
-
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+
                 <!-- 
                     Globale Ressourcen:
                     Zentrales Laden von Styles, Themes und Sprachen zur besseren Wartbarkeit.
@@ -28,13 +28,12 @@
             <!-- Globaler Converter für Menü-Logik (View-Erkennung) -->
             <converters:InstanceToTypeConverter x:Key="InstanceToTypeConverter"/>
             <converters:MultiParameterConverter x:Key="MultiParameterConverter"/>
+            
             <!-- 
                 MVVM DataTemplates:
                 Definition der Zuordnung zwischen ViewModel (Logik) und View (UI).
                 Ermöglicht die automatische View-Instanziierung durch WPF.
-                -> (Siehe Dokumentation: App.xaml.md > 3. DataTemplates)
             -->
-
             <DataTemplate DataType="{x:Type viewmodels:WelcomeViewModel}">
                 <views:WelcomeView/>
             </DataTemplate>
@@ -65,5 +64,4 @@
 
         </ResourceDictionary>
     </Application.Resources>
-
 </Application>
