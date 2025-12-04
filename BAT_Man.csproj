@@ -8,6 +8,7 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>BAT_Man</RootNamespace>
     <AssemblyName>BAT_Man</AssemblyName>
+    <ApplicationIcon>Images\Bat-Man_Icon1.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,6 +41,10 @@
     <Page Remove="Styles\BasisStyles02.xaml" />
     <Page Remove="Styles\BasisStyles03.xaml" />
     <Page Remove="Styles\BasisStyles04.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\Bat-Man_Icon1.ico" />
   </ItemGroup>
 
   <ItemGroup>

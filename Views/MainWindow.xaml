@@ -7,9 +7,10 @@
         xmlns:viewmodels="clr-namespace:BAT_Man.ViewModels"
         mc:Ignorable="d"
         Title="BAT-Man" Height="740" Width="1200"
+        Icon="/Images/Bat-Man_Icon1.ico"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource AppBackground}">
-
+        
     <!--  
         DATEN-KONTEXT (Verbindung zur Logik)
         Hier wird eine Instanz des 'MainWindowViewModel' erstellt und dem Fenster zugewiesen.
