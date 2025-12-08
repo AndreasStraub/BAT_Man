@@ -15,6 +15,7 @@ namespace BAT_Man.Models
         public int Rolle_ID { get; set; }
         public int Kurs_ID { get; set; }
         public int Fachrichtung_ID { get; set; }
+        public string Kurs {  get; set; }
 
         // WICHTIG: tinyint(1) in MySQL wird in C# meist als bool behandelt.
         public bool Erstanmeldung { get; set; }
@@ -37,11 +38,5 @@ namespace BAT_Man.Models
             get { return Erstanmeldung; }
             set { Erstanmeldung = value; }
         }
-
-        // TODO: Kurs-Name ergänzen
-        // Die App erwartet einen Kurs-Namen (String).
-        // Da wir nur die Kurs_ID haben, wird ein provisorischer String gebaut.
-        // (Für den echten Namen bräuchte man später einen SQL-JOIN auf die Kurs-Tabelle).
-        public string Kurs => $"Kurs-ID: {Kurs_ID}";
     }
 }

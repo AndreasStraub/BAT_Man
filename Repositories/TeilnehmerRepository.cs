@@ -25,7 +25,18 @@ namespace BAT_Man.Repositories
 
             // SCHRITT 2: SQL Abfrage
             // Wir suchen in 'Teilnehmer_ID', laden aber alle Felder, die wir brauchen.
-            string query = "SELECT * FROM Teilnehmer WHERE Teilnehmer_ID = @Id LIMIT 1";
+            string query = "select t.Teilnehmer_ID,  " +
+                                    "t.Vorname, " +
+                                    "t.Nachname, " +
+                                    "t.EMail, " +
+                                    "t.Rolle_ID, " +
+                                    "t.Kurs_ID, " +
+                                    "k.Name as KursName, " +
+                                    "t.Fachrichtung_ID, " +
+                                    "t.Erstanmeldung " +
+                                    "from Teilnehmer t " +
+                            "join Kurs k on t.Kurs_ID = k.Kurs_ID " +
+                            "where t.Teilnehmer_ID = @Id LIMIT 1";
 
             try
             {
@@ -46,6 +57,7 @@ namespace BAT_Man.Repositories
                                     Vorname = reader["Vorname"] as string,
                                     Nachname = reader["Nachname"] as string,
                                     EMail = reader["EMail"] as string,
+                                    Kurs = reader["KursName"] as string,
 
                                     // Umgang mit NULL bei IDs (falls das Feld leer sein darf)
                                     Rolle_ID = reader["Rolle_ID"] != DBNull.Value ? reader.GetInt32("Rolle_ID") : 0,
