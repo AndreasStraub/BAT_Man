@@ -7,7 +7,6 @@ using BAT_Man.Repositories;
 using BAT_Man.Services;
 using BAT_Man.Views;
 using System.Windows;
-// using System.Linq; // Wurde entfernt, da wir jetzt klassische Schleifen statt LINQ verwenden
 
 namespace BAT_Man.ViewModels
 {
@@ -28,20 +27,20 @@ namespace BAT_Man.ViewModels
         private readonly AktivitaetRepository _aktivitaetRepository;
 
         // Speichert optional die ID einer Firma, die beim Laden vorselektiert werden soll.
-        // Dies wird benötigt, wenn man per Doppelklick aus der Übersicht kommt.
+        // Dies ist notwendig für die Navigation per Doppelklick aus der Übersichtstabelle.
         private readonly int? _firmaIdToPreselect = null;
 
         // --- Öffentliche Eigenschaften (Datenquellen für die View) ---
 
         /// <summary>
         /// Beinhaltet alle Firmen aus der Datenbank.
-        /// Wird an die ComboBox gebunden, damit der Benutzer die Firma wechseln kann.
+        /// Dient als Datenquelle für die ComboBox, um einen schnellen Wechsel zu ermöglichen.
         /// </summary>
         public ObservableCollection<Firma> AlleFirmen { get; set; } = new ObservableCollection<Firma>();
 
         /// <summary>
         /// Beinhaltet die Aktivitäten (Anrufe, Notizen) der aktuell ausgewählten Firma.
-        /// Wird an die untere ListView gebunden.
+        /// Dient als Datenquelle für die untere ListView (Historie).
         /// </summary>
         public ObservableCollection<Aktivitaet> AktivitaetenListe { get; set; } = new ObservableCollection<Aktivitaet>();
 
@@ -50,7 +49,7 @@ namespace BAT_Man.ViewModels
         /// Die aktuell angezeigte Firma.
         /// <para>
         /// LOGIK IM SETTER:
-        /// Wenn eine neue Firma gesetzt wird (durch ComboBox oder Navigation),
+        /// Wird eine neue Firma gesetzt (durch ComboBox oder Navigation),
         /// löst dies automatisch das Nachladen der zugehörigen Aktivitäten aus (LadeAktivitaeten).
         /// </para>
         /// </summary>
@@ -62,7 +61,7 @@ namespace BAT_Man.ViewModels
                 _ausgewaehlteFirma = value;
                 OnPropertyChanged();
 
-                // WICHTIG: Kaskadierendes Laden. Neue Firma = Neue Aktivitätenliste.
+                // Kaskadierendes Laden: Neue Firma bedeutet neue Aktivitätenliste.
                 LadeAktivitaeten();
             }
         }
@@ -70,7 +69,7 @@ namespace BAT_Man.ViewModels
         private Aktivitaet _ausgewaehlteAktivitaet;
         /// <summary>
         /// Die aktuell in der unteren Liste markierte Aktivität.
-        /// Wird benötigt, um zu entscheiden, welche Aktivität bearbeitet werden soll.
+        /// Wird benötigt, um bei Klick auf "Bearbeiten" den korrekten Datensatz zu identifizieren.
         /// </summary>
         public Aktivitaet AusgewaehlteAktivitaet
         {
@@ -89,7 +88,7 @@ namespace BAT_Man.ViewModels
         /// <summary>Öffnet den Dialog zum Hinzufügen einer neuen Aktivität.</summary>
         public ICommand AddAktivitaetCommand { get; }
 
-        /// <summary>Öffnet den Dialog zum Bearbeiten einer existierenden Aktivität (Doppelklick).</summary>
+        /// <summary>Öffnet den Dialog zum Bearbeiten einer existierenden Aktivität.</summary>
         public ICommand BearbeitenCommand { get; }
 
         // --- Konstruktoren ---
@@ -103,12 +102,10 @@ namespace BAT_Man.ViewModels
             _firmaRepository = new FirmaRepository();
             _aktivitaetRepository = new AktivitaetRepository();
 
-            // Initiales Laden aller Firmen für die Dropdown-Liste
-            // LadeAlleFirmenFuerComboBox();
-            // <!*-- Initiales Laden ist gut, reicht aber nicht für spätere Änderungen --*!>
+            // Initiales Laden aller Daten.
             RefreshDaten();
 
-            // Commands initialisieren
+            // Initialisierung der Commands
             AddAktivitaetCommand = new RelayCommand(ExecuteAddAktivitaet, CanExecuteAddAktivitaet);
             FirmaBearbeitenCommand = new RelayCommand(ExecuteFirmaBearbeiten, CanExecuteFirmaBearbeiten);
             BearbeitenCommand = new RelayCommand(ExecuteEditAktivitaet, CanExecuteEditAktivitaet);
@@ -119,17 +116,15 @@ namespace BAT_Man.ViewModels
         /// Navigations-Konstruktor: Wird aufgerufen, wenn aus der Firmenübersicht navigiert wird.
         /// </summary>
         /// <param name="firmaToSelect">Das Firmen-Objekt, das direkt angezeigt werden soll.</param>
-        public FirmaAnzeigenViewModel(Firma firmaToSelect) : this() // Ruft zuerst den Standard-Konstruktor auf (Code-Reuse)
+        public FirmaAnzeigenViewModel(Firma firmaToSelect) : this() // Ruft zuerst den Standard-Konstruktor auf (Code-Wiederverwendung)
         {
-            // Speichere die ID der gewünschten Firma für später
+            // Speichern der ID der gewünschten Firma für die spätere Selektion
             _firmaIdToPreselect = firmaToSelect?.Firma_ID;
 
-            // Suche die Firma in der geladenen Liste und setze sie als ausgewählt
+            // Suche und Auswahl der Firma in der geladenen Liste
             if (_firmaIdToPreselect != null)
             {
-                // DIDAKTISCHER HINWEIS:
-                // Anstatt LINQ (FirstOrDefault) nutzen wir hier eine klassische Schleife,
-                // damit der Suchvorgang klarer wird.
+                // Iteration durch die Liste, um das passende Objekt zu finden.
                 foreach (Firma f in AlleFirmen)
                 {
                     if (f.Firma_ID == _firmaIdToPreselect)
@@ -143,6 +138,9 @@ namespace BAT_Man.ViewModels
 
         // --- Lade-Logik (Datenbeschaffung) ---
 
+        /// <summary>
+        /// Trigger für das Neuladen aller Daten.
+        /// </summary>
         public void RefreshDaten()
         {
             LadeAlleFirmenFuerComboBox();
@@ -150,11 +148,12 @@ namespace BAT_Man.ViewModels
 
         /// <summary>
         /// Lädt die Liste aller Firmen aus der Datenbank neu.
-        /// Versucht dabei, die aktuell ausgewählte Firma wiederherzustellen (Selection Restore).
+        /// Versucht dabei, die aktuell ausgewählte Firma wiederherzustellen (Selection Restore),
+        /// damit die Auswahl nach einem Refresh nicht verloren geht.
         /// </summary>
         private void LadeAlleFirmenFuerComboBox()
         {
-            // 1. Merke die ID der aktuellen Auswahl, bevor die Liste gelöscht wird
+            // 1. Speichern der ID der aktuellen Auswahl
             int? alteId = AusgewaehlteFirma?.Firma_ID;
 
             // 2. Liste leeren und neu aus der DB füllen
@@ -169,21 +168,18 @@ namespace BAT_Man.ViewModels
                 {
                     if (f.Firma_ID == alteId)
                     {
-                        // Setzt die ComboBox wieder auf den richtigen Eintrag.
-                        // Dies löst automatisch 'LadeAktivitaeten()' aus (durch den Setter).
+                        // Setzen der Eigenschaft löst automatisch 'LadeAktivitaeten()' aus.
                         AusgewaehlteFirma = f;
                         break;
                     }
                 }
             }
+            // Fallback: Wenn Liste nicht leer ist, aber keine Auswahl besteht -> Wähle das erste Element.
             else if (AlleFirmen.Count > 0)
             {
                 AusgewaehlteFirma = AlleFirmen[0];
             }
         }
-
-
-
 
         /// <summary>
         /// Lädt die Aktivitäten passend zur aktuell ausgewählten Firma.
@@ -193,14 +189,14 @@ namespace BAT_Man.ViewModels
         {
             AktivitaetenListe.Clear();
 
-            // Wenn keine Firma gewählt ist (null), zeigen wir eine leere Liste
+            // Abbruch, wenn keine Firma ausgewählt ist (null).
             if (AusgewaehlteFirma == null) return;
 
             var aktivitaetenAusDb = _aktivitaetRepository.GetAktivitaetenFuerFirma(AusgewaehlteFirma.Firma_ID);
             foreach (var akt in aktivitaetenAusDb) { AktivitaetenListe.Add(akt); }
         }
 
-        // --- Command-Logik (Was passiert beim Klick?) ---
+        // --- Command-Logik (Interaktion) ---
 
         /// <summary>
         /// Prüft, ob eine Firma zum Bearbeiten ausgewählt ist.
@@ -212,13 +208,13 @@ namespace BAT_Man.ViewModels
         /// </summary>
         private void ExecuteFirmaBearbeiten(object p)
         {
-            // ViewModel für den Dialog erstellen (Modus: Bearbeiten)
+            // Erstellung des ViewModels für den Dialog (Modus: Bearbeiten)
             FirmaAnlegenViewModel viewModel = new FirmaAnlegenViewModel(null, AusgewaehlteFirma);
 
             EditFirmaDialogWindow dialog = new EditFirmaDialogWindow();
             dialog.DataContext = viewModel;
 
-            // Wenn Dialog mit "Speichern" geschlossen wurde -> Liste aktualisieren
+            // Wenn der Dialog mit "true" (Speichern) geschlossen wurde -> Liste aktualisieren
             if (dialog.ShowDialog() == true)
             {
                 LadeAlleFirmenFuerComboBox();
@@ -226,7 +222,7 @@ namespace BAT_Man.ViewModels
         }
 
         /// <summary>
-        /// Prüft, ob eine Firma ausgewählt ist, zu der man eine Aktivität hinzufügen kann.
+        /// Prüft, ob eine Firma ausgewählt ist, zu der eine Aktivität hinzugefügt werden kann.
         /// </summary>
         private bool CanExecuteAddAktivitaet(object parameter) { return AusgewaehlteFirma != null; }
 
@@ -242,7 +238,7 @@ namespace BAT_Man.ViewModels
                 var dialogViewModel = dialog.DataContext as AddAktivitaetViewModel;
                 Aktivitaet neueAktivitaet = dialogViewModel.AktivitaetZumBearbeiten;
 
-                // Speichern in DB
+                // Speichern in der Datenbank
                 _aktivitaetRepository.AddAktivitaet(
                     neueAktivitaet,
                     AusgewaehlteFirma.Firma_ID,
@@ -268,6 +264,7 @@ namespace BAT_Man.ViewModels
 
             if (dialog.ShowDialog() == true)
             {
+                // Fallunterscheidung: Wurde gelöscht oder gespeichert?
                 if (dialog.WurdeGeloescht)
                 {
                     _aktivitaetRepository.DeleteAktivitaet(AusgewaehlteAktivitaet.Aktivitaet_ID);
@@ -280,6 +277,7 @@ namespace BAT_Man.ViewModels
                         dialogViewModel.AusgewaehlterStatus.Status_ID
                     );
                 }
+                // Ansicht aktualisieren
                 LadeAktivitaeten();
             }
         }
@@ -305,14 +303,15 @@ namespace BAT_Man.ViewModels
             {
                 try
                 {
+                    // Löschen der Firma (inkl. kaskadierendem Löschen der Aktivitäten in der DB-Logik)
                     _firmaRepository.DeleteFirma(AusgewaehlteFirma.Firma_ID);
                     MessageBox.Show("Die Firma wurde erfolgreich gelöscht.", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    // Auswahl zurücksetzen
+                    // Auswahl zurücksetzen und Liste neu laden
                     AusgewaehlteFirma = null;
                     LadeAlleFirmenFuerComboBox();
                 }
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
                     MessageBox.Show($"Fehler beim Löschen: {ex.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -321,13 +320,10 @@ namespace BAT_Man.ViewModels
 
         // --- INotifyPropertyChanged Implementierung ---
 
-        /// <summary>
-        /// Event, das die GUI über Änderungen informiert.
-        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-        /// Löst das PropertyChanged-Event sicher aus.
+        /// Löst das PropertyChanged-Event aus.
         /// </summary>
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

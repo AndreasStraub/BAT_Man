@@ -12,14 +12,14 @@
         Background="{DynamicResource AppBackground}"
         
         SizeToContent="Height">
-    <!--  SizeToContent sorgt dafür, dass sich das Fenster der Höhe des Inhalts anpasst -->
+    <!-- 'SizeToContent="Height"' bewirkt, dass sich die Fensterhöhe automatisch dem Inhalt anpasst. -->
 
-    <!--  
+    <!-- 
         INHALT:
-        Das Fenster ist nur ein Container.
-        Der Inhalt wird über Binding gesetzt. Da im C#-Code (FirmaAnzeigenViewModel) geschrieben wird:
-        "dialog.DataContext = viewModel", wird hier automatisch die passende View angezeigt,
-        sofern ein DataTemplate in der App.xaml existiert.
+        Das Fenster fungiert lediglich als Rahmen.
+        Der Inhalt wird über das Binding gesetzt ({Binding}). 
+        Da der DataContext im aufrufenden ViewModel auf 'FirmaAnlegenViewModel' gesetzt wird,
+        sucht WPF automatisch nach dem passenden DataTemplate und zeigt die 'FirmaAnlegenView' an.
     -->
     <ContentControl Content="{Binding}" />
 

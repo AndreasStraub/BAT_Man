@@ -1,19 +1,20 @@
-﻿// Dateipfad: ViewModels/WelcomeViewModel.cs
-
-// Wichtig: Sicherstellen, dass der Namespace korrekt ist.
-namespace BAT_Man.ViewModels
+﻿namespace BAT_Man.ViewModels
 {
     /// <summary>
-    /// Das "Gehirn" (ViewModel) für die Willkommens-Seite (WelcomeView).
-    /// 
-    /// (KISS-Prinzip: Diese Klasse ist im Moment leer, da die View
-    /// nur statischen Text aus den Ressourcen anzeigt und keine
-    /// eigene Logik (wie Buttons oder Listenladen) benötigt.)
+    /// Das ViewModel für die Willkommens-Seite (Startbildschirm).
+    /// <para>
+    /// ARCHITEKTUR-HINWEIS:
+    /// Diese Klasse ist momentan leer (KISS-Prinzip), da die View lediglich statische Texte
+    /// und Ressourcen anzeigt. Es wird keine Interaktionslogik benötigt.
+    /// Dennoch muss die Klasse existieren, um als Datentyp für die Navigation im
+    /// MainWindowViewModel und für das DataTemplate-Mapping zu dienen.
+    /// </para>
     /// </summary>
     public class WelcomeViewModel
     {
         public WelcomeViewModel()
         {
+            // Konstruktor ist leer, da keine Initialisierung notwendig ist.
         }
     }
 }

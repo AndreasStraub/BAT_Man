@@ -52,7 +52,7 @@
             <ListView.View>
                 <GridView>
 
-                    <!--  SPALTE 1: FIRMA & ANSPRECHPARTNER -->
+                    <!--  SPALTE 1: FIRMA und ANSPRECHPARTNER -->
                     <GridViewColumn Header="{DynamicResource CompanyList_Header_Company}" 
                                     Width="250">
                         <GridViewColumn.CellTemplate>
@@ -70,7 +70,7 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
-                    <!--  SPALTE 2: KONTAKT (Telefon & E-Mail) -->
+                    <!--  SPALTE 2: KONTAKT (Telefon und E-Mail) -->
                     <GridViewColumn Header="{DynamicResource CompanyList_Header_Contact}" 
                                     Width="250">
                         <GridViewColumn.CellTemplate>

@@ -32,7 +32,7 @@ namespace BAT_Man.ViewModels
             get { return _currentTheme == "dark"; }
             set
             {
-                // Logik: Wenn der RadioButton aktiviert wird (value == true)
+                // Logik: Nur ausführen, wenn der RadioButton aktiviert wird (value == true)
                 if (value)
                 {
                     _currentTheme = "dark";
@@ -87,7 +87,8 @@ namespace BAT_Man.ViewModels
 
         /// <summary>
         /// Informiert die GUI, dass sich ALLE Theme-Properties geändert haben könnten.
-        /// Das ist notwendig, damit die RadioButtons ihren Status korrekt aktualisieren.
+        /// Dies ist notwendig, damit die RadioButtons ihren Status korrekt aktualisieren
+        /// (wenn einer 'true' wird, müssen die anderen 'false' werden).
         /// </summary>
         private void NotifyThemeChanged()
         {
@@ -156,17 +157,17 @@ namespace BAT_Man.ViewModels
         /// </summary>
         private void ExecuteChangePassword(object parameter)
         {
-            // Neue Instanz des Fensters erstellen (dieses Fenster kennen wir aus Phase 2)
+            // Erstellung einer neuen Instanz des Fensters
             ChangePasswordWindow passwordWindow = new ChangePasswordWindow();
 
-            // "Owner" setzen: Das Pop-up "gehört" dem Hauptfenster.
-            // Verhindert, dass das Pop-up hinter dem Hauptfenster verschwindet.
+            // "Owner" setzen: Das Pop-up wird dem Hauptfenster untergeordnet.
+            // Dies verhindert, dass das Pop-up hinter dem Hauptfenster verschwindet.
             if (Application.Current != null)
             {
                 passwordWindow.Owner = Application.Current.MainWindow;
             }
 
-            // ShowDialog() pausiert diesen Code, bis das Fenster geschlossen wird.
+            // ShowDialog() blockiert die Ausführung an dieser Stelle, bis das Fenster geschlossen wird.
             passwordWindow.ShowDialog();
         }
 

@@ -6,9 +6,10 @@
         Background="{DynamicResource AppBackground}">
 
     <!-- 
-        Login-Fenster
-        Dies ist der erste Screen der Anwendung (gestartet durch App.xaml.cs).
-        Es nutzt keine MVVM-Navigation via DataTemplates, da es ein eigenständiges Fenster ist.
+        LOGIN-FENSTER:
+        Stellt den ersten Bildschirm der Anwendung dar (Initialisierung in App.xaml.cs).
+        Da es sich um ein Top-Level-Fenster handelt, wird hier keine Navigation 
+        via DataTemplates verwendet.
     -->
 
     <StackPanel Margin="20" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -16,9 +17,10 @@
         <Label Content="Reha-Nummer:" Foreground="{DynamicResource TextForeground}"/>
 
         <!-- 
-            Binding: RehaNummer
-            Verbindet diese Textbox mit der Eigenschaft 'RehaNummer' im LoginViewModel.
-            UpdateSourceTrigger=PropertyChanged sorgt dafür, dass jeder Tastendruck sofort im ViewModel ankommt.
+            BINDING: RehaNummer
+            Verknüpft die TextBox mit der Eigenschaft 'RehaNummer' im LoginViewModel.
+            'UpdateSourceTrigger=PropertyChanged' gewährleistet, dass die Validierung 
+            oder Prüfung bereits während der Eingabe erfolgen kann.
         -->
         <TextBox Text="{Binding RehaNummer, UpdateSourceTrigger=PropertyChanged}" 
                  Width="250" Margin="0,0,0,10"/>
@@ -26,9 +28,10 @@
         <Label Content="Passwort:" Foreground="{DynamicResource TextForeground}"/>
 
         <!-- 
-            PasswordBox:
-            Kann nicht direkt gebunden werden (Sicherheitsfeature von WPF).
-            Dem Element wird ein Namen (x:Name="textPasswort") gegeben, um es später referenzieren zu können.
+            PASSWORDBOX:
+            Die Eigenschaft 'Password' ist keine DependencyProperty und erlaubt kein Binding 
+            (Sicherheitsmechanismus von WPF).
+            Das Element erhält einen Namen (x:Name="textPasswort"), um im XAML referenziert zu werden.
         -->
         <PasswordBox x:Name="textPasswort" Width="250" Margin="0,0,0,20"/>
 
@@ -39,10 +42,10 @@
             </Grid.ColumnDefinitions>
 
             <!-- 
-                Login Button:
+                LOGIN BUTTON:
                 Command: Löst die Methode 'ExecuteLogin' im ViewModel aus.
-                CommandParameter: Übergibt das gesamte PasswordBox-Element an das ViewModel,
-                um das Passwort sicher ins ViewModel zu bekommen, ohne Binding.
+                CommandParameter: Übergibt das 'PasswordBox'-Element an das ViewModel.
+                Dort wird das Passwort sicher ausgelesen.
             -->
             <Button x:Name="btnLogin" 
                     Grid.Column="0" 

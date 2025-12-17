@@ -9,11 +9,11 @@ using System.Windows;
 namespace BAT_Man.ViewModels
 {
     /// <summary>
-    /// Das "Gehirn" für das Firma-Formular.
+    /// ViewModel für das Firmen-Formular.
     /// <para>
-    /// DRY-PRINZIP (Don't Repeat Yourself):
-    /// Dieses ViewModel wird sowohl für das Anlegen (Neu) als auch für das Bearbeiten (Edit) genutzt.
-    /// Der Konstruktor entscheidet anhand der Parameter, in welchem Modus wir sind.
+    /// ARCHITEKTUR:
+    /// Implementiert das DRY-Prinzip, indem dieselbe Logik für "Neu" und "Bearbeiten" genutzt wird.
+    /// Die Unterscheidung erfolgt im Konstruktor anhand der übergebenen Parameter.
     /// </para>
     /// </summary>
     public class FirmaAnlegenViewModel : INotifyPropertyChanged
@@ -21,14 +21,15 @@ namespace BAT_Man.ViewModels
         // --- Private Felder ---
         private readonly FirmaRepository _firmaRepository;
 
-        // Referenz auf das Hauptfenster (nur im "Neu"-Modus vorhanden, sonst null)
+        // Referenz auf das Hauptfenster (wird nur im Modus "Neu" benötigt, um danach zur Übersicht zu wechseln)
         private readonly MainWindowViewModel _mainVm;
 
         // --- Öffentliche Eigenschaften ---
 
         private Firma _firmaZumBearbeiten;
+
         /// <summary>
-        /// Das Datenobjekt, das im Formular angezeigt wird.
+        /// Das Datenobjekt, das an die Textfelder der View gebunden ist.
         /// </summary>
         public Firma FirmaZumBearbeiten
         {
@@ -41,14 +42,11 @@ namespace BAT_Man.ViewModels
         }
 
         /// <summary>
-        /// Gibt an, ob wir eine bestehende Firma bearbeiten (true) oder eine neue anlegen (false).
+        /// Status-Flag zur Unterscheidung der Modi:
+        /// <br/>True = Bearbeiten eines bestehenden Datensatzes (Update).
+        /// <br/>False = Anlegen eines neuen Datensatzes (Insert).
         /// </summary>
         public bool IsEditMode { get; private set; }
-
-        ///// <summary>
-        ///// Dynamischer Text für den Button (z.B. "Speichern" oder "Aktualisieren").
-        ///// </summary>
-        //public string SaveButtonText { get; set; }
 
         // --- Commands ---
         public ICommand SpeichernCommand { get; }
@@ -57,10 +55,10 @@ namespace BAT_Man.ViewModels
         // --- Konstruktor ---
 
         /// <summary>
-        /// Initialisiert das ViewModel.
+        /// Initialisiert das ViewModel und bestimmt den Betriebsmodus.
         /// </summary>
-        /// <param name="mainVm">Referenz zum Hauptfenster (für Navigation bei "Neu"). Kann null sein bei Dialogen.</param>
-        /// <param name="firma">Die zu bearbeitende Firma. Wenn null -> Modus "Neu".</param>
+        /// <param name="mainVm">Referenz zum Hauptfenster (für Navigation bei "Neu"). Kann bei Dialogen null sein.</param>
+        /// <param name="firma">Die zu bearbeitende Firma. Ist dieser Parameter null, wird der Modus "Neu" aktiviert.</param>
         public FirmaAnlegenViewModel(MainWindowViewModel mainVm, Firma firma = null)
         {
             _firmaRepository = new FirmaRepository();
@@ -72,7 +70,8 @@ namespace BAT_Man.ViewModels
             if (firma == null)
             {
                 // --- FALL A: MODUS NEU ---
-                // Wir erstellen ein leeres Objekt, damit die TextBoxen nicht abstürzen.
+                // Erstellung eines leeren Objekts zur Initialisierung der Eingabefelder.
+                // Verhindert NullReferenceExceptions in der View.
                 FirmaZumBearbeiten = new Firma();
                 IsEditMode = false;
                 //SaveButtonText = "Speichern";
@@ -80,9 +79,9 @@ namespace BAT_Man.ViewModels
             else
             {
                 // --- FALL B: MODUS BEARBEITEN ---
-                // WICHTIG: Wir erstellen eine KOPIE der Daten!
-                // Würden wir das Originalobjekt direkt binden, würden Änderungen in der TextBox
-                // sofort in der Liste sichtbar sein, auch wenn man "Abbrechen" klickt.
+                // WICHTIG: Erstellung einer tiefen Kopie (Deep Copy) der Daten.
+                // Würde das Originalobjekt direkt gebunden, wären Änderungen in den Textfeldern
+                // sofort in der Hauptliste sichtbar (durch Referenz), selbst wenn der Benutzer "Abbrechen" klickt.
                 FirmaZumBearbeiten = new Firma
                 {
                     Firma_ID = firma.Firma_ID,
@@ -104,14 +103,15 @@ namespace BAT_Man.ViewModels
         // --- Logik ---
 
         /// <summary>
-        /// Speichert die Daten in der Datenbank.
+        /// Führt die Validierung durch und speichert die Daten in der Datenbank.
         /// </summary>
         /// <param name="parameter">
-        /// Optional: Das Fenster (Window), das geschlossen werden soll (im Dialog-Modus).
-        /// </summary>
+        /// Optional: Das Fenster-Objekt (Window), falls das Formular als Dialog geöffnet wurde.
+        /// </param>
         public void ExecuteSpeichern(object parameter)
         {
             // 1. Validierung (Minimal-Anforderung)
+            // Prüfung, ob der Firmenname ausgefüllt ist.
             if (string.IsNullOrEmpty(FirmaZumBearbeiten.Firmenname))
             {
                 MessageBox.Show("Der Firmenname darf nicht leer sein.", "Eingabefehler", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -123,43 +123,35 @@ namespace BAT_Man.ViewModels
                 // 2. Datenbank-Operation je nach Modus
                 if (IsEditMode)
                 {
+                    // Aktualisierung eines bestehenden Datensatzes
                     _firmaRepository.UpdateFirma(FirmaZumBearbeiten);
                     MessageBox.Show("Firma erfolgreich aktualisiert!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
+                    // Einfügen eines neuen Datensatzes
                     _firmaRepository.AddFirma(FirmaZumBearbeiten);
                     MessageBox.Show("Firma erfolgreich angelegt!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    // Reset für nächste Eingabe
+                    // Reset des Objekts für die nächste Eingabe (nur relevant, wenn Fenster offen bleibt)
                     FirmaZumBearbeiten = new Firma();
                 }
 
-                // 3. Dialog schließen (falls wir in einem Fenster sind)
-                //if (parameter is Window window)
-                //{
-                //    window.DialogResult = true; // Signalisiert "Erfolg" an den Aufrufer (FirmaAnzeigenViewModel)
-                //    window.Close();
-                //}
+                // 3. Navigation / Fenster schließen
 
-                // FALL A: Wir sind im Hauptfenster (Modus "Neu")
+                // Fallunterscheidung A: Aufruf aus dem Hauptfenster (Modus "Neu")
                 if (_mainVm != null)
                 {
-                    // Wir schließen das Fenster NICHT, sondern navigieren z.B. zur Übersicht oder Willkommensseite
-                    // Oder wir lassen den User einfach auf der Seite, um noch eine Firma anzulegen (dann haben wir oben schon resettet).
-
-                    // Optional: Zurück zur Übersicht navigieren
+                    // Navigation zurück zur Übersichtstabelle.
                     _mainVm.ShowFirmenUebersichtCommand.Execute(null);
                 }
-                // FALL B: Wir sind in einem Pop-up Dialog (Modus "Bearbeiten")
+                // Fallunterscheidung B: Aufruf als Pop-up Dialog (Modus "Bearbeiten")
                 else if (parameter is Window window)
                 {
-                    // Nur hier darf DialogResult gesetzt werden!
+                    // Setzen des DialogResults auf true signalisiert dem Aufrufer den Erfolg.
                     window.DialogResult = true;
                     window.Close();
                 }
-
-
             }
             catch (System.Exception ex)
             {
@@ -167,23 +159,27 @@ namespace BAT_Man.ViewModels
             }
         }
 
+        /// <summary>
+        /// Bricht den Vorgang ab und navigiert zurück oder schließt das Fenster.
+        /// </summary>
         private void ExecuteAbbrechen(object parameter)
         {
             if (_mainVm != null)
             {
-                // Modus "Neu": Zurück zur Startseite navigieren
+                // Modus "Neu": Navigation zurück zur Startseite (WelcomeView).
                 _mainVm.ShowWelcomeViewCommand.Execute(null);
             }
             else if (parameter is Window window)
             {
-                // Modus "Bearbeiten": Fenster schließen ohne Speichern
+                // Modus "Bearbeiten": Schließen des Fensters mit DialogResult = false (keine Änderung).
                 window.DialogResult = false;
                 window.Close();
             }
         }
 
-        // --- INotifyPropertyChanged ---
+        // --- INotifyPropertyChanged Implementierung ---
         public event PropertyChangedEventHandler PropertyChanged;
+
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

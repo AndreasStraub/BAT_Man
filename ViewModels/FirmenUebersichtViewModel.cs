@@ -21,25 +21,26 @@ namespace BAT_Man.ViewModels
         // Zugriff auf die Datenbank
         private readonly FirmaRepository _firmaRepository;
 
-        // Referenz auf das Hauptfenster (für Navigation)
+        // Referenz auf das Hauptfenster (erforderlich für die Navigation zu anderen Ansichten)
         private readonly MainWindowViewModel _mainVm;
 
-        // Speichervariable für die ausgewählte Firma
+        // Interner Speicher für das aktuell ausgewählte Listen-Element
         private Firma _ausgewaehlteFirma;
 
         // --- 2. Öffentliche Eigenschaften (für Bindings) ---
 
         /// <summary>
         /// Die Liste der anzuzeigenden Firmen.
-        /// WICHTIG: ObservableCollection wird statt List verwendet, 
-        /// damit die GUI automatisch merkt, wenn Einträge hinzugefügt oder entfernt werden.
+        /// <para>
+        /// ARCHITEKTUR-HINWEIS: Es wird eine 'ObservableCollection' anstelle einer 'List' verwendet.
+        /// Dies garantiert, dass die Benutzeroberfläche (das DataGrid) automatisch aktualisiert wird,
+        /// sobald Elemente hinzugefügt oder entfernt werden.
+        /// </para>
         /// </summary>
         public ObservableCollection<Firma> FirmenListe { get; set; }
 
         /// <summary>
-        /// Das aktuell in der Liste angeklickte Element.
-        /// Löst bei Änderung (Setter) das PropertyChanged-Event aus,
-        /// damit z.B. Buttons (Bearbeiten) aktiviert/deaktiviert werden können.
+        /// Das aktuell in der Liste (DataGrid) markierte Element.
         /// </summary>
         public Firma AusgewaehlteFirma
         {
@@ -47,10 +48,11 @@ namespace BAT_Man.ViewModels
             set
             {
                 _ausgewaehlteFirma = value;
+                // Benachrichtigung der UI über die Änderung.
                 OnPropertyChanged();
 
-                // Optional: Command-Status aktualisieren ("Darf ich jetzt bearbeiten?")
-                // (CommandManager.InvalidateRequerySuggested() geschieht meist automatisch durch WPF)
+                // Durch das Setzen der Auswahl ändert sich der Rückgabewert von 'CanExecuteBearbeiten'.
+                // Das WPF-System prüft daraufhin automatisch, ob Buttons aktiviert werden müssen.
             }
         }
 
@@ -65,65 +67,72 @@ namespace BAT_Man.ViewModels
         // --- 4. Konstruktor ---
 
         /// <summary>
-        /// Erstellt das ViewModel.
+        /// Initialisiert das ViewModel und lädt die Daten.
         /// </summary>
-        /// <param name="mainVm">Wird per Dependency Injection übergeben, um Navigation zu ermöglichen.</param>
+        /// <param name="mainVm">Referenz auf das Haupt-ViewModel (Dependency Injection Light), um Navigationsbefehle abzusetzen.</param>
         public FirmenUebersichtViewModel(MainWindowViewModel mainVm)
         {
             _firmaRepository = new FirmaRepository();
 
-            // Die Collection muss initialisiert werden, sonst gibt es eine NullReferenceException
+            // Initialisierung der Collection, um NullReferenceExceptions zu vermeiden.
             FirmenListe = new ObservableCollection<Firma>();
 
             _mainVm = mainVm;
 
-            // Commands initialisieren
+            // Initialisierung der Commands (Verknüpfung von Logik und UI)
             RefreshCommand = new RelayCommand(ExecuteRefresh);
-            // Bearbeiten ist nur erlaubt, wenn eine Firma ausgewählt ist (CanExecuteBearbeiten)
+
+            // Der Bearbeiten-Befehl erhält eine Zusatzbedingung (CanExecute):
+            // Er darf nur ausgeführt werden, wenn 'CanExecuteBearbeiten' true zurückgibt.
             BearbeitenCommand = new RelayCommand(ExecuteBearbeiten, CanExecuteBearbeiten);
 
-            // Daten sofort beim Start laden
+            // Automatisches Laden der Daten beim Start.
             ExecuteRefresh(null);
         }
 
         // --- 5. Ausführungs-Methoden (Logik) ---
 
         /// <summary>
-        /// Lädt alle Firmen aus der Datenbank und füllt die ObservableCollection.
+        /// Lädt alle Firmen aus der Datenbank und befüllt die ObservableCollection neu.
         /// </summary>
+        /// <param name="parameter">Wird vom Command ignoriert.</param>
         public void ExecuteRefresh(object parameter)
         {
-            // Merken der aktuellen Auswahl (falls möglich), um sie nach dem Refresh wiederherzustellen
+            // Optional: Speichern der ID der aktuell ausgewählten Firma, um die Selektion nach dem Neuladen wiederherzustellen.
             var alteAusgewaehlteFirmaId = AusgewaehlteFirma?.Firma_ID;
 
-            // Liste leeren (löst CollectionChanged-Event in der GUI aus -> Liste wird leer)
+            // Leeren der Liste. Dies löst das CollectionChanged-Event aus und leert die Tabelle in der GUI.
             FirmenListe.Clear();
 
-            // Daten aus DB holen
+            // Abruf der aktuellen Daten aus der Datenbank (inkl. Status-Informationen).
             var firmenAusDb = _firmaRepository.GetAlleFirmenMitLetztemStatus();
 
-            // Daten in die ObservableCollection übertragen
+            // Übertragung der Datensätze in die ObservableCollection.
+            // Jedes 'Add' löst ein Event aus und fügt eine Zeile im DataGrid hinzu.
             foreach (var firma in firmenAusDb)
             {
-                FirmenListe.Add(firma); // Jedes Add aktualisiert die GUI Zeile für Zeile
+                FirmenListe.Add(firma);
             }
         }
 
         /// <summary>
-        /// Prüft, ob der "Bearbeiten"-Button klickbar sein darf.
+        /// Prüf-Logik für den Bearbeiten-Button.
         /// </summary>
+        /// <param name="parameter">Nicht genutzt.</param>
+        /// <returns>Gibt 'true' zurück, wenn eine Firma ausgewählt ist, sonst 'false'.</returns>
         private bool CanExecuteBearbeiten(object parameter)
         {
-            // Nur klickbar, wenn tatsächlich eine Zeile ausgewählt ist
+            // Der Button ist nur aktiv (klickbar), wenn die Auswahl nicht null ist.
             return AusgewaehlteFirma != null;
         }
 
         /// <summary>
-        /// Führt die Navigation zur Detailansicht aus.
+        /// Navigiert zur Detailansicht.
         /// </summary>
+        /// <param name="parameter">Nicht genutzt.</param>
         private void ExecuteBearbeiten(object parameter)
         {
-            // Ruft die Navigationsmethode im Haupt-ViewModel auf
+            // Delegiert den Navigationswunsch an das Haupt-ViewModel.
             _mainVm.NavigateToFirmaDetail(AusgewaehlteFirma);
         }
 
@@ -131,6 +140,9 @@ namespace BAT_Man.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Löst das PropertyChanged-Event aus.
+        /// </summary>
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

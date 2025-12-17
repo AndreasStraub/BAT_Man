@@ -31,54 +31,53 @@ namespace BAT_Man.ViewModels
         }
 
         /// <summary>
-        /// Führt die Speicherlogik aus.
+        /// Führt die Validierung und den Speicherprozess aus.
         /// </summary>
-        /// <param name="parameter">Erwartet ein Array mit zwei PasswordBox-Objekten (durch MultiBinding übergeben).</param>
-        // <!*-- ÄNDERUNG: 'async void' ermöglicht das Warten auf den Service (await) --*!>
+        /// <param name="parameter">
+        /// Erwartet ein Array (object[]), das zwei PasswordBox-Objekte enthält.
+        /// Dies wird durch den MultiValueConverter im XAML ermöglicht.
+        /// </param>
         private async void ExecuteSave(object parameter)
         {
-            // <!*-- NEU: Prüfen, ob der Parameter ein Array von Objekten ist (durch unseren Converter) --*!>
-            // Wir erwarten genau zwei PasswordBoxen im Array.
+            // 1. Parameter-Prüfung und Entpacken des Arrays
             if (parameter is object[] values && values.Length == 2 &&
                 values[0] is PasswordBox pbNeu && values[1] is PasswordBox pbBestaetigen)
             {
+                // Auslesen der unsicheren Strings aus den PasswordBoxen
                 string neuesPasswort = pbNeu.Password;
                 string bestaetigung = pbBestaetigen.Password;
 
-                // <!*-- NEU: Vergleich der beiden Passwörter --*!>
+                // 2. Vergleich der beiden Eingaben
                 if (neuesPasswort != bestaetigung)
                 {
                     MessageBox.Show("Die Passwörter stimmen nicht überein.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return; // Abbruch, wenn sie ungleich sind
+                    return;
                 }
 
+                // 3. Identifikation des aktuellen Benutzers
                 var currentUser = AktiveSitzung.Instance.AngemeldeterTeilnehmer;
 
-                // Sicherheitsprüfung: Ist überhaupt jemand angemeldet?
                 if (currentUser == null)
                 {
                     MessageBox.Show("Kein Benutzer angemeldet.");
                     return;
                 }
 
-                // Aufruf der neuen API-Methode
-                // Der Service kümmert sich um Validierung (Länge, Sonderzeichen) und HTTP-Request.
+                // 4. API-Aufruf (asynchron)
+                // Der AuthenticationService übernimmt die Kommunikation mit dem Webserver.
                 bool erfolg = await AuthenticationService.Instance.ChangePasswordAsync(
                     currentUser.TeilnehmerID,
                     currentUser.RehaNummer,
                     neuesPasswort);
 
+                // 5. Erfolgsbehandlung
                 if (erfolg)
                 {
                     MessageBox.Show("Passwort erfolgreich geändert.", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    // Schließt das Fenster mit positivem Ergebnis
                     CloseWindow(true);
                 }
-                // Else: Im Fehlerfall hat der Service bereits eine Meldung angezeigt.
+                // Im Fehlerfall zeigt der Service bereits eine Meldung an.
             }
-            // Optional: Fallback für Single-Parameter (alte Logik), falls benötigt.
-            // Ist hier aber nicht mehr nötig, da wir das XAML auf MultiBinding umgestellt haben.
         }
 
         /// <summary>
@@ -90,29 +89,24 @@ namespace BAT_Man.ViewModels
         }
 
         /// <summary>
-        /// Hilfsmethode zum Schließen des aktiven Fensters.
+        /// Hilfsmethode zum Schließen des aktiven Dialogfensters.
         /// </summary>
-        /// <param name="result">Das DialogResult (true = Erfolg, false = Abbruch).</param>
+        /// <param name="result">Das DialogResult, das an den Aufrufer zurückgegeben wird.</param>
         private void CloseWindow(bool result)
         {
-            // Sucht das aktuell aktive Fenster der Anwendung
+            // Ermittlung des aktiven Fensters über die Application-Klasse.
             var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
             if (window != null)
             {
-                window.DialogResult = result; // Setzt den Rückgabewert für ShowDialog() in App.xaml.cs
+                window.DialogResult = result;
                 window.Close();
             }
         }
 
         #region INotifyPropertyChanged Implementierung
 
-        // Das Event, auf das die View "hört"
         public event PropertyChangedEventHandler PropertyChanged;
 
-        /// <summary>
-        /// Löst das PropertyChanged-Event aus, um die GUI zu aktualisieren.
-        /// </summary>
-        /// <param name="propertyName">Name der geänderten Eigenschaft (automatisch ermittelt).</param>
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

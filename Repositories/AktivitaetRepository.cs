@@ -27,9 +27,9 @@ namespace BAT_Man.Repositories
             string aktuelleSprache = LanguageService.Instance.AktuelleSprache;
 
             // SQL-Query mit JOINs:
-            // 1. Tabelle 'aktivitaet' (Basisdaten)
-            // 2. JOIN 'status': Verknüpfung über Status_ID (technische Notwendigkeit)
-            // 3. JOIN 'status_translation': Verknüpfung über Status_ID, um den Text in der korrekten Sprache zu finden.
+            // 1. Tabelle 'Aktivitaet' (Basisdaten)
+            // 2. JOIN 'Status': Verknüpfung über Status_ID (technische Notwendigkeit)
+            // 3. JOIN 'Status_Translation': Verknüpfung über Status_ID, um den Text in der korrekten Sprache zu finden.
             string query = @"
                 SELECT 
                     a.Aktivitaet_ID, 
@@ -57,6 +57,9 @@ namespace BAT_Man.Repositories
                 // automatisch aufgerufen werden, sobald der Block verlassen wird.
                 using (MySqlConnection connection = GetConnection())
                 {
+                    // WICHTIG: Explizites Öffnen, falls GetConnection() dies nicht tut.
+                    if (connection.State != System.Data.ConnectionState.Open) connection.Open();
+
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
                         // Parameter-Binding verhindert SQL-Injection und sorgt für korrekte Typisierung.
@@ -115,6 +118,8 @@ namespace BAT_Man.Repositories
             {
                 using (MySqlConnection connection = GetConnection())
                 {
+                    if (connection.State != System.Data.ConnectionState.Open) connection.Open();
+
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@FirmaID", firmaId);
@@ -153,6 +158,8 @@ namespace BAT_Man.Repositories
             {
                 using (MySqlConnection connection = GetConnection())
                 {
+                    if (connection.State != System.Data.ConnectionState.Open) connection.Open();
+
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@StatusID", statusId);
@@ -185,6 +192,8 @@ namespace BAT_Man.Repositories
             {
                 using (MySqlConnection connection = GetConnection())
                 {
+                    if (connection.State != System.Data.ConnectionState.Open) connection.Open();
+
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@AktivitaetID", aktivitaetId);

@@ -7,18 +7,18 @@
              d:DesignHeight="600" d:DesignWidth="800"
              Background="{DynamicResource AppBackground}">
 
-    <!--  Grid mit 3 Zeilen  -->
+    <!--  Grid-Struktur für Titel, Scroll-Bereich und Footer  -->
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <!--  0: Titel  -->
             <RowDefinition Height="*"/>
-            <!--  1: Inhalt (Scrollbar)  -->
+            <!--  1: Inhalt (variabel)  -->
             <RowDefinition Height="Auto"/>
             <!--  2: Footer (Button)  -->
         </Grid.RowDefinitions>
 
-        <!--  HEADER (Zeile 0)  -->
+        <!--  HEADER: Titel der Hilfeseite  -->
         <TextBlock Grid.Row="0" 
                    Text="{Binding Titel}" 
                    FontSize="28" 
@@ -26,32 +26,34 @@
                    Foreground="{DynamicResource TextForeground}"
                    Margin="0,0,0,20"/>
 
-        <!--  INHALT (Zeile 1)  -->
+        <!--  INHALT: Scrollbarer Bereich für Bild und Text  -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,0,20">
             <StackPanel>
 
-                <!--  Screenshot  -->
+                <!--  Screenshot mit Rahmen  -->
                 <Border BorderBrush="{DynamicResource TextForeground}" 
                         BorderThickness="4" 
                         HorizontalAlignment="Left" 
                         Margin="0,0,0,30" 
                         CornerRadius="5">
 
-                    <!-- Das Bild innerhalb des Rahmens -->
                     <Image Source="{Binding BildPfad}" 
                            Stretch="Uniform" 
                            MaxHeight="550"
                            RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Border>
 
-                <!--  Legende Titel (Lokalisiert via DynamicResource)  -->
+                <!--  Titel der Legende (übersetzt)  -->
                 <TextBlock Text="{DynamicResource Help_Legend_Title}" 
                            FontSize="18" 
                            FontWeight="Bold" 
                            Foreground="{DynamicResource TextForeground}"
                            Margin="0,0,0,15"/>
 
-                <!--  Legende Liste  -->
+                <!--  
+                    DYNAMISCHE LEGENDE:
+                    Ein ItemsControl wiederholt das DataTemplate für jeden Eintrag in der Liste 'Legende'.
+                 -->
                 <ItemsControl ItemsSource="{Binding Legende}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -61,6 +63,7 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
+                                <!--  Der rote Kreis mit der Nummer  -->
                                 <Border Grid.Column="0" 
                                         Background="#E63946" 
                                         CornerRadius="15" 
@@ -75,6 +78,7 @@
                                                VerticalAlignment="Center"/>
                                 </Border>
 
+                                <!--  Der erklärende Text  -->
                                 <TextBlock Grid.Column="1" 
                                            Text="{Binding Beschreibung}" 
                                            Foreground="{DynamicResource TextForeground}"
@@ -88,7 +92,7 @@
             </StackPanel>
         </ScrollViewer>
 
-        <!--  FOOTER / BUTTON (Zeile 2 - Unten Rechts)  -->
+        <!--  FOOTER: Zurück-Button  -->
         <Grid Grid.Row="2">
             <Button Command="{Binding SchliessenCommand}" 
                     Content="{DynamicResource Help_Button_Back}"

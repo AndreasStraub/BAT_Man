@@ -1,21 +1,25 @@
-﻿// Dateipfad: Models/Status.cs
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-// WICHTIG: Der Namespace MUSS so lauten
 namespace BAT_Man.Models
 {
     /// <summary>
     /// Repräsentiert eine einzelne Status-Option (z.B. "Anruf", "Email").
-    /// Dies ist der "Bauplan" für die Objekte, die in der RadioButton-Liste im "Aktivität hinzufügen"-Dialog angezeigt werden.
+    /// Dient als Datenstruktur für die Auswahlmöglichkeiten im Dialog "Aktivität hinzufügen".
     /// </summary>
     public class Status
     {
         /// <summary>
-        /// Die ID aus der 'status'-Tabelle (z.B. 1)
+        /// Die eindeutige ID aus der Datenbanktabelle 'Status'.
         /// </summary>
         public int Status_ID { get; set; }
 
         /// <summary>
-        /// Der übersetzte Text (z.B. "Anruf" oder "Call") aus der 'status_translation'-Tabelle.
+        /// Der lokalisierte Anzeigetext (z.B. "Anruf" oder "Call"), 
+        /// geladen aus der Tabelle 'Status_Translation'.
         /// </summary>
         public string Bezeichnung { get; set; }
     }

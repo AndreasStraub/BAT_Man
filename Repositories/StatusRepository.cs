@@ -26,8 +26,8 @@ namespace BAT_Man.Repositories
             string aktuelleSprache = LanguageService.Instance.AktuelleSprache;
 
             // 2. SQL-Abfrage mit JOIN
-            // Die Tabelle 'status' enthält nur die IDs.
-            // Die Tabelle 'status_translation' enthält die Texte in verschiedenen Sprachen.
+            // Die Tabelle 'Status' enthält nur die IDs.
+            // Die Tabelle 'Status_Translation' enthält die Texte in verschiedenen Sprachen.
             // Beide werden über die 'Status_ID' verknüpft.
             string query = @"
                 SELECT 
@@ -45,6 +45,8 @@ namespace BAT_Man.Repositories
                 // 3. Verbindung aufbauen (Using-Statement stellt das Schließen sicher)
                 using (MySqlConnection connection = GetConnection())
                 {
+                    if (connection.State != System.Data.ConnectionState.Open) connection.Open();
+
                     // 4. Befehl vorbereiten
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {

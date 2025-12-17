@@ -17,8 +17,9 @@ namespace BAT_Man.Repositories
 
         /// <summary>
         /// Ermittelt die ID des aktuell angemeldeten Teilnehmers.
-        /// Wirft einen Fehler, wenn niemand angemeldet ist (Sicherheits-Check).
+        /// Löst eine Ausnahme aus, wenn keine gültige Sitzung vorliegt.
         /// </summary>
+        /// <exception cref="InvalidOperationException">Wird geworfen, wenn kein Benutzer angemeldet ist.</exception>
         private int GetAktuelleTeilnehmerID()
         {
             if (!AktiveSitzung.Instance.IstAngemeldet())
@@ -31,13 +32,16 @@ namespace BAT_Man.Repositories
         // --- Öffentliche Methoden ---
 
         /// <summary>
-        /// Liest ALLE Firmen, die dem AKTUELLEN Teilnehmer gehören.
-        /// Wird für Dropdowns (ComboBox) verwendet.
+        /// Liest alle Firmen, die dem aktuell angemeldeten Teilnehmer zugeordnet sind.
+        /// Diese Methode lädt nur die Stammdaten und wird z.B. für Dropdowns verwendet.
         /// </summary>
+        /// <returns>Eine Liste von Firma-Objekten.</returns>
         public List<Firma> GetAlleFirmen()
         {
             var firmenListe = new List<Firma>();
             int teilnehmerId = GetAktuelleTeilnehmerID();
+
+            // Filterung auf Teilnehmer_ID stellt sicher, dass jeder User nur seine eigenen Daten sieht.
             string query = "SELECT * FROM Firma WHERE Teilnehmer_ID = @TeilnehmerID";
 
             try
@@ -86,17 +90,20 @@ namespace BAT_Man.Repositories
         }
 
         /// <summary>
-        /// Liest ALLE Firmen inkl. des LETZTEN Statusberichts und Kommentars.
+        /// Liest alle Firmen inklusive des neuesten Statusberichts und Kommentars.
         /// Wird für die Haupt-Übersichtstabelle verwendet.
         /// </summary>
+        /// <returns>Eine Liste von Firma-Objekten, angereichert mit Status-Informationen.</returns>
         public List<Firma> GetAlleFirmenMitLetztemStatus()
         {
             var firmenListe = new List<Firma>();
             int teilnehmerId = GetAktuelleTeilnehmerID();
             string aktuelleSprache = LanguageService.Instance.AktuelleSprache;
 
-            // Komplexe Abfrage: Holt zu jeder Firma den NEUESTEN Aktivitäts-Eintrag.
-            // Nutzt 'ROW_NUMBER()' zur Sortierung.
+            // Komplexe Abfrage: 
+            // 1. Holt alle Firmen des Teilnehmers.
+            // 2. Joint via LEFT JOIN die Aktivitätstabelle.
+            // 3. Nutzt 'ROW_NUMBER()' in einer Unterabfrage, um nur die jeweils NEUESTE Aktivität pro Firma zu erhalten.
             string query = @"
                 SELECT 
                     f.*, 
@@ -174,6 +181,7 @@ namespace BAT_Man.Repositories
         /// <summary>
         /// Fügt eine neue Firma in die Datenbank ein.
         /// </summary>
+        /// <param name="neueFirma">Das Objekt mit den zu speichernden Daten.</param>
         public void AddFirma(Firma neueFirma)
         {
             int teilnehmerId = GetAktuelleTeilnehmerID();
@@ -213,8 +221,9 @@ namespace BAT_Man.Repositories
         }
 
         /// <summary>
-        /// Aktualisiert eine bestehende Firma.
+        /// Aktualisiert die Daten einer bestehenden Firma.
         /// </summary>
+        /// <param name="firma">Das Objekt mit den neuen Daten (ID muss gesetzt sein).</param>
         public void UpdateFirma(Firma firma)
         {
             int teilnehmerId = GetAktuelleTeilnehmerID();
@@ -266,8 +275,10 @@ namespace BAT_Man.Repositories
         }
 
         /// <summary>
-        /// Löscht eine Firma UND alle ihre Aktivitäten endgültig (Transaktion).
+        /// Löscht eine Firma UND alle ihre zugehörigen Aktivitäten endgültig.
+        /// Nutzt eine Datenbank-Transaktion, um Inkonsistenzen zu vermeiden.
         /// </summary>
+        /// <param name="firmaId">Die ID der zu löschenden Firma.</param>
         public void DeleteFirma(int firmaId)
         {
             int teilnehmerId = GetAktuelleTeilnehmerID();
@@ -279,7 +290,7 @@ namespace BAT_Man.Repositories
                 {
                     try
                     {
-                        // 1. Zuerst alle Aktivitäten dieser Firma löschen (Referenzielle Integrität)
+                        // 1. Zuerst alle Aktivitäten dieser Firma löschen (Referenzielle Integrität wahren)
                         string deleteAktivitaetenQuery = "DELETE FROM Aktivitaet WHERE Firma_ID = @FirmaID";
                         using (MySqlCommand cmd1 = new MySqlCommand(deleteAktivitaetenQuery, connection, transaction))
                         {
@@ -288,6 +299,7 @@ namespace BAT_Man.Repositories
                         }
 
                         // 2. Dann die Firma selbst löschen
+                        // Zusätzliche Prüfung auf Teilnehmer_ID verhindert Löschen fremder Daten.
                         string deleteFirmaQuery = "DELETE FROM Firma WHERE Firma_ID = @FirmaID AND Teilnehmer_ID = @TeilnehmerID";
                         using (MySqlCommand cmd2 = new MySqlCommand(deleteFirmaQuery, connection, transaction))
                         {
@@ -301,7 +313,7 @@ namespace BAT_Man.Repositories
                     }
                     catch (Exception)
                     {
-                        // Fehler: Alles rückgängig machen
+                        // Fehler: Änderungen rückgängig machen
                         transaction.Rollback();
                         throw; // Fehler weiterwerfen
                     }

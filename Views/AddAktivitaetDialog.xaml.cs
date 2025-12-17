@@ -1,8 +1,5 @@
-﻿// Dateipfad: Views/AddAktivitaetDialog.xaml.cs
-
-using System.Windows;
+﻿using System.Windows;
 using BAT_Man.ViewModels;
-// NEU: Wir brauchen das Model
 using BAT_Man.Models;
 
 namespace BAT_Man.Views
@@ -10,68 +7,72 @@ namespace BAT_Man.Views
     public partial class AddAktivitaetDialog : Window
     {
         /// <summary>
-        /// Speichert, ob der Benutzer "Löschen" geklickt hat.
-        /// (true = Löschen, false = OK)
+        /// Status-Flag, das anzeigt, ob der Benutzer den "Löschen"-Button betätigt hat.
+        /// <br/>True = Der Datensatz soll entfernt werden.
+        /// <br/>False = Der Datensatz soll gespeichert/aktualisiert werden (Standard).
         /// </summary>
         public bool WurdeGeloescht { get; private set; } = false;
 
         /// <summary>
         /// Konstruktor für den Dialog.
-        /// (Erstellt das "Gehirn" (ViewModel) und
-        /// übergibt ihm die zu bearbeitende Aktivität)
+        /// Initialisiert die Komponenten und setzt den DataContext.
         /// </summary>
         /// <param name="aktivitaet">
-        /// 'null' für "Neu",
-        /// ein 'Aktivitaet'-Objekt für "Bearbeiten".
+        /// Das zu bearbeitende Objekt.
+        /// 'null' signalisiert den Modus "Neu anlegen".
+        /// Ein Objekt signalisiert den Modus "Bearbeiten".
         /// </param>
         public AddAktivitaetDialog(Aktivitaet aktivitaet)
         {
             InitializeComponent();
 
-            // Wir erstellen das "Gehirn" (ViewModel) manuell
-            // und übergeben ihm die Aktivität.
+            // Manuelle Instanziierung des ViewModels und Übergabe der Daten.
+            // Dies ist notwendig, da der Konstruktor Parameter erwartet.
             this.DataContext = new AddAktivitaetViewModel(aktivitaet);
         }
 
         /// <summary>
-        /// Wird aufgerufen, wenn der Benutzer auf "OK" klickt.
+        /// Event-Handler für den OK-Button.
+        /// Führt eine Validierung durch und schließt den Dialog mit Erfolg.
         /// </summary>
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Hole das "Gehirn" (ViewModel)
+            // Zugriff auf das ViewModel, um die Benutzereingaben zu prüfen.
             var viewModel = this.DataContext as AddAktivitaetViewModel;
 
-            // 2. Prüfen, ob ein Status ausgewählt wurde.
+            // Validierung: Es muss zwingend ein Status gewählt sein.
             if (viewModel.AusgewaehlterStatus == null)
             {
                 MessageBox.Show("Bitte wählen Sie einen Status aus.", "Eingabefehler");
                 return;
             }
 
-            // 3. Erfolg signalisieren
+            // Setzen des DialogResults schließt das Fenster und gibt "true" an den Aufrufer zurück.
             this.DialogResult = true;
         }
 
+        /// <summary>
+        /// Event-Handler für den Löschen-Button.
+        /// Fordert eine Bestätigung an und markiert den Vorgang als "Löschen".
+        /// </summary>
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            // Schritt A: Sicherheitsabfrage
+            // Sicherheitsabfrage, um versehentliches Löschen zu verhindern.
             var result = MessageBox.Show(
-                "Möchten Sie diese Aktivität wirklich endgültig löschen?", // TODO: In Sprachdatei auslagern
-                "Löschen bestätigen", // TODO: In Sprachdatei auslagern
+                "Möchten Sie diese Aktivität wirklich endgültig löschen?",
+                "Löschen bestätigen",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
 
             if (result == MessageBoxResult.Yes)
             {
-                // Schritt B: Setze unseren "Merkzettel"
+                // Setzen des Flags, damit das aufrufende ViewModel weiß, was zu tun ist.
                 this.WurdeGeloescht = true;
 
-                // Schritt C: Schließe den Dialog mit "Erfolg"
-                // (Das Hauptfenster wird bei "true" aufwachen,
-                // egal ob wir OK oder Löschen geklickt haben)
+                // Schließen des Dialogs mit "true" (Erfolg), damit die Aktion im Hauptfenster ausgeführt wird.
                 this.DialogResult = true;
             }
-            // Wenn "Nein" geklickt wird, passiert nichts.
+            // Bei "Nein" wird der Vorgang abgebrochen und das Fenster bleibt offen.
         }
     }
 }

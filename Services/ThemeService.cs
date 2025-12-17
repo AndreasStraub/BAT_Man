@@ -22,20 +22,21 @@ namespace BAT_Man.Services
             ResourceDictionary themeDict = null;
 
             // 1. Suche nach dem aktuellen Theme-Wörterbuch in der App.xaml
+            // Die Anwendung besitzt eine Liste von "MergedDictionaries" (zusammengeführte Ressourcen).
             foreach (var dict in Application.Current.Resources.MergedDictionaries)
             {
-                // Wir suchen nach einem Wörterbuch, das entweder:
-                // a) Unseren speziellen Marker "ThemeDictIdentifier" enthält (wenn wir schon mal gewechselt haben)
+                // Es wird nach einem Wörterbuch gesucht, das entweder:
+                // a) Den speziellen Marker "ThemeDictIdentifier" enthält (falls bereits gewechselt wurde)
                 // b) Oder dessen Quellpfad den Ordner "Themes" enthält (beim ersten Start)
                 if (dict.Contains("ThemeDictIdentifier") ||
                     (dict.Source != null && dict.Source.OriginalString.Contains("Themes")))
                 {
                     themeDict = dict;
-                    break; // Gefunden!
+                    break; // Wörterbuch gefunden.
                 }
             }
 
-            // Sicherheits-Check: Wenn kein Theme-Dictionary gefunden wurde, abbrechen.
+            // Sicherheits-Check: Wenn kein Theme-Dictionary identifiziert wurde, wird abgebrochen.
             if (themeDict == null) return;
 
             // 2. Zieldatei bestimmen
@@ -56,8 +57,8 @@ namespace BAT_Man.Services
             themeDict.Source = new Uri(sourceFile, UriKind.Relative);
 
             // 4. Marker setzen
-            // Damit wir dieses Dictionary beim nächsten Aufruf sicher wiederfinden,
-            // setzen wir einen eindeutigen Schlüssel.
+            // Um dieses Dictionary beim nächsten Aufruf sicher wiederzufinden,
+            // wird ein eindeutiger Schlüssel gesetzt.
             themeDict["ThemeDictIdentifier"] = themeName;
         }
     }

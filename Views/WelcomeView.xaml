@@ -9,7 +9,8 @@
         <!-- 
             ZENTRALER BLOCK
             Beinhaltet die Begrüßung, den Titel und den Untertitel.
-            Alles ist horizontal zentriert.
+            Die Ausrichtung 'Center' sorgt dafür, dass der Block immer mittig bleibt,
+            egal wie groß das Fenster gezogen wird.
         -->
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
 
@@ -40,8 +41,8 @@
 
         <!-- 
             HINWEIS-TEXT (Unten Links)
-            "Bitte wählen Sie links eine Funktion"
-            Kursiv gesetzt, wie im Screenshot.
+            Dient als "Call to Action" für den Benutzer ("Bitte wählen Sie links eine Funktion").
+            Durch 'VerticalAlignment="Bottom"' klebt dieser Text immer am unteren Rand.
         -->
         <TextBlock Text="{DynamicResource Welcome_Instruction}"
                    FontSize="16"

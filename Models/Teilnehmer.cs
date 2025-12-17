@@ -1,7 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace BAT_Man.Models
 {
+    /// <summary>
+    /// Repräsentiert einen Benutzer (Teilnehmer) der Anwendung.
+    /// </summary>
     public class Teilnehmer
     {
         // ==========================================================
@@ -15,24 +22,32 @@ namespace BAT_Man.Models
         public int Rolle_ID { get; set; }
         public int Kurs_ID { get; set; }
         public int Fachrichtung_ID { get; set; }
-        public string Kurs {  get; set; }
+        public string Kurs { get; set; }
 
-        // WICHTIG: tinyint(1) in MySQL wird in C# meist als bool behandelt.
+        // WICHTIG: tinyint(1) in MySQL wird in C# standardmäßig als bool behandelt.
+        // Kennzeichnet, ob der Benutzer sich zum ersten Mal anmeldet (Passwort-Zwang).
         public bool Erstanmeldung { get; set; }
 
         // ==========================================================
-        // 2. LOGIK-BRÜCKEN (Für Kompatibilität zur App)
+        // 2. LOGIK-BRÜCKEN (Kompatibilitäts-Layer)
+        // Dienen der Anpassung an bestehenden Code, der andere Namen erwartet.
         // ==========================================================
 
-        // Die App nutzt "TeilnehmerID" (ohne Unterstrich). Es wird weitergeleitet.
+        /// <summary>
+        /// Alias für Teilnehmer_ID (ohne Unterstrich).
+        /// </summary>
         public int TeilnehmerID => Teilnehmer_ID;
 
-        // Die App nutzt "RehaNummer" (als String).
-        // LOGIK: Da RehaNummer == Teilnehmer_ID ist, wird die ID einfach als String zurück gegeben.
+        /// <summary>
+        /// Alias für RehaNummer.
+        /// Konvertiert die ID in einen String, da die Anwendungslogik dies erwartet.
+        /// </summary>
         public string RehaNummer => Teilnehmer_ID.ToString();
 
-        // Die App nutzt "MussPasswortAendern".
-        // Das entspricht jetzt dem Feld "Erstanmeldung".
+        /// <summary>
+        /// Alias für Erstanmeldung.
+        /// Ermöglicht lesenden und schreibenden Zugriff auf das zugrundeliegende Feld.
+        /// </summary>
         public bool MussPasswortAendern
         {
             get { return Erstanmeldung; }

@@ -3,187 +3,210 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using BAT_Man.Models;
 using BAT_Man.Services;
-using System.Windows.Input;
 using BAT_Man.ViewModels;
 using BAT_Man.Views;
 
 namespace BAT_Man.ViewModels
 {
     /// <summary>
-    /// Das Haupt-ViewModel ("MainViewModel").
+    /// Das Haupt-ViewModel ("MainViewModel") für das Hauptfenster.
     /// <para>
-    /// ARCHITEKTUR-HINWEIS:
-    /// Diese Klasse fungiert im Observer-Pattern als "Subjekt" (Sender).
-    /// Sie benachrichtigt die View ("Beobachter"), sobald sich Daten ändern.
-    /// Zudem dient sie als Container für die Navigation und hält die User-Session-Daten bereit.
+    /// ARCHITEKTUR-FUNKTION:
+    /// 1. Container: Verwaltet die gesamte Navigation zwischen den Unterseiten (Views).
+    /// 2. State-Management: Hält die Instanzen der Unter-ViewModels im Speicher (Caching).
+    /// 3. Observer-Subjekt: Benachrichtigt die View (MainWindow.xaml), wenn sich der anzuzeigende Inhalt ändert.
     /// </para>
     /// </summary>
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         // --- Private Felder (Zustandsspeicher) ---
+
+        // Speichert die Daten des aktuell eingeloggten Benutzers für die Anzeige.
         private Teilnehmer _aktuellerTeilnehmer;
 
-        // Instanzen der untergeordneten ViewModels (Caching-Strategie für statische Seiten)
+        // --- Caching der Unter-ViewModels ---
         private WelcomeViewModel _welcomeViewModel;
         private SettingsViewModel _settingsViewModel;
         private FirmenUebersichtViewModel _firmenUebersichtViewModel;
         private FirmaAnzeigenViewModel _betriebAnzeigenViewModel;
 
-        // Speichert das aktuell sichtbare ViewModel für das ContentControl
+        // Referenziert das ViewModel, das AKTUELL im rechten Bereich (ContentControl) angezeigt wird.
         private object _aktuellesViewModel;
 
-        // [NEU] Variable zum Merken der vorherigen Ansicht für die Hilfe-Funktion ("Back-Stack")
+        // Speichert die vorherige Ansicht, um nach dem Schließen der Hilfe dorthin zurückzukehren.
         private object _letzteView;
 
-        // --- Öffentliche Eigenschaften (Binding-Quellen) ---
+        // --- Öffentliche Eigenschaften (Datenquellen für die GUI) ---
 
-        // Daten für die Anzeige in der Navigationsleiste
-        public string TeilnehmerKurs { get; }
+        /// <summary>
+        /// Der Name des angemeldeten Benutzers (für die Anzeige im Menü).
+        /// Read-Only (nur get), da er sich nach dem Login nicht mehr ändert.
+        /// </summary>
         public string TeilnehmerName { get; }
 
         /// <summary>
-        /// Bestimmt, welche Ansicht im ContentControl angezeigt wird.
-        /// <para>
-        /// HIER GREIFT DAS OBSERVER-PATTERN:
-        /// Der Setter ändert den Zustand und löst die Benachrichtigung (OnPropertyChanged) aus.
-        /// Die View empfängt diese Nachricht und aktualisiert die Anzeige.
-        /// </para>
+        /// Der Kurs des angemeldeten Benutzers.
+        /// </summary>
+        public string TeilnehmerKurs { get; }
+
+        /// <summary>
+        /// Die Eigenschaft, die bestimmt, welche View gerade angezeigt wird.
+        /// Das ContentControl im MainWindow bindet an diese Eigenschaft.
         /// </summary>
         public object AktuellesViewModel
         {
             get { return _aktuellesViewModel; }
             set
             {
-                // 1. Der Zustand ändert sich (Schreibvorgang)
+                // 1. Wert setzen
                 _aktuellesViewModel = value;
 
-                // 2. Die Benachrichtigung wird gesendet
-                // Das "Subjekt" ruft: "Hallo Beobachter (View), mein Wert hat sich geändert!"
+                // 2. WICHTIG: Benachrichtigung senden!
                 OnPropertyChanged();
             }
         }
 
-        // --- Commands (Steuerung der Buttons) ---
+        // --- Commands (Die "Fernbedienung" für die Buttons) ---
+        // Jede Eigenschaft hier entspricht einem klickbaren Menüpunkt.
+
         public ICommand ShowWelcomeViewCommand { get; }
         public ICommand ShowSettingsViewCommand { get; }
         public ICommand ShowFirmaAnlegenCommand { get; }
         public ICommand ShowFirmenUebersichtCommand { get; }
         public ICommand ShowBetriebAnzeigenCommand { get; }
-
-        // [NEU] Command für den Hilfe-Button
         public ICommand ShowHilfeViewCommand { get; }
 
+        // --- Konstruktor (Initialisierung) ---
+
         /// <summary>
-        /// Konstruktor: Wird beim Programmstart instanziiert.
-        /// Lädt Benutzerdaten, initialisiert Sub-ViewModels und Commands.
+        /// Wird aufgerufen, sobald das MainWindow erstellt wird (nach erfolgreichem Login).
+        /// Lädt Benutzerdaten und initialisiert die Navigation.
         /// </summary>
         public MainWindowViewModel()
         {
-            // 1. Laden der Sitzungsdaten
-            // Zugriff auf das Singleton, um den angemeldeten Benutzer zu ermitteln.
+            // -------------------------------------------------------
+            // SCHRITT 1: Benutzerdaten laden (Singleton-Zugriff)
+            // -------------------------------------------------------
             var sitzung = AktiveSitzung.Instance;
+
+            // Sicherheits-Check: Prüfung, ob eine Anmeldung vorliegt.
             if (sitzung.IstAngemeldet())
             {
                 _aktuellerTeilnehmer = sitzung.AngemeldeterTeilnehmer;
-                TeilnehmerKurs = _aktuellerTeilnehmer.Kurs;
+
+                TeilnehmerKurs = _aktuellerTeilnehmer.Kurs; 
                 TeilnehmerName = $"{_aktuellerTeilnehmer.Vorname} {_aktuellerTeilnehmer.Nachname}";
             }
             else
             {
-                // Fallback-Werte für Design-Mode oder Fehlerfälle
+                // Fallback für den Designer-Modus in Visual Studio
                 TeilnehmerKurs = "Nicht angemeldet";
                 TeilnehmerName = "Unbekannt";
             }
 
-            // 2. Initialisierung der Unter-ViewModels
+            // -------------------------------------------------------
+            // SCHRITT 2: Unter-ViewModels vorbereiten
+            // -------------------------------------------------------
             _welcomeViewModel = new WelcomeViewModel();
             _settingsViewModel = new SettingsViewModel();
 
-            // Übergabe der Referenz 'this' (das Hauptfenster), damit Unterseiten
-            // Navigationsbefehle an das Hauptfenster senden können (Dependency Injection light).
+            // Übergabe der Referenz auf die eigene Instanz ('this') an das FirmenUebersichtViewModel.
             _firmenUebersichtViewModel = new FirmenUebersichtViewModel(this);
+
             _betriebAnzeigenViewModel = new FirmaAnzeigenViewModel();
 
-            // 3. Verknüpfung der Commands mit Methoden
+            // -------------------------------------------------------
+            // SCHRITT 3: Commands verkabeln
+            // -------------------------------------------------------
+            // Zuweisung der auszuführenden Methoden an die RelayCommands.
             ShowWelcomeViewCommand = new RelayCommand(ExecuteShowWelcomeView);
             ShowSettingsViewCommand = new RelayCommand(ExecuteShowSettingsView);
             ShowFirmaAnlegenCommand = new RelayCommand(ExecuteShowFirmaAnlegen);
             ShowFirmenUebersichtCommand = new RelayCommand(ExecuteShowFirmenUebersicht);
             ShowBetriebAnzeigenCommand = new RelayCommand(ExecuteShowBetriebAnzeigen);
-
-            // [NEU] Verknüpfung des Hilfe-Commands
             ShowHilfeViewCommand = new RelayCommand(ExecuteShowHilfeView);
 
-            // 4. Festlegen der Startseite
+            // -------------------------------------------------------
+            // SCHRITT 4: Startzustand
+            // -------------------------------------------------------
+            // Initiale Anzeige der Willkommens-Seite.
             AktuellesViewModel = _welcomeViewModel;
         }
 
-        // --- Navigations-Methoden (Logik hinter den Commands) ---
+        // --- Navigations-Methoden (Die Logik hinter den Klicks) ---
 
         /// <summary>
-        /// Zeigt die Willkommens-Seite an.
+        /// Navigiert zur Willkommensseite (Startbildschirm).
+        /// Wird ausgeführt, wenn der Benutzer auf "Willkommen" klickt.
         /// </summary>
+        /// <param name="p">Parameter vom Command (nicht genutzt).</param>
         private void ExecuteShowWelcomeView(object p)
         {
             AktuellesViewModel = _welcomeViewModel;
         }
 
         /// <summary>
-        /// Zeigt die Einstellungs-Seite an.
+        /// Navigiert zur Einstellungs-Seite.
+        /// Wird ausgeführt, wenn der Benutzer auf "Einstellungen" klickt.
         /// </summary>
+        /// <param name="p">Parameter vom Command (nicht genutzt).</param>
         private void ExecuteShowSettingsView(object p)
         {
             AktuellesViewModel = _settingsViewModel;
         }
 
         /// <summary>
-        /// Zeigt die Firmenübersicht an und aktualisiert die Daten.
+        /// Navigiert zur Firmenübersicht (Tabelle).
+        /// Aktualisiert vor der Anzeige die Daten aus der Datenbank.
         /// </summary>
+        /// <param name="p">Parameter vom Command (nicht genutzt).</param>
         private void ExecuteShowFirmenUebersicht(object p)
         {
-            // Aktualisierung der Daten beim Wechsel auf die Übersicht erzwingen
+            // WICHTIG: Erneutes Laden der Daten vor dem Umschalten.
+            // Stellt sicher, dass zwischenzeitlich hinzugefügte Firmen angezeigt werden.
             _firmenUebersichtViewModel.ExecuteRefresh(null);
+
             AktuellesViewModel = _firmenUebersichtViewModel;
         }
 
         /// <summary>
-        /// Zeigt die Betriebs-Anzeige (Platzhalter) an.
+        /// Navigiert zur Detailansicht (Firma anzeigen).
+        /// Zeigt die zuletzt ausgewählte Firma an.
         /// </summary>
+        /// <param name="p">Parameter vom Command (nicht genutzt).</param>
         private void ExecuteShowBetriebAnzeigen(object p)
         {
-            _betriebAnzeigenViewModel.RefreshDaten();
             AktuellesViewModel = _betriebAnzeigenViewModel;
         }
 
         /// <summary>
         /// Navigiert zur Maske "Neue Firma anlegen".
+        /// Erstellt dafür explizit eine neue Instanz, um alle Felder zu leeren.
         /// </summary>
-        /// <param name="parameter">Wird vom Command übergeben (meist null).</param>
+        /// <param name="parameter">Wird vom Command ignoriert.</param>
         public void ExecuteShowFirmaAnlegen(object parameter)
         {
-            // Erstellung einer neuen Instanz, um leere Eingabefelder zu garantieren.
-            // Übergabe von 'this' (für Navigation) und 'null' (weil kein bestehender Datensatz bearbeitet wird).
             AktuellesViewModel = new FirmaAnlegenViewModel(this, null);
         }
 
         /// <summary>
-        /// [NEU] Zeigt die kontextsensitive Hilfe an.
-        /// Speichert vorher die aktuelle Ansicht, um ein "Zurück" zu ermöglichen.
+        /// Öffnet die kontextsensitive Hilfe und speichert die aktuelle Ansicht.
+        /// Ermöglicht es dem Benutzer, nach dem Lesen der Hilfe zur ursprünglichen Seite zurückzukehren.
         /// </summary>
+        /// <param name="p">Parameter vom Command (nicht genutzt).</param>
         private void ExecuteShowHilfeView(object p)
         {
-            // 1. Speichern, wo wir gerade sind ("Gedächtnis")
-            // Wir müssen prüfen, ob wir nicht schon in der Hilfe sind, sonst überschreiben wir 
-            // die echte letzte View mit der Hilfe selbst.
+            // 1. "Back-Stack" Logik: Speichern der vorherigen Ansicht.
+            // Erfolgt nur, wenn die aktuelle Ansicht nicht bereits die Hilfe ist.
             if (!(AktuellesViewModel is HilfeViewModel))
             {
                 _letzteView = AktuellesViewModel;
             }
 
-            // 2. Kontext ermitteln (Woher kommt der User?)
+            // 2. Kontext ermitteln (Herkunft des Aufrufs)
+            // Auswahl der passenden Hilfeseite basierend auf dem aktiven ViewModel.
             string kontextKey = "Allgemein";
 
-            // Wir prüfen den Typ des aktuellen ViewModels
             if (AktuellesViewModel is FirmenUebersichtViewModel)
             {
                 kontextKey = "FirmenUebersichtViewModel";
@@ -201,52 +224,50 @@ namespace BAT_Man.ViewModels
                 kontextKey = "SettingsViewModel";
             }
 
-            // 3. Das Hilfe-ViewModel erstellen
+            // 3. Hilfe-ViewModel erstellen
             var hilfeVM = new HilfeViewModel(kontextKey);
 
-            // 4. Die "Zurück"-Funktion injizieren (Dependency Injection)
-            // Wir geben dem HilfeViewModel eine Funktion mit, die es ausführen soll, wenn "Schließen" gedrückt wird.
+            // 4. "Zurück"-Funktion injizieren (Callback)
+            // Übergabe einer Aktion an das Hilfe-VM, die beim Schließen ausgeführt wird.
             hilfeVM.SchliessenCommand = new RelayCommand(o =>
             {
-                // Status wiederherstellen
+                // Wiederherstellen der alten Ansicht
                 if (_letzteView != null)
                 {
                     AktuellesViewModel = _letzteView;
-                    _letzteView = null; // Sauber aufräumen
+                    _letzteView = null; // Reset
                 }
                 else
                 {
-                    // Fallback, falls etwas schief ging
+                    // Notfall-Fallback
                     AktuellesViewModel = _welcomeViewModel;
                 }
             });
 
-            // 5. Ansicht wechseln
+            // 5. Anzeigen
             AktuellesViewModel = hilfeVM;
         }
 
         /// <summary>
-        /// Ermöglicht Quernavigation zu einer spezifischen Firmendetail-Seite.
-        /// Wird oft von der Firmenübersicht aufgerufen.
+        /// Öffentliche Methode für Quernavigation zur Detailansicht.
+        /// Wird vom 'FirmenUebersichtViewModel' aufgerufen, wenn dort eine Zeile doppelt geklickt wird.
         /// </summary>
-        /// <param name="firma">Das anzuzeigende Firmen-Objekt.</param>
+        /// <param name="firma">Die Firma, deren Details angezeigt werden sollen.</param>
         public void NavigateToFirmaDetail(Firma firma)
         {
-            // Erstellung des Detail-ViewModels mit den konkreten Daten der Firma.
+            // Erstellung eines neuen Detail-ViewModels unter direkter Übergabe der Firma.
             AktuellesViewModel = new FirmaAnzeigenViewModel(firma);
         }
 
         // --- INotifyPropertyChanged Implementierung ---
 
-        /// <summary>
-        /// Das Event, auf das die View "hört" (Observer-Pattern).
-        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-        /// Hilfsmethode zum Auslösen des PropertyChanged-Events.
+        /// Hilfsmethode, um das PropertyChanged-Event sicher auszulösen.
+        /// Informiert die View über Änderungen an Eigenschaften.
         /// </summary>
-        /// <param name="propertyName">Name der geänderten Eigenschaft (automatisch ermittelt).</param>
+        /// <param name="propertyName">Der Name der geänderten Eigenschaft (automatisch ermittelt).</param>
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

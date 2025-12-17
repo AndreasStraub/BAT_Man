@@ -30,13 +30,13 @@ namespace BAT_Man.ViewModels
         }
 
         /// <summary>
-        /// Liste aller möglichen Status-Werte (für die Auswahl).
+        /// Liste aller möglichen Status-Werte (für die Auswahl in der ListBox).
         /// </summary>
         public ObservableCollection<Status> AlleStatusOptionen { get; set; }
 
         private Status _ausgewaehlterStatus;
         /// <summary>
-        /// Der aktuell ausgewählte Status.
+        /// Der aktuell vom Benutzer ausgewählte Status.
         /// </summary>
         public Status AusgewaehlterStatus
         {
@@ -49,47 +49,48 @@ namespace BAT_Man.ViewModels
         }
 
         /// <summary>
-        /// Gibt an, ob wir eine bestehende Aktivität bearbeiten (true) oder eine neue anlegen (false).
+        /// Gibt an, ob eine bestehende Aktivität bearbeitet (true) oder eine neue angelegt wird (false).
+        /// Dies steuert u.a. den Fenstertitel und die Sichtbarkeit des Löschen-Buttons.
         /// </summary>
         public bool IsEditMode { get; private set; }
 
         // --- Konstruktor ---
 
         /// <summary>
-        /// Initialisiert das ViewModel.
+        /// Initialisiert das ViewModel und bereitet die Daten vor.
         /// </summary>
         /// <param name="aktivitaet">
         /// Die Aktivität, die bearbeitet werden soll.
-        /// Wenn 'null', wird der Modus "Neu" gestartet.
+        /// Ist dieser Parameter 'null', wird der Modus "Neu" gestartet.
         /// </param>
         public AddAktivitaetViewModel(Aktivitaet aktivitaet)
         {
             _statusRepository = new StatusRepository();
             AlleStatusOptionen = new ObservableCollection<Status>();
 
-            // Entscheidung: Welcher Modus?
+            // Entscheidung über den Betriebsmodus anhand des Parameters.
             this.IsEditMode = (aktivitaet != null);
 
-            // 1. Status-Liste laden
+            // 1. Laden der Stammdaten (Status-Liste)
             LadeStatusOptionen();
 
-            // 2. Daten vorbereiten
+            // 2. Vorbereitung des Datenobjekts
             if (aktivitaet == null)
             {
                 // --- MODUS: NEU ---
                 AktivitaetZumBearbeiten = new Aktivitaet
                 {
-                    Datum = DateTime.Now // Standard: Heute
+                    Datum = DateTime.Now // Vorbelegung mit dem aktuellen Datum
                 };
 
-                // Standard-Status auswählen (z.B. der erste in der Liste)
+                // Standardmäßige Auswahl des ersten Status in der Liste (z.B. "Anruf"), um Leerauswahl zu vermeiden.
                 if (AlleStatusOptionen.Count > 0)
                     AusgewaehlterStatus = AlleStatusOptionen[0];
             }
             else
             {
                 // --- MODUS: BEARBEITEN ---
-                // WICHTIG: Wir arbeiten auf einer KOPIE, damit "Abbrechen" möglich ist.
+                // WICHTIG: Erstellung einer Kopie, um Änderungen verwerfen zu können ("Abbrechen").
                 AktivitaetZumBearbeiten = new Aktivitaet
                 {
                     Aktivitaet_ID = aktivitaet.Aktivitaet_ID,
@@ -99,7 +100,7 @@ namespace BAT_Man.ViewModels
                     StatusBezeichnung = aktivitaet.StatusBezeichnung
                 };
 
-                // Den passenden Status in der Liste finden und auswählen
+                // Wiederherstellung der Status-Auswahl passend zum Datensatz.
                 SetzeStatusAuswahl(aktivitaet.Status_ID);
             }
         }
@@ -107,28 +108,28 @@ namespace BAT_Man.ViewModels
         // --- Logik ---
 
         /// <summary>
-        /// Sucht den Status mit der gegebenen ID in der Liste und setzt ihn als ausgewählt.
+        /// Sucht den Status mit der gegebenen ID in der Liste und setzt ihn als aktiv.
         /// </summary>
         private void SetzeStatusAuswahl(int gesuchteStatusId)
         {
-            // DIDAKTISCHER HINWEIS:
-            // Wir nutzen hier eine klassische Schleife statt LINQ (FirstOrDefault),
-            // um den Suchvorgang explizit zu zeigen.
-
             Status gefundenerStatus = null;
 
+            // Iteration durch die Liste, um das passende Status-Objekt zu finden.
             foreach (Status s in AlleStatusOptionen)
             {
                 if (s.Status_ID == gesuchteStatusId)
                 {
                     gefundenerStatus = s;
-                    break; // Gefunden -> Suche beenden
+                    break; // Gefunden -> Abbruch
                 }
             }
 
             AusgewaehlterStatus = gefundenerStatus;
         }
 
+        /// <summary>
+        /// Lädt alle verfügbaren Status-Optionen aus der Datenbank.
+        /// </summary>
         private void LadeStatusOptionen()
         {
             AlleStatusOptionen.Clear();
@@ -141,6 +142,7 @@ namespace BAT_Man.ViewModels
 
         // --- INotifyPropertyChanged Implementierung ---
         public event PropertyChangedEventHandler PropertyChanged;
+
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
