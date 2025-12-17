@@ -72,7 +72,7 @@ namespace BAT_Man
             mainWindow.Show();
 
             // ============================================================
-            // Modus wird jetzt geändert:    
+            // Der Modus wird jetzt geändert:    
             // Jetzt, wo das Hauptfenster offen ist, wird die Regel geändert.
             // Ab jetzt gilt: "Wenn das Hauptfenster zugeht, beende dich."
             // ============================================================
